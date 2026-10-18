@@ -287,3 +287,24 @@ def test_installing_the_hook_does_not_change_what_the_model_is_shown(tmp_path):
     _git(repo, "add", ".claude")
     _git(repo, "commit", "-q", "-m", "install injunct")
     assert coverage._files(repo) == before
+
+
+def test_a_sentence_that_timed_out_costs_nothing_on_the_next_run(repo, fake_model, monkeypatch):
+    real = coverage.provider.chat
+    calls = []
+
+    def hangs_once(prompt, system="", **k):
+        calls.append(prompt)
+        if system == coverage.COMPILE and "commit messages" in prompt and len(json.loads(prompt)["files"]) > 30:
+            raise coverage.provider.Unavailable("The read operation timed out")
+        return real(prompt, system=system, **k)
+
+    # Enough files that the retry's 30-path prompt differs from the full one.
+    _commit(repo, {f"pkg/m{i}.py": "x = 1\n" for i in range(60)}, "vendor a package")
+    monkeypatch.setattr(coverage.provider, "chat", hangs_once)
+    first = coverage.run(repo)                            # full prompt hangs, compact answers
+    assert not first["model_failed"]
+    assert any(len(json.loads(p)["files"]) > 30 for p in calls if p.startswith("{") and "commit messages" in p)
+    calls.clear()
+    s = coverage.run(repo)                                # warm: nothing should reach the model
+    assert calls == [] and not s["model_failed"]

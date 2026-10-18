@@ -120,7 +120,27 @@ class _Model:
         with self._lock:
             self.enabled, self._streak = self.wanted, 0
 
-    def ask(self, prompt: str, system: str) -> dict | None:
+    def _save(self, key: str, raw: str) -> None:
+        with self._lock:
+            self._cache[key] = raw
+            # Merge with what is on disk before writing: two runs at once (two
+            # repositories, one key) each held the whole cache in memory, and
+            # the last writer silently erased the other's answers - which then
+            # cost a live call on every rerun.
+            try:
+                CACHE.parent.mkdir(parents=True, exist_ok=True)
+                try:
+                    disk = json.loads(CACHE.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError):
+                    disk = {}
+                self._cache = {**disk, **self._cache}
+                tmp = CACHE.with_suffix(f".{threading.get_ident()}.tmp")
+                tmp.write_text(json.dumps(self._cache), encoding="utf-8")
+                os.replace(tmp, CACHE)
+            except OSError:
+                pass
+
+    def ask(self, prompt: str, system: str, also: str | None = None) -> dict | None:
         if not self.wanted:
             return None
         from .coverdemo import MODEL as RECORDED
@@ -151,23 +171,14 @@ class _Model:
                 return None
             with self._lock:
                 self._streak = 0
-                self._cache[key] = raw
-                # Merge with what is on disk before writing: two runs at once
-                # (two repositories, one key) each held the whole cache in
-                # memory, and the last writer silently erased the other's
-                # answers - which then cost a live call on every rerun.
-                try:
-                    CACHE.parent.mkdir(parents=True, exist_ok=True)
-                    try:
-                        disk = json.loads(CACHE.read_text(encoding="utf-8"))
-                    except (OSError, json.JSONDecodeError):
-                        disk = {}
-                    self._cache = {**disk, **self._cache}
-                    tmp = CACHE.with_suffix(f".{threading.get_ident()}.tmp")
-                    tmp.write_text(json.dumps(self._cache), encoding="utf-8")
-                    os.replace(tmp, CACHE)
-                except OSError:
-                    pass
+            self._save(key, raw)
+        if also is not None:
+            # The answer to a retry also answers the prompt that timed out, so
+            # the next run hits the cache instead of waiting out that timeout
+            # again - one hung sentence was costing every warm run 3 minutes.
+            alias = hashlib.sha1(f"{provider.MODEL}\0{system}\0{also}".encode()).hexdigest()
+            if alias not in self._cache:
+                self._save(alias, raw)
         self.used = True
         with self._lock:
             self.models.add(answered_by)
@@ -306,8 +317,12 @@ def compile_rule(text: str, files: list[str], model: _Model,
         if t == "required_command":
             t = "must_run"
         return t, p, says
-    sample = _sample(files, 30) if compact else _sample(files)
-    d = model.ask(json.dumps({"instruction": text, "files": sample}, indent=1), COMPILE)
+    full = json.dumps({"instruction": text, "files": _sample(files)}, indent=1)
+    if compact:
+        d = model.ask(json.dumps({"instruction": text, "files": _sample(files, 30)}, indent=1), COMPILE,
+                      also=full)
+    else:
+        d = model.ask(full, COMPILE)
     if d is None:
         return None, {"kind": "vague", "unanswered": True}, UNANSWERED
     t = d.get("template")
