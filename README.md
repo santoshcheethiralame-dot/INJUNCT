@@ -33,6 +33,7 @@ hook, or on a pull request.
 - [Configuration](#configuration)
 - [Command reference](#command-reference)
 - [Development](#development)
+- [Documentation](#documentation)
 - [License](#license)
 
 ## Why
@@ -415,6 +416,25 @@ python -m pytest -q
 The suite needs no network and no API key. Design notes for contributors are in
 [CLAUDE.md](CLAUDE.md), and the five-minute presentation run sheet is
 [docs/HACKDAY-DEMO.md](docs/HACKDAY-DEMO.md).
+
+## Documentation
+
+This README is enough to use Injunct. Read further when you need to:
+
+| If you want to | Read |
+|---|---|
+| understand the engine: templates, empanelment, overruling, the data model | [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md) |
+| check a number on this page | [docs/BENCHMARKS.md](docs/BENCHMARKS.md), with the raw files in `bench/` |
+| know what is not proven, and how each gap was found | [docs/LIMITATIONS.md](docs/LIMITATIONS.md) |
+| see a real Claude Code session, including the hole it found | [docs/GALLERY.md](docs/GALLERY.md) |
+| present it in five minutes from a terminal | [docs/HACKDAY-DEMO.md](docs/HACKDAY-DEMO.md) |
+| present it inside Claude Code, prompt by prompt | [docs/DEMO-PROMPTS.md](docs/DEMO-PROMPTS.md) |
+| run the split-screen race and the board | [docs/DEMO.md](docs/DEMO.md) |
+| explain every feature in plain language | [docs/SCRIPT.md](docs/SCRIPT.md) |
+| work on the board UI | [docs/DESIGN.md](docs/DESIGN.md) and [docs/PAGES.md](docs/PAGES.md) |
+| contribute to the code | [CLAUDE.md](CLAUDE.md): constraints, the frozen core, past failure modes |
+
+[docs/SUBMISSION.md](docs/SUBMISSION.md) is the hackathon submission draft.
 
 ## License
 
