@@ -242,7 +242,63 @@ def cmd_coverage(a) -> int:
     return 0
 
 
+def cmd_hindsight(a) -> int:
+    import json
+
+    from . import coverage, hindsight
+    if a.demo:
+        import tempfile
+
+        from . import coverdemo, provider
+        a.path = str(coverdemo.build(Path(tempfile.mkdtemp(prefix="injunct-demo-")) / "clinic"))
+        coverage.CACHE, provider.MODEL = coverdemo.CACHE, coverdemo.MODEL
+        print(f"  demo repository: {a.path}")
+    repo = Path(a.path) if Path(a.path).exists() else None
+    if repo is not None:
+        # Everything Injunct can know before anything goes wrong: the pack,
+        # the habits in the history, and - if a model is set - the documents.
+        verbs.install_pack(repo)
+        verbs.init(repo)
+        if not a.no_docs:
+            coverage.run(repo, use_model=True, adopt=True)
+    s = hindsight.run(a.path, window=a.window)
+    if a.json:
+        print(json.dumps(s, indent=2))
+        return 0
+    r = hindsight.rate
+    print()
+    print(f"  {s['fixes']} fix commits in the last {s['window']}; "
+          f"{s['introducers']} commits they trace back to.")
+    print(f"  {s['rules']} rules replayed against each, as it landed.")
+    print()
+    print(f"  caught      {r(s['caught'], s['introducers'])} of the commits that introduced a fixed problem")
+    print(f"  baseline    fired on {r(s['clean_fired'], s['clean'])} of the other commits")
+    print(f"  binding     {s['caught_binding']} of those catches came from a rule that blocks today")
+    print()
+    for c in s["catches"]:
+        print(f"  {c['introduced']}")
+        print(f"    fixed by  {c['fixed_by']}")
+        for h in c["rules"][:3]:
+            mark = "BINDING " if h["status"] == "binding" else "advisory"
+            print(f"    {mark}  {h['says']}")
+            print(f"              {h['why']}")
+        print()
+    print("  traced with SZZ (blame the lines each fix changed); check each pair by hand.")
+    if s["shallow"]:
+        print("  shallow clone: commits older than the clone could not be traced.")
+    print()
+    return 0
+
+
 def register(sub) -> None:
+    hs = sub.add_parser("hindsight", help="replay the rules against the commits that later needed a fix")
+    hs.add_argument("path", nargs="?", default=".", help="a repository path, GitHub URL or owner/name")
+    hs.add_argument("--window", type=int, default=300, help="how many recent commits to read")
+    hs.add_argument("--no-docs", action="store_true", help="skip compiling AGENTS.md (no model calls)")
+    hs.add_argument("--demo", action="store_true", help="the clinic demo repository, offline")
+    hs.add_argument("--json", action="store_true")
+    hs.set_defaults(fn=cmd_hindsight)
+
     cv = sub.add_parser("coverage", help="how much of AGENTS.md / CONTRIBUTING.md is actually enforced")
     cv.add_argument("path", nargs="?", default=".", help="a repository path, GitHub URL or owner/name")
     cv.add_argument("--adopt", action="store_true", help="put the rules on the ledger (enforced ones bind)")

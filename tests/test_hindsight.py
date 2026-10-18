@@ -1,0 +1,72 @@
+"""Hindsight: the rules, replayed against the commits that later needed a fix."""
+import subprocess
+from types import SimpleNamespace
+from pathlib import Path
+
+import pytest
+
+from injunct import hindsight
+from injunct.db import Ledger, ledger_path
+
+
+def _git(repo, *args):
+    return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True, text=True).stdout
+
+
+def _commit(repo, files: dict, msg: str):
+    for path, text in files.items():
+        p = repo / path
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", msg)
+    return _git(repo, "rev-parse", "HEAD").strip()
+
+
+@pytest.fixture
+def repo(tmp_path):
+    r = tmp_path / "app"
+    r.mkdir()
+    _git(r, "init", "-q")
+    _git(r, "config", "user.email", "t@t")
+    _git(r, "config", "user.name", "t")
+    _commit(r, {"app/a.py": "def a():\n    return 1\n"}, "start")
+    bad = _commit(r, {"app/a.py": "def a():\n    print('dbg')\n    return 1\n"}, "quick debug for the bug")
+    _commit(r, {"app/b.py": "def b():\n    return 2\n"}, "add b")
+    fix = _commit(r, {"app/a.py": "def a():\n    return 1\n"}, "Fix stray print in a")
+    reverted = _commit(r, {"app/c.py": "x = 1\n"}, "add c")
+    _git(r, "revert", "--no-edit", "HEAD")
+    led = Ledger(ledger_path(r))
+    run = led.open_run(str(r.resolve()), "t", arm="t")
+    case = led.file_case(run, str(r.resolve()), "t", "high", "no print", [], "{}")
+    led.establish(case, str(r.resolve()), "must_not_appear", {"regex": r"print\(", "glob": "app/**"},
+                  "No print in app/.", status="persuasive")
+    led.close()
+    return SimpleNamespace(path=r, bad=bad, fix=fix, reverted=reverted)
+
+
+def test_a_bug_word_alone_is_not_a_fix():
+    assert not hindsight.FIX.search("quick debug for the bug")
+    assert hindsight.FIX.search("Fix stray print") and hindsight.FIX.search("Add missing migration")
+
+
+def test_szz_traces_a_fix_to_the_commit_that_broke_it(repo):
+    assert hindsight.introducers(repo.path, repo.fix, "", set()) == {repo.bad}
+
+
+def test_a_revert_names_its_target(repo):
+    head = _git(repo.path, "rev-parse", "HEAD").strip()
+    body = _git(repo.path, "log", "-1", "--format=%b")
+    assert hindsight.introducers(repo.path, head, body, set()) == {repo.reverted}
+
+
+def test_a_shallow_boundary_is_never_blamed(repo):
+    assert hindsight.introducers(repo.path, repo.fix, "", {repo.bad}) == set()
+
+
+def test_the_rule_catches_the_bad_commit_and_the_baseline_is_reported(repo):
+    s = hindsight.run(repo.path)
+    assert s["caught"] == 1 and s["introducers"] >= 1
+    assert repo.bad[:7] in s["catches"][0]["introduced"]
+    assert repo.fix[:7] in s["catches"][0]["fixed_by"]
+    assert s["clean"] >= 2 and s["clean_fired"] == 0       # the rule is not firing on everything

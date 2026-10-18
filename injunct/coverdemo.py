@@ -75,7 +75,7 @@ HISTORY = [
         "models/appointment.py": "class Appointment:\n    slot: str\n    doctor: str\n",
         "migrations/005_doctor.sql": "ALTER TABLE appointment ADD doctor TEXT;\n",
     }),
-    ("Remove the debug print", {
+    ("Fix stray debug print in booking", {
         "app/booking.py": "def book(slot, doctor=None):\n    return {'slot': slot, 'doctor': doctor}\n",
         "CHANGELOG.md": "# Changelog\n- booking returns the doctor\n- fix double booking\n",
     }),
