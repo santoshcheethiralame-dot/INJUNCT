@@ -121,11 +121,15 @@ class _Model:
             if not self.enabled:
                 return None
             try:
-                raw = provider.chat(prompt, system=system, timeout=180)
-            except provider.Unavailable:
+                raw = provider.chat(prompt, system=system, timeout=180, attempts=6)
+            except provider.Unavailable as e:
                 with self._lock:
                     self.failed += 1
-                    self._streak += 1
+                    # A rate limit is the endpoint saying "wait", not "dead".
+                    # Counting it toward giving up let one busy minute switch
+                    # the model off for the rest of a run.
+                    if "429" not in str(e):
+                        self._streak += 1
                     if self._streak >= self.GIVE_UP:
                         self.enabled = False
                 return None
@@ -340,13 +344,15 @@ def run(target: str | Path, use_model: bool = True, adopt: bool = False) -> dict
     with ThreadPoolExecutor(WORKERS) as pool:
         compiled = list(pool.map(lambda f: compile_rule(f[2], files, model), found))
     # A failed call is usually one timeout or one bad 500, not a dead model.
-    # Each gets one more try, one at a time, on a smaller prompt - and the
-    # endpoint gets a fresh chance even if the first pass gave up on it.
+    # Each gets one more try on a smaller prompt - and the endpoint gets a
+    # fresh chance even if the first pass gave up on it.
     again = [i for i, c in enumerate(compiled) if c[1].get("unanswered")]
     if again and model.wanted:
         model.revive()
-        for i in again:
-            compiled[i] = compile_rule(found[i][2], files, model, compact=True)
+        with ThreadPoolExecutor(WORKERS) as pool:
+            retried = list(pool.map(lambda i: compile_rule(found[i][2], files, model, compact=True), again))
+        for i, c in zip(again, retried):
+            compiled[i] = c
     unanswered = sum(1 for c in compiled if c[1].get("unanswered"))
 
     rules: list[Rule] = []

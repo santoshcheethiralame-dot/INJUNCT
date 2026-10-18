@@ -79,6 +79,7 @@ Answers are cached, so a rerun is instant and the number does not drift.
 
 | repository | instructions | enforced | checkable | unchecked |
 |---|---|---|---|---|
+| astral-sh/uv | 63 | **2** — no `#[allow(clippy::…)]`, no `pull_request_target` in workflows; both held on 90 commits | 3 — two already broken by 5 recent commits each | 58 (22 process, 15 judgement, 12 runtime, 9 vague) |
 <!-- coverage-results -->
 
 **What this is not.** Most instructions in most agent documents are process
@@ -86,6 +87,27 @@ and judgement — "write a regression test", "keep the change small" — and no
 deterministic check will ever enforce them. A low number is the finding, not a
 bug: it says how much of what you wrote is a suggestion. When the output ends
 in a WARNING, some model calls failed and the number is a floor.
+
+### What would it have caught?
+
+```bash
+injunct hindsight .            # or: injunct hindsight --demo  (offline)
+```
+
+`hindsight` finds the commits that fixed something, traces each one back to
+the commit that introduced the problem, and replays every rule Injunct knows
+against that commit as it landed. Tracing is SZZ (Śliwerski, Zimmermann and
+Zeller, 2005): the lines a fix had to change were last written by the commit
+that broke them, and `git blame` on the fix's parent names it; a revert names
+its target outright.
+
+A rule that fires on everything catches every bug for free, so the same rules
+are replayed against every other commit too, and the two rates are printed
+side by side. Only the gap is evidence. SZZ is noisy — a fix that only adds
+lines points at nothing — so every catch prints both commits for a person to
+check.
+
+<!-- hindsight-results -->
 
 In CI, [`action.yml`](action.yml) rebuilds the ledger from the base branch,
 gates the pull request, and comments the coverage report; copy
@@ -646,7 +668,8 @@ takes the keys.*
 | | |
 |---|---|
 | `injunct init` | mine git history and install the rule pack |
-| `injunct coverage [repo]` | how much of AGENTS.md / CONTRIBUTING.md is enforced; `--badge`, `--md`, `--adopt` |
+| `injunct coverage [repo]` | how much of AGENTS.md / CONTRIBUTING.md is enforced; `--badge`, `--md`, `--adopt`, `--demo` |
+| `injunct hindsight [repo]` | replay the rules against the commits that later needed a fix, beside a baseline; `--demo` |
 | `injunct rule "..."` | teach it a rule in one sentence |
 | `injunct confirm <n>` | promote a mined rule to binding |
 | `injunct why <file>` | which rules apply here, and the case behind each |

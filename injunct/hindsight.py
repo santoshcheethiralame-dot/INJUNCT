@@ -41,7 +41,10 @@ FIX = re.compile(r"\b(fix(e[sd]|ing)?|hotfix|bugfix|revert(s|ed)?|regression|for
 REVERTS = re.compile(r"This reverts commit ([0-9a-f]{7,40})")
 HUNK = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+\d+(?:,\d+)? @@", re.M)
 REPLAYABLE = ("co_change", "forbidden_edit", "must_not_appear", "must_not_remove")
-MAX_FILES = 12       # the same bar the miner uses: a commit touching everything says nothing
+# The miner skips commits over 12 files because a huge commit is no evidence of
+# a habit. Replay is a different question - a big commit can still break a
+# rule - so the bar here is only there to skip vendored dumps and mass renames.
+MAX_FILES = 50
 WINDOW = 300
 
 

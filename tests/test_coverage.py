@@ -219,3 +219,18 @@ def test_a_sentence_that_fails_once_is_retried_and_not_reported(repo, fake_model
     s = coverage.run(repo)
     assert failed and not s["model_failed"] and s["model_failures"] == 0
     assert {r["text"]: r for r in s["rules"]}["Write clear commit messages."]["reason"].startswith("judgement")
+
+
+def test_a_rate_limit_does_not_switch_the_model_off(repo, fake_model, monkeypatch):
+    real = coverage.provider.chat
+    limited = []
+
+    def busy(prompt, system="", **k):
+        if system == coverage.COMPILE and len(limited) < 5:
+            limited.append(1)
+            raise coverage.provider.Unavailable("HTTP Error 429: Too Many Requests")
+        return real(prompt, system=system, **k)
+
+    monkeypatch.setattr(coverage.provider, "chat", busy)
+    s = coverage.run(repo)
+    assert len(limited) == 5 and not s["model_failed"] and s["enforced"] == 1
