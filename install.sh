@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # INJUNCT — one line, and your agent stops repeating itself.
 #
-#   curl -fsSL https://raw.githubusercontent.com/YOUR_ORG/INJUNCT/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/santoshcheethiralame-dot/INJUNCT/main/install.sh | bash
 #
 # There is nothing to install. The engine is Python's standard library, the
 # ledger is one SQLite file, and the plugin is a single .ts file. This script
@@ -9,7 +9,7 @@
 
 set -euo pipefail
 
-REPO="${INJUNCT_REPO:-https://github.com/YOUR_ORG/INJUNCT}"
+REPO="${INJUNCT_REPO:-https://github.com/santoshcheethiralame-dot/INJUNCT}"
 HOME_DIR="${INJUNCT_HOME:-$HOME/.injunct}"
 PORT="${INJUNCT_PORT:-4000}"
 PROJECT="${1:-$PWD}"

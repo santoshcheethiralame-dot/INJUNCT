@@ -13,7 +13,8 @@ uv is the proof that the same thing runs on a real repository.
 
 ## Before the room (once, 2 minutes)
 
-PowerShell, from `C:\Users\carbo\projects\hackathons\demo-repos`:
+PowerShell, from a `demo-repos` folder next to this repository, holding a clone
+of astral-sh/uv as `uv` (`git clone --depth 400 https://github.com/astral-sh/uv`):
 
 ```powershell
 $env:INJUNCT_MODEL = "gemma-4-26b-a4b-it"
