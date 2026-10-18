@@ -13,7 +13,7 @@ hook, or on a pull request.
 ![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)
 ![Model: Gemma 4](https://img.shields.io/badge/model-Gemma%204%20(open%20weights)-4285F4.svg)
 ![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20standard-8A2BE2.svg)
-![Tests: 439 passing](https://img.shields.io/badge/tests-439%20passing-brightgreen.svg)
+![Tests: 446 passing](https://img.shields.io/badge/tests-446%20passing-brightgreen.svg)
 
 <p align="center">
   <img src="docs/img/coverage-report.png" alt="Injunct coverage report: 33% of AGENTS.md guarded, with each instruction colour-coded" width="720">
