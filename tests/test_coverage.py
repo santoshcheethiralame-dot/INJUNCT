@@ -354,4 +354,13 @@ def test_the_html_report_is_self_contained_and_escapes_what_it_quotes(repo, fake
     assert page.startswith("<!doctype html>") and "%" in page
     assert "<script>" not in page                                  # quoted, never executed
     assert "http://" not in page and "https://" not in page        # no network, opens from a file
-    assert "<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>" in page and "ENFORCED" in page
+    assert "<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>" in page and "GUARDED" in page
+    assert "What you can do now" in page                           # every report says what to do next
+    assert 'class="ln l-ok"' in page                               # the document itself, colour-coded
+    assert "When a file matching <code>models/*.py</code> changes" in page   # rules in English
+
+
+def test_commit_hashes_link_to_github_only_when_the_repository_is_there():
+    from injunct import report_html
+    assert 'href="https://github.com/o/r/commit/12a65fe"' in report_html._commits("12a65fe: Regenerate", "o/r")
+    assert "<a " not in report_html._commits("12a65fe: Regenerate", None)

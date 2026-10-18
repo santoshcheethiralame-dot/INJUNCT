@@ -523,7 +523,11 @@ def run(target: str | Path, use_model: bool = True, adopt: bool = False,
         _adopt(led, repo, rules)
     led.close()
     out = {**_summary(repo, remote, docs, rules, model, unanswered), "discounted": discounted,
-           "suggestions": suggested}
+           "suggestions": suggested, "github": remote or _github(repo),
+           # The documents themselves, so a report can show each instruction
+           # where it sits rather than as a list torn out of context.
+           "documents": {d.relative_to(repo).as_posix(): d.read_text(encoding="utf-8", errors="replace")
+                         for d in docs}}
     if out["total"]:
         out["percent_if_rewritten"] = round(100 * (out["enforced"] + len(suggested)) / out["total"])
     return out
@@ -554,6 +558,13 @@ def _adopt(led: Ledger, repo: Path, rules: list[Rule]) -> None:
         led.establish(case_id, str(repo), r.template, r.params, r.says,
                       status="binding" if r.status == "enforced" else "persuasive",
                       empanel={**r.receipt, "documented": f"{r.doc}:{r.line}"})
+
+
+def _github(repo: Path) -> str | None:
+    """owner/name when the repository's origin is on GitHub, so a report can link its commits."""
+    url = sh("git remote get-url origin", repo).stdout.strip()
+    m = re.search(r"github\.com[:/]([^/]+/[^/]+?)(?:\.git)?$", url)
+    return m.group(1) if m else None
 
 
 def _summary(repo, remote, docs, rules: list[Rule], model: _Model, unanswered: int = 0) -> dict:

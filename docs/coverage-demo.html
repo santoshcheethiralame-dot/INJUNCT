@@ -3,65 +3,91 @@
 <title>Injunct coverage</title><style>
 :root{--bg:#fbfaf7;--fg:#1c1b19;--dim:#6b6860;--line:#e6e2d9;--card:#ffffff;
 --ok:#1f7a4d;--ok-bg:#e6f4ec;--warn:#9a5b00;--warn-bg:#fdf1dc;--off:#5f5d57;--off-bg:#efede8;
---accent:#3b4cca}
+--accent:#3b4cca;--accent-bg:#eceefd}
 @media (prefers-color-scheme:dark){:root{--bg:#151514;--fg:#ecebe7;--dim:#9b988f;--line:#2c2b28;
 --card:#1d1c1a;--ok:#5fd19a;--ok-bg:#16301f;--warn:#f0b35a;--warn-bg:#33270f;--off:#b3b0a8;
---off-bg:#262522;--accent:#93a0ff}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);
-font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+--off-bg:#262522;--accent:#93a0ff;--accent-bg:#1f2240}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
 main{max-width:920px;margin:0 auto;padding:32px 16px 64px}
-header p{margin:.2rem 0;color:var(--dim)}h1{font-size:1.05rem;margin:0 0 .2rem;font-weight:600}
-.big{display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap;margin:28px 0 12px}
-.pct{font-size:4.2rem;font-weight:700;line-height:1;letter-spacing:-.03em}
+a{color:var(--accent)}header p{margin:.15rem 0;color:var(--dim)}
+h1{font-size:1.15rem;margin:0 0 .3rem;font-weight:650}
+.big{display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap;margin:26px 0 6px}
+.pct{font-size:4rem;font-weight:750;line-height:1;letter-spacing:-.03em}
 .pct small{font-size:1rem;font-weight:500;color:var(--dim);letter-spacing:0;margin-left:.4rem}
-.then{color:var(--accent);font-weight:600}
-.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--off-bg);margin:8px 0 6px}
+.then{color:var(--accent);font-weight:600;padding-bottom:.4rem}
+.lede{font-size:1.05rem;margin:10px 0 14px;max-width:46em}
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--off-bg);margin:6px 0 8px}
 .bar span{display:block}.b-ok{background:var(--ok)}.b-warn{background:var(--warn)}
-.legend{display:flex;gap:18px;flex-wrap:wrap;color:var(--dim);font-size:.9rem}
-.legend b{color:var(--fg)}
-h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:40px 0 12px;font-weight:600}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0}
-.card .top{display:flex;gap:10px;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
-.text{font-weight:500}.where{color:var(--dim);font-size:.85rem;white-space:nowrap}
-.stamp{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;padding:2px 8px;
+.legend{display:flex;gap:8px 20px;flex-wrap:wrap;font-size:.9rem;color:var(--dim)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:0}
+.d-ok{background:var(--ok)}.d-warn{background:var(--warn)}.d-off{background:var(--off-bg);border:1px solid var(--line)}
+.todo{background:var(--accent-bg);border-radius:12px;padding:16px 18px;margin:26px 0}
+.todo h2{margin:0 0 8px;color:var(--fg)}.todo ol{margin:0;padding-left:20px}.todo li{margin:6px 0}
+h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:40px 0 12px;font-weight:650}
+h2 small{text-transform:none;letter-spacing:0;font-weight:400}
+.doc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 0;overflow:hidden;margin:10px 0}
+.doc summary{cursor:pointer;padding:0 16px 8px;font-weight:600}
+.ln{display:flex;gap:12px;padding:1px 16px;font-size:.9rem;color:var(--dim);text-decoration:none}
+.ln i{font-style:normal;min-width:2.4em;text-align:right;opacity:.6;font:12px/1.9 ui-monospace,Consolas,monospace}
+.ln span{white-space:pre-wrap;overflow-wrap:anywhere}
+a.ln{color:var(--fg);border-left:4px solid transparent}a.ln:hover{filter:brightness(.97)}
+a.l-ok{background:var(--ok-bg);border-left-color:var(--ok)}
+a.l-warn{background:var(--warn-bg);border-left-color:var(--warn)}
+a.l-off{background:var(--off-bg);border-left-color:var(--line)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0;scroll-margin-top:16px}
+.card:target{outline:2px solid var(--accent)}
+.top{display:flex;gap:10px;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
+.text{font-weight:550}.where{color:var(--dim);font-size:.85rem;white-space:nowrap}
+.stamp{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.05em;padding:2px 8px;
 border-radius:999px;margin-right:8px;vertical-align:2px}
 .s-ok{color:var(--ok);background:var(--ok-bg)}.s-warn{color:var(--warn);background:var(--warn-bg)}
 .s-off{color:var(--off);background:var(--off-bg)}
-code,.rule{font:13px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace}
-.rule{display:block;margin-top:8px;color:var(--fg);overflow-wrap:anywhere}
-.why{color:var(--dim);font-size:.9rem;margin-top:6px}
-ul.broke{margin:6px 0 0;padding-left:18px;color:var(--warn);font-size:.88rem}
-.fixed{border-left:3px solid var(--accent)}
+.plain{margin-top:8px}.why{color:var(--dim);font-size:.92rem;margin-top:4px}
+.next{margin-top:8px;font-size:.92rem}.next b{color:var(--accent)}
+code{font:13px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}
+details.rule{margin-top:6px;font-size:.85rem;color:var(--dim)}details.rule summary{cursor:pointer}
+ul.broke{margin:6px 0 0;padding-left:18px;font-size:.88rem}
 .sug .was{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--line)}
 .sug .now{font-weight:600;margin-top:4px}
-footer{margin-top:48px;color:var(--dim);font-size:.85rem;border-top:1px solid var(--line);padding-top:16px}
+.how{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:40px}
+.how summary{cursor:pointer;font-weight:600}
+footer{margin-top:32px;color:var(--dim);font-size:.85rem}
 </style></head><body><main>
-<header><h1>Is this repository's agent guidance enforced?</h1>
-<p>clinic</p><p>AGENTS.md</p></header>
-<div class="big"><div class="pct">33%<small>enforced</small></div></div>
-<div class="bar" role="img" aria-label="3 enforced, 2 checkable, 4 unchecked">
+<header><h1>Your agent instructions, checked</h1>
+<p>clinic &middot; AGENTS.md</p></header>
+<div class="big"><div class="pct">33%<small>guarded</small></div></div>
+<p class="lede"><b>3 of your 9 instructions are guarded</b>: if an agent breaks one, Injunct stops the edit before it lands. 2 could be guarded but are not proven yet, and 4 need a human, because no automatic check can express them.</p>
+<div class="bar" role="img" aria-label="3 guarded, 2 could be guarded, 4 need a human">
 <span class="b-ok" style="width:33.3%"></span><span class="b-warn" style="width:22.2%"></span></div>
-<div class="legend"><span><b>3</b> enforced: proven on this history, blocks today</span>
-<span><b>2</b> checkable: compiles, not yet proven</span>
-<span><b>4</b> unchecked: no check can express it</span></div>
-<h2>Left out of the proof: a later commit had to fix these</h2>
-<div class="card fixed"><div class="text"><code>744e19f: quick debug for the double-booking bug</code></div><div class="why">fixed by <code>a1650dd Fix stray debug print in booking</code></div></div>
-<div class="card fixed"><div class="text"><code>8e112ba: Add Visit model</code></div><div class="why">fixed by <code>9f500f5 Fix Visit: add the missing migration and store a real date</code></div></div>
-<div class="card fixed"><div class="text"><code>7267f8b: Silence the Appointment type error</code></div><div class="why">fixed by <code>415d28f Fix Appointment.room properly instead of ignoring the type</code></div></div>
-<h2>Enforced (3)</h2>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-ok">ENFORCED</span>When you change a model in <code>models/</code>, add a migration under <code>migrations/</code> in the same commit.</div><div class="where">AGENTS.md:7</div></div><code class="rule">co_change( models/* -&gt; migrations/* )</code><div class="why">held on all 14 past commits that could test it</div></div>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-ok">ENFORCED</span>Do not leave <code>print(</code> debugging calls in <code>app/</code>.</div><div class="where">AGENTS.md:9</div></div><code class="rule">must_not_appear( /print\(/ in app/* )</code><div class="why">held on all 14 past commits that could test it</div></div>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-ok">ENFORCED</span>Never add <code># type: ignore</code> to anything under <code>models/</code>.</div><div class="where">AGENTS.md:10</div></div><code class="rule">must_not_appear( /# type: ignore/ in models/* )</code><div class="why">held on all 14 past commits that could test it</div></div>
-<h2>Checkable, not yet proven (2)</h2>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-warn">CHECKABLE</span>Never hand-edit <code>client/generated.py</code>; it is regenerated from <code>api/spec.json</code>.</div><div class="where">AGENTS.md:8</div></div><code class="rule">forbidden_edit( client/generated.py )</code><div class="why">2 past commit(s) already break it</div><ul class="broke"><li>commit 12a65fe: Regenerate client from the spec</li><li>commit 787d909: Start the clinic app</li></ul></div>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-warn">CHECKABLE</span>Update <code>CHANGELOG.md</code> whenever you change code in <code>app/</code>.</div><div class="where">AGENTS.md:11</div></div><code class="rule">co_change( app/** -&gt; CHANGELOG.md )</code><div class="why">1 past commit(s) already break it</div><ul class="broke"><li>commit 92438c5: Cancel a booking</li></ul></div>
-<h2>Unchecked (4)</h2>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-off">UNCHECKED</span>Write clear, descriptive commit messages.</div><div class="where">AGENTS.md:12</div></div><div class="why">judgement: Descriptiveness is a subjective quality.</div></div>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-off">UNCHECKED</span>Open an issue and wait for a maintainer before starting a large refactor.</div><div class="where">AGENTS.md:13</div></div><div class="why">process: It describes a human workflow involving issue creation and approval.</div></div>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-off">UNCHECKED</span>Make sure the app still starts and serves the booking page.</div><div class="where">AGENTS.md:14</div></div><div class="why">runtime: Verifying app startup and functionality requires executing the code.</div></div>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-off">UNCHECKED</span>Keep functions small and focused.</div><div class="where">AGENTS.md:15</div></div><div class="why">judgement: Small and focused is a subjective stylistic preference.</div></div>
-<footer><p>Candidate sentences come from the documents themselves.
-The model (gemma-4-26b-a4b-it) only sorts each one into a template or a reason it cannot be checked;
-whether a rule binds is decided by replaying it against this repository's own commits.
-Nothing the model wrote was executed.</p><p>injunct · 18 Oct 2026 15:33</p></footer>
+<div class="legend"><span><i class="dot d-ok"></i>Guarded: stops an agent today</span>
+<span><i class="dot d-warn"></i>Could be guarded: not proven yet</span>
+<span><i class="dot d-off"></i>Needs a human: no check can express it</span></div>
+<div class="todo"><h2>What you can do now</h2><ol><li><b>Turn on the 3 guarded rules.</b> Run <code>injunct coverage . --adopt</code>, and an agent that breaks one is stopped before the write lands.</li><li><b>Look at the 2 rules your own history breaks.</b> Either the rule is too strict or the habit is real; each card names the commits.</li><li><b>Keep the 4 instructions that need a human</b> as guidance; no tool will ever enforce taste or process.</li></ol></div>
+<h2>Your documents, colour-coded <small>&middot; click an instruction for details</small></h2>
+<details class="doc" open><summary>AGENTS.md</summary><div class="ln"><i>1</i><span># Working on the clinic app</span></div><div class="ln"><i>2</i><span> </span></div><div class="ln"><i>3</i><span>This repository is a small clinic scheduling app in Python.</span></div><div class="ln"><i>4</i><span> </span></div><div class="ln"><i>5</i><span>## Rules</span></div><div class="ln"><i>6</i><span> </span></div><a class="ln l-ok" href="#i-agents-md-7" title="Guarded: click for details"><i>7</i><span>- When you change a model in `models/`, add a migration under `migrations/` in the same commit.</span></a><a class="ln l-warn" href="#i-agents-md-8" title="Could be guarded: click for details"><i>8</i><span>- Never hand-edit `client/generated.py`; it is regenerated from `api/spec.json`.</span></a><a class="ln l-ok" href="#i-agents-md-9" title="Guarded: click for details"><i>9</i><span>- Do not leave `print(` debugging calls in `app/`.</span></a><a class="ln l-ok" href="#i-agents-md-10" title="Guarded: click for details"><i>10</i><span>- Never add `# type: ignore` to anything under `models/`.</span></a><a class="ln l-warn" href="#i-agents-md-11" title="Could be guarded: click for details"><i>11</i><span>- Update `CHANGELOG.md` whenever you change code in `app/`.</span></a><a class="ln l-off" href="#i-agents-md-12" title="Needs a human: click for details"><i>12</i><span>- Write clear, descriptive commit messages.</span></a><a class="ln l-off" href="#i-agents-md-13" title="Needs a human: click for details"><i>13</i><span>- Open an issue and wait for a maintainer before starting a large refactor.</span></a><a class="ln l-off" href="#i-agents-md-14" title="Needs a human: click for details"><i>14</i><span>- Make sure the app still starts and serves the booking page.</span></a><a class="ln l-off" href="#i-agents-md-15" title="Needs a human: click for details"><i>15</i><span>- Keep functions small and focused.</span></a></details>
+<h2>Guarded (3)</h2>
+<div class="card" id="i-agents-md-7"><div class="top"><div class="text"><span class="stamp s-ok">GUARDED</span>When you change a model in <code>models/</code>, add a migration under <code>migrations/</code> in the same commit.</div><div class="where">AGENTS.md line 7</div></div><div class="plain">When a file matching <code>models/*</code> changes, something in <code>migrations/*</code> must change in the same commit.</div><div class="why">All 14 past commits we could check it against followed it.</div><div class="next"><b>Next:</b> Once adopted, an agent that breaks this is stopped before the edit lands.</div><details class="rule"><summary>show the rule</summary><code>co_change( models/* -&gt; migrations/* )</code></details></div>
+<div class="card" id="i-agents-md-9"><div class="top"><div class="text"><span class="stamp s-ok">GUARDED</span>Do not leave <code>print(</code> debugging calls in <code>app/</code>.</div><div class="where">AGENTS.md line 9</div></div><div class="plain">No line added to <code>app/*</code> may match <code>print\(</code>.</div><div class="why">All 14 past commits we could check it against followed it.</div><div class="next"><b>Next:</b> Once adopted, an agent that breaks this is stopped before the edit lands.</div><details class="rule"><summary>show the rule</summary><code>must_not_appear( /print\(/ in app/* )</code></details></div>
+<div class="card" id="i-agents-md-10"><div class="top"><div class="text"><span class="stamp s-ok">GUARDED</span>Never add <code># type: ignore</code> to anything under <code>models/</code>.</div><div class="where">AGENTS.md line 10</div></div><div class="plain">No line added to <code>models/*</code> may match <code># type: ignore</code>.</div><div class="why">All 14 past commits we could check it against followed it.</div><div class="next"><b>Next:</b> Once adopted, an agent that breaks this is stopped before the edit lands.</div><details class="rule"><summary>show the rule</summary><code>must_not_appear( /# type: ignore/ in models/* )</code></details></div>
+<h2>Could be guarded (2)</h2>
+<div class="card" id="i-agents-md-8"><div class="top"><div class="text"><span class="stamp s-warn">COULD BE GUARDED</span>Never hand-edit <code>client/generated.py</code>; it is regenerated from <code>api/spec.json</code>.</div><div class="where">AGENTS.md line 8</div></div><div class="plain">Files matching <code>client/generated.py</code> must never be edited.</div><div class="why">2 of your past commits broke it, so it cannot block yet without blocking work that already shipped.</div><ul class="broke"><li>12a65fe: Regenerate client from the spec</li><li>787d909: Start the clinic app</li></ul><div class="next"><b>Next:</b> If those commits did it on purpose, narrow the rule (for example, allow the generator); otherwise keep it as guidance.</div><details class="rule"><summary>show the rule</summary><code>forbidden_edit( client/generated.py )</code></details></div>
+<div class="card" id="i-agents-md-11"><div class="top"><div class="text"><span class="stamp s-warn">COULD BE GUARDED</span>Update <code>CHANGELOG.md</code> whenever you change code in <code>app/</code>.</div><div class="where">AGENTS.md line 11</div></div><div class="plain">When a file matching <code>app/**</code> changes, something in <code>CHANGELOG.md</code> must change in the same commit.</div><div class="why">1 of your past commits broke it, so it cannot block yet without blocking work that already shipped.</div><ul class="broke"><li>92438c5: Cancel a booking</li></ul><div class="next"><b>Next:</b> If those commits did it on purpose, narrow the rule (for example, allow the generator); otherwise keep it as guidance.</div><details class="rule"><summary>show the rule</summary><code>co_change( app/** -&gt; CHANGELOG.md )</code></details></div>
+<h2>Needs a human (4)</h2>
+<div class="card" id="i-agents-md-12"><div class="top"><div class="text"><span class="stamp s-off">NEEDS A HUMAN</span>Write clear, descriptive commit messages.</div><div class="where">AGENTS.md line 12</div></div><div class="why">No automatic check can enforce this: needs taste, not a pattern. Descriptiveness is a subjective quality.</div><div class="next"><b>Next:</b> Keep it as guidance for people and agents, or put it on a review checklist.</div></div>
+<div class="card" id="i-agents-md-13"><div class="top"><div class="text"><span class="stamp s-off">NEEDS A HUMAN</span>Open an issue and wait for a maintainer before starting a large refactor.</div><div class="where">AGENTS.md line 13</div></div><div class="why">No automatic check can enforce this: a team process, not a file change. It describes a human workflow involving issue creation and approval.</div><div class="next"><b>Next:</b> Keep it as guidance for people and agents, or put it on a review checklist.</div></div>
+<div class="card" id="i-agents-md-14"><div class="top"><div class="text"><span class="stamp s-off">NEEDS A HUMAN</span>Make sure the app still starts and serves the booking page.</div><div class="where">AGENTS.md line 14</div></div><div class="why">No automatic check can enforce this: only running the code could tell. Verifying app startup and functionality requires executing the code.</div><div class="next"><b>Next:</b> Keep it as guidance for people and agents, or put it on a review checklist.</div></div>
+<div class="card" id="i-agents-md-15"><div class="top"><div class="text"><span class="stamp s-off">NEEDS A HUMAN</span>Keep functions small and focused.</div><div class="where">AGENTS.md line 15</div></div><div class="why">No automatic check can enforce this: needs taste, not a pattern. Small and focused is a subjective stylistic preference.</div><div class="next"><b>Next:</b> Keep it as guidance for people and agents, or put it on a review checklist.</div></div>
+<h2>Commits we did not count</h2>
+<p class="why">These commits introduced a problem that a later commit had to fix, so they are not counted as examples of good work when a rule is checked against your history.</p>
+<div class="card"><div class="text">744e19f: quick debug for the double-booking bug</div><div class="why">fixed later by a1650dd Fix stray debug print in booking</div></div>
+<div class="card"><div class="text">8e112ba: Add Visit model</div><div class="why">fixed later by 9f500f5 Fix Visit: add the missing migration and store a real date</div></div>
+<div class="card"><div class="text">7267f8b: Silence the Appointment type error</div><div class="why">fixed later by 415d28f Fix Appointment.room properly instead of ignoring the type</div></div>
+<details class="how"><summary>How this works</summary>
+<p>Injunct reads the documents your agents are given and finds every sentence that sounds like an instruction.
+A model (gemma-4-26b-a4b-it) sorts each one: either it can be written as one of six simple checks on a commit,
+or it cannot, and it says why. Then each check is replayed against this repository's own past commits.
+A check that every past commit already followed is <b>guarded</b>: it can stop an agent without ever
+blocking work that already shipped. Nothing the model wrote is ever run.</p></details>
+<footer><p>injunct &middot; 18 Oct 2026 15:45</p></footer>
 </main></body></html>
