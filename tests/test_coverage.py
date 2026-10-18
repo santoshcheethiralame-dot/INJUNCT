@@ -264,3 +264,26 @@ def test_two_runs_at_once_do_not_erase_each_others_answers(tmp_path, monkeypatch
     fresh = coverage._Model(True)
     monkeypatch.setattr(coverage.provider, "chat", lambda *x, **k: (_ for _ in ()).throw(AssertionError("miss")))
     assert fresh.ask("one", "s") == {"answer": "one"} and fresh.ask("two", "s") == {"answer": "two"}
+
+
+def test_the_demo_scores_the_same_under_any_model_setting(monkeypatch):
+    """An app session does not inherit a terminal's INJUNCT_MODEL; the demo's
+    recorded answers must still be found, and credited to the model that gave them."""
+    import tempfile
+    from injunct import coverdemo
+    monkeypatch.setattr(coverage.provider, "MODEL", "qwen2.5-coder:7b")
+    monkeypatch.setattr(coverage.provider, "chat",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("went to the network")))
+    s = coverage.run(coverdemo.build(Path(tempfile.mkdtemp()) / "clinic"))
+    assert s["enforced"] == 3 and s["model"] == coverdemo.MODEL and not s["model_failed"]
+
+
+def test_installing_the_hook_does_not_change_what_the_model_is_shown(tmp_path):
+    import tempfile
+    from injunct import coverdemo, verbs
+    repo = coverdemo.build(Path(tempfile.mkdtemp()) / "clinic")
+    before = coverage._files(repo)
+    verbs.claude(repo)
+    _git(repo, "add", ".claude")
+    _git(repo, "commit", "-q", "-m", "install injunct")
+    assert coverage._files(repo) == before

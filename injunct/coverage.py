@@ -99,16 +99,22 @@ class _Model:
         self._streak = 0
         self._lock = threading.Lock()
         self._cache = {}
+        self._shipped = {}
+        self.models: set[str] = set()      # whose answers this run actually used
         if enabled:
             from .coverdemo import CACHE as SHIPPED
+            try:
+                self._cache = json.loads(CACHE.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                pass
             # The demo's recorded answers ride along read-only, so the demo
-            # repository scores the same from any folder, not only via --demo.
-            # They are keyed by model and prompt and match nothing else.
-            for path in (SHIPPED, CACHE):
-                try:
-                    self._cache.update(json.loads(path.read_text(encoding="utf-8")))
-                except (OSError, json.JSONDecodeError):
-                    pass
+            # repository scores the same from any folder and under any model
+            # setting - an app session does not inherit a terminal's
+            # INJUNCT_MODEL. They are keyed by prompt and match nothing else.
+            try:
+                self._shipped = json.loads(SHIPPED.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                pass
 
     def revive(self) -> None:
         with self._lock:
@@ -117,8 +123,13 @@ class _Model:
     def ask(self, prompt: str, system: str) -> dict | None:
         if not self.wanted:
             return None
+        from .coverdemo import MODEL as RECORDED
         key = hashlib.sha1(f"{provider.MODEL}\0{system}\0{prompt}".encode()).hexdigest()
-        raw = self._cache.get(key)
+        demo = hashlib.sha1(f"{RECORDED}\0{system}\0{prompt}".encode()).hexdigest()
+        raw = self._cache.get(key) or self._shipped.get(key)
+        answered_by = provider.MODEL
+        if raw is None and demo in self._shipped:
+            raw, answered_by = self._shipped[demo], RECORDED
         if raw is None:
             # Giving up stops new calls only. An answer already on disk is
             # still the model's answer, and throwing it away would score a
@@ -158,6 +169,8 @@ class _Model:
                 except OSError:
                     pass
         self.used = True
+        with self._lock:
+            self.models.add(answered_by)
         m = re.search(r"\{.*\}", raw, re.S)
         try:
             return json.loads(m.group(0)) if m else None
@@ -179,12 +192,19 @@ def find_docs(repo: Path) -> list[Path]:
     return out
 
 
+# Agent harness config, not the project the instructions describe. Leaving it
+# out also means installing a hook does not change what the model is shown.
+HARNESS_DIRS = (".claude/", ".opencode/", ".injunct/")
+
+
 def _files(repo: Path) -> list[str]:
     r = sh("git ls-files", repo)
     if r.returncode == 0 and r.stdout.strip():
-        return [x.strip().replace("\\", "/") for x in r.stdout.splitlines() if x.strip()]
-    return [p.relative_to(repo).as_posix() for p in repo.rglob("*")
-            if p.is_file() and ".git" not in p.parts and ".injunct" not in p.parts]
+        names = [x.strip().replace("\\", "/") for x in r.stdout.splitlines() if x.strip()]
+    else:
+        names = [p.relative_to(repo).as_posix() for p in repo.rglob("*")
+                 if p.is_file() and ".git" not in p.parts]
+    return [n for n in names if not n.startswith(HARNESS_DIRS)]
 
 
 def _norm(s: str) -> str:
@@ -467,7 +487,7 @@ def _summary(repo, remote, docs, rules: list[Rule], model: _Model, unanswered: i
     return {
         "repo": remote or str(repo),
         "docs": [d.relative_to(repo).as_posix() for d in docs],
-        "model": provider.MODEL if model.used else "none (`injunct rule` forms only)",
+        "model": ", ".join(sorted(model.models)) if model.used else "none (`injunct rule` forms only)",
         # Only what is still unanswered at the end counts: a call that failed
         # and then succeeded on its second try cost time, not accuracy.
         "model_failed": model.wanted and (unanswered > 0 or not model.used),
