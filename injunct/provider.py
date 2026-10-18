@@ -3,6 +3,12 @@
 INJUNCT_BASE_URL  default http://localhost:11434/v1
 INJUNCT_MODEL     default qwen2.5-coder:7b
 INJUNCT_API_KEY   optional (Groq / Cerebras / OpenRouter / Gemini-compat)
+
+Unset variables fall back to ~/.injunct/provider.json (or the file named by
+INJUNCT_CONFIG): {"base_url": ..., "model": ..., "api_key_file": ...}. An agent
+session started from a desktop app does not inherit a terminal's environment,
+and without this it silently ran on the default model. The key lives in its
+own file, named rather than copied, so the config holds no secret.
 """
 from __future__ import annotations
 
@@ -12,10 +18,27 @@ import re
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 
-BASE = os.environ.get("INJUNCT_BASE_URL", "http://localhost:11434/v1").rstrip("/")
-MODEL = os.environ.get("INJUNCT_MODEL", "qwen2.5-coder:7b")
-KEY = os.environ.get("INJUNCT_API_KEY", "")
+
+def _config() -> dict:
+    path = Path(os.environ.get("INJUNCT_CONFIG") or Path.home() / ".injunct" / "provider.json")
+    try:
+        cfg = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if cfg.get("api_key_file") and not cfg.get("api_key"):
+        try:
+            cfg["api_key"] = Path(cfg["api_key_file"]).expanduser().read_text(encoding="utf-8").strip()
+        except OSError:
+            pass
+    return cfg
+
+
+_CFG = _config()
+BASE = (os.environ.get("INJUNCT_BASE_URL") or _CFG.get("base_url") or "http://localhost:11434/v1").rstrip("/")
+MODEL = os.environ.get("INJUNCT_MODEL") or _CFG.get("model") or "qwen2.5-coder:7b"
+KEY = os.environ.get("INJUNCT_API_KEY") or _CFG.get("api_key") or ""
 
 # Plenty of OpenAI-compatible endpoints sit behind Cloudflare, and Cloudflare
 # rejects urllib's default "Python-urllib/3.12" on browser fingerprint alone -

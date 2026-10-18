@@ -202,10 +202,17 @@ def _demo_dir(path: str, coverdemo) -> Path:
     if path in (".", ""):
         return coverdemo.build(Path(tempfile.mkdtemp(prefix="injunct-demo-")) / "clinic")
     dest = Path(path).resolve()
-    if dest.exists():
+    if dest.exists() and any(dest.iterdir()):
         if not (dest / ".git").exists() or not (dest / "AGENTS.md").exists():
             raise SystemExit(f"{dest} exists and is not a previous demo; refusing to overwrite it")
-        shutil.rmtree(dest, onerror=lambda f, p, e: (Path(p).chmod(0o700), f(p)))
+        # Empty the folder rather than delete it: an agent session opened on
+        # the demo holds it as its working directory, and Windows will not
+        # remove a directory a process is standing in.
+        for child in dest.iterdir():
+            if child.is_dir():
+                shutil.rmtree(child, onerror=lambda f, p, e: (Path(p).chmod(0o700), f(p)))
+            else:
+                child.unlink()
     return coverdemo.build(dest)
 
 

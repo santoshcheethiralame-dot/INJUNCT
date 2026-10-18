@@ -64,3 +64,25 @@ def test_a_server_error_is_retried_like_a_rate_limit(monkeypatch):
     monkeypatch.setattr(provider, "_once", flaky)
     monkeypatch.setattr(provider.time, "sleep", lambda s: None)
     assert provider.chat("x") == "ok" and len(calls) == 2
+
+
+def test_a_config_file_stands_in_for_missing_env_vars(tmp_path, monkeypatch):
+    """An app session inherits no terminal environment; the config file must
+    supply the endpoint and model, and read the key from its own file."""
+    import importlib
+    key = tmp_path / "k.key"
+    key.write_text("secret-123\n", encoding="utf-8")
+    cfg = tmp_path / "provider.json"
+    cfg.write_text(json.dumps({"base_url": "https://x.example/v1/", "model": "gemma-test",
+                               "api_key_file": str(key)}), encoding="utf-8")
+    for v in ("INJUNCT_BASE_URL", "INJUNCT_MODEL", "INJUNCT_API_KEY"):
+        monkeypatch.delenv(v, raising=False)
+    monkeypatch.setenv("INJUNCT_CONFIG", str(cfg))
+    p = importlib.reload(provider)
+    assert (p.BASE, p.MODEL, p.KEY) == ("https://x.example/v1", "gemma-test", "secret-123")
+    assert "secret" not in cfg.read_text(encoding="utf-8")       # the key is named, not copied
+    monkeypatch.setenv("INJUNCT_MODEL", "from-env")
+    assert importlib.reload(provider).MODEL == "from-env"         # the environment still wins
+    monkeypatch.delenv("INJUNCT_CONFIG")
+    monkeypatch.delenv("INJUNCT_MODEL")
+    importlib.reload(provider)
