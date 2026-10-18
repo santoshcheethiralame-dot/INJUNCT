@@ -67,7 +67,7 @@ runs:
             cat "$RUNNER_TEMP/injunct-gate.txt"
             echo '```'
             echo
-            echo "Do the step named under DO THIS NEXT and push again. A rule that is wrong can be muted with \`injunct off <n>\`."
+            echo "Fix what the card names (its DO THIS NEXT line, when it has one) and push again. A rule that is wrong can be muted with \`injunct off <n>\`."
           } > "$RUNNER_TEMP/injunct-gate.md"
           cat "$RUNNER_TEMP/injunct-gate.md" >> "$GITHUB_STEP_SUMMARY"
           gh pr comment "$PR" --body-file "$RUNNER_TEMP/injunct-gate.md" || true

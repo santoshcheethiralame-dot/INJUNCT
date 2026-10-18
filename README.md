@@ -134,6 +134,10 @@ gates the pull request, and comments the coverage report; copy
 that load skills, [`skills/injunct/SKILL.md`](skills/injunct/SKILL.md) follows
 the Agent Skills open standard.
 
+Injunct gates its own pull requests: [PR #1](https://github.com/santoshcheethiralame-dot/INJUNCT/pull/1)
+leaves a stray `breakpoint()` in the code, and the Action fails the check and
+comments the halt card on the PR.
+
 ---
 
 ## See it
