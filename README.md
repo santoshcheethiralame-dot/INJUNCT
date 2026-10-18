@@ -585,6 +585,7 @@ takes the keys.*
 | | |
 |---|---|
 | `injunct init` | mine git history and install the rule pack |
+| `injunct coverage [repo]` | how much of AGENTS.md / CONTRIBUTING.md is enforced; `--badge`, `--md`, `--adopt` |
 | `injunct rule "..."` | teach it a rule in one sentence |
 | `injunct confirm <n>` | promote a mined rule to binding |
 | `injunct why <file>` | which rules apply here, and the case behind each |

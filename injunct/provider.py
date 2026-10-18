@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 import urllib.error
 import urllib.request
@@ -25,6 +26,17 @@ USER_AGENT = os.environ.get(
     "INJUNCT_USER_AGENT",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
+
+
+RETRY = ("429", "500", "502", "503", "504")
+THOUGHT = re.compile(r"<thought>.*?</thought>", re.S)
+
+
+def _unthink(text: str) -> str:
+    """Gemma 4 on the Gemini API prefixes its answer with its reasoning in a
+    <thought> block. A brace in there would be the first `{` every caller's
+    JSON regex finds, so the reasoning goes before anyone parses the answer."""
+    return THOUGHT.sub("", text).strip()
 
 
 class Unavailable(RuntimeError):
@@ -64,15 +76,27 @@ def chat(prompt: str, system: str = "", timeout: float = 30.0, temperature: floa
             return _once(prompt, system, timeout, temperature)
         except Unavailable as e:
             last = e
-            if "429" not in str(e) or n == attempts - 1:
+            # A 5xx is the provider's own transient fault (Gemini's Gemma
+            # endpoint throws bare 500s that succeed on the next try); retrying
+            # it is the same honesty as waiting out a rate limit.
+            if not any(c in str(e) for c in RETRY) or n == attempts - 1:
                 raise
             time.sleep(min(30.0, 3.0 * (2 ** n)))
     raise last if last else Unavailable("no attempt was made")
 
 
-def _once(prompt: str, system: str = "", timeout: float = 30.0, temperature: float = 0.0) -> str:
-    msgs = ([{"role": "system", "content": system}] if system else []) + \
+def _messages(prompt: str, system: str) -> list[dict]:
+    """Gemma on the Gemini API refuses a system turn outright ("developer
+    instruction is not enabled"), so for Gemma the instructions ride at the top
+    of the user turn instead. Every other model keeps its system role."""
+    if system and "gemma" in MODEL.lower():
+        return [{"role": "user", "content": f"{system}\n\n---\n\n{prompt}"}]
+    return ([{"role": "system", "content": system}] if system else []) + \
            [{"role": "user", "content": prompt}]
+
+
+def _once(prompt: str, system: str = "", timeout: float = 30.0, temperature: float = 0.0) -> str:
+    msgs = _messages(prompt, system)
     body = json.dumps({"model": MODEL, "messages": msgs, "temperature": temperature}).encode()
     req = urllib.request.Request(f"{BASE}/chat/completions", data=body,
                                  headers={"Content-Type": "application/json",
@@ -81,7 +105,7 @@ def _once(prompt: str, system: str = "", timeout: float = 30.0, temperature: flo
                                           **({"Authorization": f"Bearer {KEY}"} if KEY else {})})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            return _text(json.loads(r.read())["choices"][0]["message"]["content"])
+            return _unthink(_text(json.loads(r.read())["choices"][0]["message"]["content"]))
     except (urllib.error.URLError, OSError, KeyError, json.JSONDecodeError) as e:
         raise Unavailable(str(e)) from e
 

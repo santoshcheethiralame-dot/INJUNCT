@@ -195,7 +195,56 @@ def cmd_claude(a) -> int:
     return 0
 
 
+def cmd_coverage(a) -> int:
+    import json
+
+    from . import coverage
+    s = coverage.run(a.path, use_model=not a.no_model, adopt=a.adopt)
+    if a.badge:
+        Path(a.badge).write_text(coverage.badge(s["percent"]), encoding="utf-8")
+    if a.md:
+        Path(a.md).write_text(coverage.markdown(s), encoding="utf-8")
+    if a.json:
+        print(json.dumps(s, indent=2))
+        return 0
+    if not s["docs"]:
+        print("  no agent documents here (AGENTS.md, CLAUDE.md, CONTRIBUTING.md, ...).")
+        return 0
+    print()
+    print(f"  {s['percent']}% of the instructions in {', '.join(s['docs'])} are enforced.")
+    print(f"  {s['enforced']} enforced   {s['checkable']} checkable   {s['unchecked']} unchecked"
+          f"   ({s['total']} instructions)")
+    print()
+    mark = {"enforced": "ENFORCED ", "checkable": "checkable", "unchecked": "unchecked"}
+    for r in s["rules"]:
+        text = r["text"] if len(r["text"]) <= 72 else r["text"][:69] + "..."
+        print(f"  {mark[r['status']]}  {text}")
+        if r["template"]:
+            print(f"             {templates.render(r['template'], r['params'])}")
+        print(f"             {r['doc']}:{r['line']}  {r['reason']}")
+        for c in r["broken_by"][:3]:
+            print(f"               broken by {c}")
+    print()
+    print(f"  model: {s['model']}")
+    if s.get("model_failed"):
+        print(f"  WARNING: {s['model_failures']} model call(s) failed; those instructions are")
+        print("  scored unchecked, so this number is a floor, not a measurement.")
+    if not a.adopt and (s["enforced"] or s["checkable"]):
+        print("  injunct coverage --adopt    to put these rules on the ledger")
+    print()
+    return 0
+
+
 def register(sub) -> None:
+    cv = sub.add_parser("coverage", help="how much of AGENTS.md / CONTRIBUTING.md is actually enforced")
+    cv.add_argument("path", nargs="?", default=".", help="a repository path, GitHub URL or owner/name")
+    cv.add_argument("--adopt", action="store_true", help="put the rules on the ledger (enforced ones bind)")
+    cv.add_argument("--no-model", action="store_true", help="heuristic extraction, no model calls")
+    cv.add_argument("--badge", help="write an SVG badge to this path")
+    cv.add_argument("--md", help="write a markdown report to this path")
+    cv.add_argument("--json", action="store_true")
+    cv.set_defaults(fn=cmd_coverage)
+
     i = sub.add_parser("init", help="learn this repo's habits from its own history")
     i.add_argument("--no-pack", action="store_true",
                    help="skip the common-mistake rules, mine history only")
