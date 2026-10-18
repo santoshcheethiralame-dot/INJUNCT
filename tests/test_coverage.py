@@ -144,7 +144,8 @@ def test_a_dead_model_is_dropped_quickly_and_said_out_loud(repo, monkeypatch, tm
 
     monkeypatch.setattr(coverage.provider, "chat", dead)
     s = coverage.run(repo)
-    assert len(calls) <= coverage._Model.GIVE_UP + coverage.WORKERS
+    # one give-up on the parallel pass, one more on the retry pass
+    assert len(calls) <= 2 * coverage._Model.GIVE_UP + coverage.WORKERS
     assert s["model_failed"] and s["total"] >= 3
 
 
@@ -200,3 +201,21 @@ def test_the_demo_runs_offline_on_recorded_answers(monkeypatch):
     assert (s["enforced"], s["checkable"], s["unchecked"]) == (2, 3, 4)
     broken = {r["text"][:20]: r["broken_by"] for r in s["rules"]}
     assert any("quick debug" in c for c in broken["Do not leave `print("])
+
+
+def test_a_sentence_that_fails_once_is_retried_and_not_reported(repo, fake_model, monkeypatch):
+    """One timeout is not a dead model: the second, smaller try answers it, and
+    the run must not then warn that its number is only a floor."""
+    real = coverage.provider.chat
+    failed = []
+
+    def flaky(prompt, system="", **k):
+        if system == coverage.COMPILE and "commit messages" in prompt and not failed:
+            failed.append(1)
+            raise coverage.provider.Unavailable("The read operation timed out")
+        return real(prompt, system=system, **k)
+
+    monkeypatch.setattr(coverage.provider, "chat", flaky)
+    s = coverage.run(repo)
+    assert failed and not s["model_failed"] and s["model_failures"] == 0
+    assert {r["text"]: r for r in s["rules"]}["Write clear commit messages."]["reason"].startswith("judgement")

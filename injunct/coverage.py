@@ -105,6 +105,10 @@ class _Model:
             except (OSError, json.JSONDecodeError):
                 self._cache = {}
 
+    def revive(self) -> None:
+        with self._lock:
+            self.enabled, self._streak = self.wanted, 0
+
     def ask(self, prompt: str, system: str) -> dict | None:
         if not self.wanted:
             return None
@@ -245,18 +249,27 @@ or
   {"template": null, "kind": "none|judgement|process|runtime|vague", "why": "one short sentence"}"""
 
 
-def compile_rule(text: str, files: list[str], model: _Model) -> tuple[str | None, dict, str]:
-    """(template, params, says) or (None, {"kind":..}, why)."""
+UNANSWERED = ("no model reachable, and it is not in a form `injunct rule` understands")
+
+
+def compile_rule(text: str, files: list[str], model: _Model,
+                 compact: bool = False) -> tuple[str | None, dict, str]:
+    """(template, params, says) or (None, {"kind":..}, why).
+
+    `compact` is the second try for a sentence whose first call failed: a
+    smaller slice of the tree, so a model that ran out of time on the full
+    prompt has less to read.
+    """
     parsed = verbs.parse(text)
     if parsed:
         t, p, says = parsed
         if t == "required_command":
             t = "must_run"
         return t, p, says
-    d = model.ask(json.dumps({"instruction": text, "files": _sample(files)}, indent=1), COMPILE)
+    sample = _sample(files, 30) if compact else _sample(files)
+    d = model.ask(json.dumps({"instruction": text, "files": sample}, indent=1), COMPILE)
     if d is None:
-        return None, {"kind": "vague"}, ("no model reachable, and it is not in a form "
-                                          "`injunct rule` understands")
+        return None, {"kind": "vague", "unanswered": True}, UNANSWERED
     t = d.get("template")
     if not t:
         kind = d.get("kind") if d.get("kind") in REASONS + (NOT_AN_INSTRUCTION,) else "vague"
@@ -326,6 +339,15 @@ def run(target: str | Path, use_model: bool = True, adopt: bool = False) -> dict
              for line, text in extract(doc.read_text(encoding="utf-8", errors="replace"))]
     with ThreadPoolExecutor(WORKERS) as pool:
         compiled = list(pool.map(lambda f: compile_rule(f[2], files, model), found))
+    # A failed call is usually one timeout or one bad 500, not a dead model.
+    # Each gets one more try, one at a time, on a smaller prompt - and the
+    # endpoint gets a fresh chance even if the first pass gave up on it.
+    again = [i for i, c in enumerate(compiled) if c[1].get("unanswered")]
+    if again and model.wanted:
+        model.revive()
+        for i in again:
+            compiled[i] = compile_rule(found[i][2], files, model, compact=True)
+    unanswered = sum(1 for c in compiled if c[1].get("unanswered"))
 
     rules: list[Rule] = []
     for (rel, line, text), (t, p, says) in zip(found, compiled):
@@ -352,7 +374,7 @@ def run(target: str | Path, use_model: bool = True, adopt: bool = False) -> dict
     if adopt:
         _adopt(led, repo, rules)
     led.close()
-    return _summary(repo, remote, docs, rules, model)
+    return _summary(repo, remote, docs, rules, model, unanswered)
 
 
 def _resolve(target) -> tuple[Path, str | None]:
@@ -382,15 +404,17 @@ def _adopt(led: Ledger, repo: Path, rules: list[Rule]) -> None:
                       empanel={**r.receipt, "documented": f"{r.doc}:{r.line}"})
 
 
-def _summary(repo, remote, docs, rules: list[Rule], model: _Model) -> dict:
+def _summary(repo, remote, docs, rules: list[Rule], model: _Model, unanswered: int = 0) -> dict:
     n = len(rules)
     count = {s: sum(r.status == s for r in rules) for s in ("enforced", "checkable", "unchecked")}
     return {
         "repo": remote or str(repo),
         "docs": [d.relative_to(repo).as_posix() for d in docs],
         "model": provider.MODEL if model.used else "none (`injunct rule` forms only)",
-        "model_failed": model.wanted and (model.failed > 0 or not model.used),
-        "model_failures": model.failed,
+        # Only what is still unanswered at the end counts: a call that failed
+        # and then succeeded on its second try cost time, not accuracy.
+        "model_failed": model.wanted and (unanswered > 0 or not model.used),
+        "model_failures": unanswered,
         "total": n,
         **count,
         "percent": round(100 * count["enforced"] / n) if n else 0,

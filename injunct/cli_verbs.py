@@ -234,8 +234,8 @@ def cmd_coverage(a) -> int:
     print()
     print(f"  model: {s['model']}")
     if s.get("model_failed"):
-        print(f"  WARNING: {s['model_failures']} model call(s) failed; those instructions are")
-        print("  scored unchecked, so this number is a floor, not a measurement.")
+        print(f"  WARNING: {s['model_failures']} instruction(s) got no answer from the model, even on retry;")
+        print("  they are scored unchecked, so this number is a floor, not a measurement.")
     if not a.adopt and (s["enforced"] or s["checkable"]):
         print("  injunct coverage --adopt    to put these rules on the ledger")
     print()
