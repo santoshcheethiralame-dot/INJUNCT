@@ -169,3 +169,20 @@ def test_a_cached_answer_survives_the_model_being_given_up(repo, fake_model, mon
                         lambda *a, **k: (_ for _ in ()).throw(coverage.provider.Unavailable("down")))
     s = coverage.run(repo)
     assert s["enforced"] == 1 and s["total"] == 4        # every answer came from disk
+
+
+def test_a_hard_wrapped_instruction_is_judged_whole():
+    doc = ("# Rules\n\n"
+           "- DO NOT run integration test scenarios in loops or share their snapshots with\n"
+           "  `insta::allow_duplicates!`. Write explicit snapshots.\n"
+           "- Never edit client/generated.py.\n\n"
+           "This tool is fast. Always run the linter before you\n"
+           "commit. See the docs.\n\n"
+           "```\nnever parsed: run rm -rf\n```\n")
+    got = [t for _, t in coverage.extract(doc)]
+    assert got[0].endswith("`insta::allow_duplicates!`. Write explicit snapshots.")
+    assert "Never edit client/generated.py." in got
+    assert "Always run the linter before you commit." in got
+    assert "This tool is fast." not in got                    # prose that instructs nothing
+    assert not any("rm -rf" in t for t in got)                # code blocks are never instructions
+    assert dict((t, ln) for ln, t in coverage.extract(doc))["Never edit client/generated.py."] == 5

@@ -172,26 +172,52 @@ DIRECTIVE = re.compile(
 BULLET = re.compile(r"^([-*+]|\d+[.)])\s+")
 
 
-def extract(text: str) -> list[tuple[int, str]]:
-    """Every candidate instruction in a document, as (line, exact text).
+SENTENCE = re.compile(r"(?<=[.!?])\s+(?=[A-Z`*\"(])")
 
-    Bullets always count - in a document written for agents nearly every
-    bullet is an instruction - and a prose line counts when it sounds like one.
-    The model later throws out the candidates that instruct nothing.
+
+def _blocks(text: str) -> list[tuple[int, str, bool]]:
+    """Bullets and paragraphs as (first line, joined text, is_bullet).
+
+    Markdown is often hard-wrapped at 80 columns, so one instruction spans
+    several lines. Judged line by line, "DO NOT share their snapshots with"
+    and "`insta::allow_duplicates!`" are two fragments neither of which means
+    anything; a continuation line belongs to the bullet or paragraph above it.
     """
-    out, seen, fence = [], set(), False
+    blocks: list[list] = []
+    fence = False
     for i, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
         if line.startswith("```"):
             fence = not fence
+            blocks.append(None)
             continue
-        if fence or not line or line.startswith(("#", "|", "<", "![")):
+        if fence or not line or line.startswith(("#", "|", "<", "![", "---")):
+            blocks.append(None)
             continue
-        bullet = bool(BULLET.match(line))
-        line = BULLET.sub("", line)
-        if len(line) >= 12 and (bullet or DIRECTIVE.search(line)) and _norm(line) not in seen:
-            seen.add(_norm(line))
-            out.append((i, line))
+        if BULLET.match(line):
+            blocks.append([i, BULLET.sub("", line), True])
+        elif blocks and blocks[-1] is not None:
+            blocks[-1][1] += " " + line
+        else:
+            blocks.append([i, line, False])
+    return [tuple(b) for b in blocks if b is not None]
+
+
+def extract(text: str) -> list[tuple[int, str]]:
+    """Every candidate instruction in a document, as (line, exact text).
+
+    Bullets always count - in a document written for agents nearly every
+    bullet is an instruction. Paragraphs are split into sentences, and a
+    sentence counts when it sounds like one. The model later throws out the
+    candidates that instruct nothing.
+    """
+    out, seen = [], set()
+    for line, text, bullet in _blocks(text):
+        for piece in ([text] if bullet else SENTENCE.split(text)):
+            piece = piece.strip()
+            if len(piece) >= 12 and (bullet or DIRECTIVE.search(piece)) and _norm(piece) not in seen:
+                seen.add(_norm(piece))
+                out.append((line, piece))
     return out
 
 
