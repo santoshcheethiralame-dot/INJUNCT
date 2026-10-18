@@ -101,6 +101,50 @@ def pending_paths(tool_name: str, tool_input: dict) -> list[str]:
     return [_msys(p) for p in dict.fromkeys(out)]
 
 
+def _apply(text: str, old: object, new: object, every: bool = False) -> str | None:
+    """One Edit, the way Claude Code applies it; None if it would not apply."""
+    if not isinstance(old, str) or not isinstance(new, str):
+        return None
+    if old == "":
+        return new if text == "" else None
+    if old not in text:
+        return None
+    return text.replace(old, new) if every else text.replace(old, new, 1)
+
+
+def pending_contents(tool_name: str, tool_input: dict) -> dict[str, str]:
+    """What each file will hold once this call lands.
+
+    Paths alone let every content rule through: the first live run wrote an
+    AWS key into a new app/config.py and only Stop noticed. So a Write is
+    judged on its content and an Edit on the file with the edit applied. An
+    edit that would not apply gets nothing here - it fails in Claude Code
+    anyway, and inventing content for it would be guessing. Shell writes stay
+    with PostToolUse, which sees the tree after the command.
+    """
+    ti = tool_input or {}
+    path = ti.get("file_path")
+    if tool_name not in ("Write", "Edit", "MultiEdit") or not isinstance(path, str) or not path.strip():
+        return {}
+    path = _msys(path.strip())
+    if tool_name == "Write":
+        return {path: ti["content"]} if isinstance(ti.get("content"), str) else {}
+    try:
+        text = Path(path).read_text(encoding="utf-8", errors="replace") if Path(path).is_file() else ""
+    except OSError:
+        return {}
+    edits = [ti] if tool_name == "Edit" else ti.get("edits")
+    if not isinstance(edits, list) or not edits:
+        return {}
+    for e in edits:
+        if not isinstance(e, dict):
+            return {}
+        text = _apply(text, e.get("old_string"), e.get("new_string"), bool(e.get("replace_all")))
+        if text is None:
+            return {}
+    return {path: text}
+
+
 def _post(path: str, body: dict, timeout: float) -> dict | None:
     req = urllib.request.Request(
         f"{URL}{path}", data=json.dumps(body).encode("utf-8"),
@@ -109,7 +153,8 @@ def _post(path: str, body: dict, timeout: float) -> dict | None:
         return json.loads(r.read().decode("utf-8"))
 
 
-def gate(repo: str, pending: list[str], timeout: float = 0.9) -> dict:
+def gate(repo: str, pending: list[str], timeout: float = 0.9,
+         contents: dict[str, str] | None = None) -> dict:
     """Ask the service if it is up, otherwise answer in-process.
 
     The service is preferred only so the desk page lights up while someone is
@@ -118,13 +163,14 @@ def gate(repo: str, pending: list[str], timeout: float = 0.9) -> dict:
     to start and nothing to keep running.
     """
     try:
-        got = _post("/v1/gate", {"repo": repo, "pending": pending}, timeout)
+        got = _post("/v1/gate", {"repo": repo, "pending": pending,
+                                 "contents": contents or {}}, timeout)
         if isinstance(got, dict) and "block" in got:
             return got
     except Exception:
         pass
     from . import serve
-    return serve.gate_check(repo, pending)
+    return serve.gate_check(repo, pending, contents)
 
 
 def advise(repo: str, task: str, everything: bool, timeout: float = 0.9) -> str:
@@ -207,7 +253,8 @@ def pretooluse(payload: dict, mode: str) -> tuple[int, str, str]:
     repo = _repo(payload)
     if not (Path(repo) / ".injunct" / "ledger.db").is_file():
         return 0, "", ""            # nothing has been learned here yet
-    got = gate(repo, pending)
+    got = gate(repo, pending, contents=pending_contents(
+        payload.get("tool_name", ""), payload.get("tool_input") or {}))
     if not got.get("block") or not got.get("verdicts"):
         return 0, "", ""
     if mode == "advise":

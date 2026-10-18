@@ -187,7 +187,7 @@ python -m injunct coverage uv
 ```
 
 - ENFORCED: no `#[allow(clippy::…)]` in Rust, and no `pull_request_target` in
-  workflows (a security rule). Both held on 90 commits.
+  workflows (a security rule). Both held on all 69 commits that could test them.
 - could be guarded: "avoid `matches!` and wildcard arms" was already broken by 5 of
   uv's own recent commits, which coverage lists by name.
 - 58 need a human: 22 process, 15 judgement, 12 runtime, 9 vague.

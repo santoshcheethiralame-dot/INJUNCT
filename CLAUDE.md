@@ -126,8 +126,9 @@ anything else's internals directly.
 
 ### The two harnesses that actually refuse
 
-Both go through the same `serve.gate_check(repo, pending)` — a pure function
-of those two arguments, which is why the hook needs no running service and
+Both go through the same `serve.gate_check(repo, pending, contents)` — a pure
+function of those arguments (`contents` is what each file will hold once the
+write lands), which is why the hook needs no running service and
 falls back in-process when `injunct serve` is not up. Both render the halt
 card from `render.agent_card`, and `tests/test_claude_hook.py` asserts the two
 stay byte-identical: an agent must not be able to tell which harness refused
@@ -194,6 +195,11 @@ test or an assertion, not just a memory:
    source mtime to one-second granularity; writing a module and importing it
    inside the same wall-clock second let Python serve the stale version.
    Every benchmark subprocess now sets `PYTHONDONTWRITEBYTECODE`.
+7. **An AWS key walked through PreToolUse.** The gate was told which file a
+   write touched, never what it wrote, so every content rule waited for the
+   Stop hook. Both harnesses now send `contents` (a Write's content, or an
+   Edit with its edit applied) to `serve.gate_check`. Shell writes are still
+   judged after the fact, by PostToolUse. See `docs/GALLERY.md`.
 
 ## 8. The other documents
 

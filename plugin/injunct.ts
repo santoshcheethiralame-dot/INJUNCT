@@ -69,6 +69,29 @@ const pendingPaths = (tool: string, args: Record<string, unknown>): string[] => 
   return out
 }
 
+// What the file will hold once this call lands. Paths alone let every content
+// rule through - a key, a breakpoint - until the session went idle. A write is
+// judged on its content and an edit on the file with the edit applied; an edit
+// that would not apply gets nothing, as in the Claude Code hook.
+const pendingContents = async (tool: string, args: Record<string, unknown>): Promise<Record<string, string>> => {
+  const path = args?.["filePath"]
+  if (typeof path !== "string" || !path.trim()) return {}
+  if (tool === "write") return typeof args["content"] === "string" ? { [path]: args["content"] as string } : {}
+  if (tool !== "edit") return {}
+  const oldS = args["oldString"], newS = args["newString"]
+  if (typeof oldS !== "string" || typeof newS !== "string") return {}
+  let text = ""
+  try {
+    const fs = await import("node:fs")
+    if (fs.existsSync(path)) text = fs.readFileSync(path, "utf8")
+  } catch {
+    return {}
+  }
+  if (oldS === "") return text === "" ? { [path]: newS } : {}
+  if (!text.includes(oldS)) return {}
+  return { [path]: args["replaceAll"] ? text.split(oldS).join(newS) : text.replace(oldS, () => newS) }
+}
+
 // The halt card, as the model will read it. Short, cited, and it names the
 // thing that is missing — a warning the agent cannot skim past, because it
 // arrives as the failure of the call it just tried to make.
@@ -142,7 +165,8 @@ const Injunct = async (ctx: {
       if (!repo || MODE !== "enforce") return
       const pending = pendingPaths(input.tool, output.args)
       if (!pending.length) return
-      const r = await post("/v1/gate", { repo, pending })
+      const contents = await pendingContents(input.tool, output.args).catch(() => ({}))
+      const r = await post("/v1/gate", { repo, pending, contents })
       if (r?.block && Array.isArray(r.verdicts) && r.verdicts.length) {
         throw new Error(card(r.verdicts as Verdict[]))
       }

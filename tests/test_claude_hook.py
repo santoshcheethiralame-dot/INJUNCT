@@ -286,3 +286,67 @@ def test_a_content_rule_is_caught_before_the_turn_ends(tmp_path):
     assert code == 2 and "breakpoint" in err and "Before you finish" in err
     # and it does not loop: a Stop that Claude Code marks as already continuing is left alone
     assert claude_hook.stop({"cwd": str(repo), "stop_hook_active": True}, "enforce")[0] == 0
+
+
+# ---- content rules fire before the bytes land ----------------------------------
+#
+# The first live run let `app/config.py` with an AWS key straight through
+# PreToolUse: the gate was told which file a Write touched, never what it put
+# there, so every content rule (keys, breakpoints, prints) waited for Stop.
+
+@pytest.fixture
+def clinic(tmp_path):
+    from injunct import coverdemo, serve
+    r = coverdemo.build(tmp_path / "clinic")
+    verbs.install_pack(r)
+    serve.forget_ledgers()
+    return r
+
+
+def test_a_write_that_adds_a_key_is_denied_before_it_lands(clinic):
+    target = clinic / "app" / "config.py"
+    r = fire(clinic, "Write", {"file_path": str(target),
+                               "content": 'AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"\n'})
+    assert r.returncode == 2, r.stderr
+    assert "AWS access key" in r.stderr
+    assert not target.exists()
+
+
+def test_an_edit_that_adds_a_breakpoint_is_denied_before_it_lands(clinic):
+    booking = clinic / "app" / "booking.py"
+    before = booking.read_text(encoding="utf-8")
+    r = fire(clinic, "Edit", {"file_path": str(booking),
+                              "old_string": "def book(slot, doctor=None):\n",
+                              "new_string": "def book(slot, doctor=None):\n    breakpoint()\n"})
+    assert r.returncode == 2, r.stderr
+    assert "breakpoint" in r.stderr
+    assert booking.read_text(encoding="utf-8") == before
+
+
+def test_a_multiedit_is_judged_on_what_its_edits_add(clinic):
+    booking = clinic / "app" / "booking.py"
+    r = fire(clinic, "MultiEdit", {"file_path": str(booking), "edits": [
+        {"old_string": "def book(slot, doctor=None):\n",
+         "new_string": "def book(slot, doctor=None):\n    import pdb; pdb.set_trace()\n"}]})
+    assert r.returncode == 2 and "breakpoint" in r.stderr
+
+
+def test_clean_content_still_goes_through(clinic):
+    r = fire(clinic, "Write", {"file_path": str(clinic / "app" / "config.py"),
+                               "content": 'import os\nKEY = os.environ.get("AWS_ACCESS_KEY_ID")\n'})
+    assert r.returncode == 0, r.stderr
+
+
+def test_an_edit_that_does_not_apply_is_judged_on_paths_alone(clinic):
+    """An old_string the file does not contain fails in Claude Code anyway;
+    the gate must not invent content for it, and must not crash."""
+    r = fire(clinic, "Edit", {"file_path": str(clinic / "app" / "booking.py"),
+                              "old_string": "no such text", "new_string": "breakpoint()"})
+    assert r.returncode == 0, r.stderr
+
+
+def test_contents_outside_the_repository_are_ignored(clinic, tmp_path):
+    from injunct import serve
+    outside = tmp_path / "elsewhere.py"
+    got = serve.gate_check(str(clinic), [], {str(outside): 'KEY = "AKIAIOSFODNN7EXAMPLE"\n'})
+    assert not got["block"]

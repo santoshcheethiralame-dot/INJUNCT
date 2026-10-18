@@ -151,6 +151,19 @@ And what you see:
 > migration in the same commit. (from AGENTS.md:7) Next: create
 > migrations/009_patient.sql.
 
+Here it is in a real session, first through the Edit tool and then through
+`sed -i`:
+
+<p align="center">
+  <img src="docs/img/session-block-edit.png" alt="Claude Code edit denied by Injunct, citing AGENTS.md:7" width="380">
+  <img src="docs/img/session-block-shell.png" alt="The same edit through sed -i, also denied" width="400">
+</p>
+
+Content rules (keys, `breakpoint()`, debug prints) are judged on what the
+write will put in the file, so they fire before it lands as well. The whole
+session is in [docs/GALLERY.md](docs/GALLERY.md), including the hole it found
+and how it was fixed.
+
 Injunct gates its own pull requests. [PR #1](https://github.com/santoshcheethiralame-dot/INJUNCT/pull/1)
 leaves a stray `breakpoint()` in the code; the check fails and the Action posts
 the card on the pull request.
@@ -302,7 +315,7 @@ The full design, every check, the built-in rules and the data model are in
 
 | Repository | Instructions | Guarded | Could be guarded | Needs a human |
 |---|---|---|---|---|
-| astral-sh/uv | 63 | **2**: no `#[allow(clippy::…)]` in Rust; no `pull_request_target` in workflows. Both held on 90 commits | 3, two of them already broken by recent commits | 58 (22 process, 15 judgement, 12 runtime, 9 vague) |
+| astral-sh/uv | 63 | **2**: no `#[allow(clippy::…)]` in Rust; no `pull_request_target` in workflows. Both held on all 69 commits that could test them | 3, two of them already broken by recent commits | 58 (22 process, 15 judgement, 12 runtime, 9 vague) |
 | sample repository (`--demo`) | 9 | **3** | 2 | 4 |
 
 On astral-sh/uv, `--suggest` proposes 6 rewrites that would be guarded today,

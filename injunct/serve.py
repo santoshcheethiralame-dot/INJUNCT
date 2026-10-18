@@ -4,7 +4,7 @@ Standard library only, one process, no container. The agent-side plugin is
 deliberately thin: every decision is made here, where it is testable.
 
 Endpoints:
-  POST /v1/gate       {repo, pending[]}  -> binding precedents that would fire
+  POST /v1/gate       {repo, pending[], contents?} -> binding precedents that would fire
   POST /v1/advise     {repo, task}       -> persuasive authority, as prose
   POST /v1/reject     {repo, reason}     -> file a rejection against the tree
   POST /v1/postflight {repo, cmd}        -> run a check, file the failure
@@ -78,27 +78,55 @@ def _relative(repo: Path, path: str) -> str:
         return q.lstrip("./")
 
 
-def _tree(repo: str, pending: list[str] | None = None) -> Change:
+def _tree(repo: str, pending: list[str] | None = None,
+          contents: dict[str, str] | None = None) -> Change:
     """The tree as it stands, plus what the agent is about to touch.
 
     Judging a write before it lands is the difference between a gate and a
     post-mortem. An advisory memory layer can only ever report; this refuses.
+
+    `contents` is what a file will hold once the write lands. Its new lines
+    count as added and its dropped lines as removed, so a content rule - a key,
+    a breakpoint - fires on the write itself rather than at the end of the
+    turn. A path outside the repository is ignored, as everywhere else.
     """
+    root = Path(repo).resolve()
     ch = Change.from_git(Path(repo))
     for raw in pending or []:
         rel = _relative(Path(repo), raw)
         if rel and rel not in ch.touched:
             ch.touched.append(rel)
+    texts: dict[str, str] = {}
+    for raw, text in (contents or {}).items():
+        if not isinstance(text, str):
+            continue
+        try:
+            rel = Path(str(raw)).resolve().relative_to(root).as_posix()
+        except (ValueError, OSError):
+            continue
+        old = ch.text(rel).splitlines()
+        new = text.splitlines()
+        old_set, new_set = set(old), set(new)
+        ch.added[rel] = list(dict.fromkeys(ch.added.get(rel, []) + [ln for ln in new if ln not in old_set]))
+        if ch.removed is not None:
+            ch.removed[rel] = list(dict.fromkeys(ch.removed.get(rel, []) + [ln for ln in old if ln not in new_set]))
+        if rel not in ch.touched:
+            ch.touched.append(rel)
+        texts[rel] = text
+    if texts:
+        # must_appear reads the whole file; it has to read the file to be.
+        on_disk = ch.text
+        ch.text = lambda path: texts[path] if path in texts else on_disk(path)
     ch.touched.sort()
     return ch
 
 
-def gate_check(repo: str, pending: list[str] | None = None) -> dict:
+def gate_check(repo: str, pending: list[str] | None = None,
+               contents: dict[str, str] | None = None) -> dict:
     led = _led(repo)
     root = str(Path(repo).resolve())
-    verdicts = gate.evaluate(led, root, _tree(repo, pending),
-                             borrowed=transfer.borrowed(root))
-    ch = _tree(repo, pending)
+    ch = _tree(repo, pending, contents)
+    verdicts = gate.evaluate(led, root, ch, borrowed=transfer.borrowed(root))
     # One event shape for both paths. Whether the decision came from a plugin
     # intercepting a write or from the watcher noticing the file changed, a page
     # should not have to care.
@@ -173,7 +201,7 @@ def file_check_failure(repo: str, cmd: str, output: str) -> dict:
 
 
 ROUTES = {
-    "/v1/gate": lambda b: gate_check(b["repo"], b.get("pending")),
+    "/v1/gate": lambda b: gate_check(b["repo"], b.get("pending"), b.get("contents")),
     "/v1/advise": lambda b: advise(b["repo"], b.get("task", ""), b.get("everything", False)),
     "/v1/reject": lambda b: reject(b["repo"], b.get("reason", "")),
     "/v1/postflight": lambda b: postflight(b["repo"], b.get("cmd", "python oracle.py")),

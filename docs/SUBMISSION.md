@@ -73,7 +73,7 @@ The run sheet is `docs/HACKDAY-DEMO.md`: five minutes, offline.
   migrations/009_patient.sql". The same card stops the write inside Claude
   Code and opencode, and in CI.
 - **A real repository, astral-sh/uv:** 63 instructions, 2 enforced (no
-  `#[allow(clippy::…)]`, no `pull_request_target`; both held on 90 commits),
+  `#[allow(clippy::…)]`, no `pull_request_target`; both held on all 69 commits that could test them),
   3 checkable, 58 unchecked. Most agent instructions are process and
   judgement, and that gap is the finding.
 
