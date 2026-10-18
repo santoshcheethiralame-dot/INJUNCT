@@ -27,6 +27,7 @@ hook, or on a pull request.
 - [Use it on your repository](#use-it-on-your-repository)
 - [Stop the edit, wherever the agent runs](#stop-the-edit-wherever-the-agent-runs)
 - [How it works](#how-it-works)
+- [Everything it does](#everything-it-does)
 - [Results](#results)
 - [Limitations](#limitations)
 - [Configuration](#configuration)
@@ -49,15 +50,17 @@ honest about the ones it cannot move.
 
 | | |
 |---|---|
-| **Measure** | `coverage` sorts every instruction into **guarded** (a check exists and your history proves it), **could be guarded** (a check exists but is not proven yet), or **needs a human** (no check can express it), and says why. One self-contained HTML report, or text, Markdown, JSON and a README badge. |
-| **Improve** | `coverage --suggest` proposes a narrower rewrite of vague instructions that *would* be guarded today, each one proven against your history before it is shown. |
-| **Enforce** | Proven rules refuse the edit **before it is written**: a Claude Code hook, an opencode plugin, a git pre-commit hook, a GitHub Action that comments on the pull request, or `gate` in any CI. |
+| **Learn** | Rules come from five places: your agent documents, the habits in your git history, failures and rejections as they happen, 25 built-in rules for mistakes every agent makes, and a sentence you type. |
+| **Prove** | No rule may block anything until it has been replayed against your repository's own commits and stayed silent on work that already shipped. A rule that keeps being overridden while the work succeeds anyway is retired in public. |
+| **Enforce** | Proven rules refuse the edit **before it is written**: a Claude Code hook, an opencode plugin, a git pre-commit hook, a GitHub Action that comments on the pull request, `gate` in any CI, or `watch` beside any editor. Every refusal names the next step. |
+| **Measure** | `coverage` shows how much of your AGENTS.md is **guarded**, **could be guarded**, or **needs a human**, as a visual report, and `--suggest` proposes rewrites that would be guarded today. |
 | **Look back** | `hindsight` traces each past bug fix to the commit that caused it and reports which of those bugs the rules would have stopped, beside a baseline. |
+| **Show its work** | A six-page board of every rule and the evidence behind it, a split-screen live demo, and a reproducible benchmark. |
 
 Three properties hold throughout:
 
-- **A model never decides what blocks.** It only sorts sentences into one of six
-  typed checks. Whether a check binds is decided by replaying it against your
+- **A model never decides what blocks.** It only fills in one of twelve typed
+  checks. Whether a check binds is decided by replaying it against your
   repository's own commits.
 - **Nothing a model writes is executed.** Rules are patterns over a diff, never
   generated code.
@@ -160,44 +163,140 @@ folders into `~/.claude/skills/`.
 
 ## How it works
 
+Injunct has one idea: **a rule has to earn the right to block.** Everything
+else is where rules come from and where they act.
+
+```mermaid
+flowchart LR
+    subgraph SRC["Where rules come from"]
+        direction TB
+        s1["Agent documents<br/>AGENTS.md · CLAUDE.md"]
+        s2["Habits in<br/>git history"]
+        s3["Failures and<br/>rejections"]
+        s4["25 built-in<br/>rules"]
+        s5["A sentence<br/>you type"]
+    end
+    subgraph CORE["How a rule earns authority"]
+        direction TB
+        c1["Compile into one of<br/>12 typed checks"]
+        c2["Prove against<br/>past commits"]
+        c3[("Ledger<br/>one SQLite file")]
+        c1 --> c2 --> c3
+    end
+    subgraph GATE["Where it acts"]
+        direction TB
+        g1["Claude Code hook"]
+        g2["opencode plugin"]
+        g3["git pre-commit"]
+        g4["GitHub Action"]
+        g5["gate · watch"]
+    end
+    SRC --> c1
+    c3 --> GATE
 ```
- AGENTS.md / CLAUDE.md / CONTRIBUTING.md
-        │  candidate sentences, found deterministically
-        ▼
- model sorts each one  ──►  one of six typed checks, or a reason it cannot be one
-        │
-        ▼
- replay against your git history   (commits that a later commit had to fix are left out)
-        │
-        ├── followed by every past commit      ──►  guarded: blocks today
-        ├── broken by a past commit, or untestable ──►  could be guarded
-        └── no check can express it            ──►  needs a human
-        │
-        ▼
- the gate: Claude Code · opencode · git hook · GitHub Action · CI
+
+**A model only fills in a form.** When a rule starts as prose (a sentence in
+AGENTS.md, a reviewer's rejection), a model chooses one of twelve typed checks
+and fills its blanks: a file that must change with another, a file that must
+never be edited, a pattern no added line may contain, and so on. It never
+writes a checker and never decides whether the rule blocks. With no model
+available, a deterministic fallback reads the failure and the history itself.
+
+**Every rule then goes through the same life:**
+
+```mermaid
+flowchart TB
+    A["Case<br/>a failure, a rejection,<br/>or a line in AGENTS.md"] --> B["Compile<br/>into a typed check"]
+    B --> C{"Prove<br/>fires on its own case,<br/>silent on past successes?"}
+    C -- yes --> D["Binding<br/>blocks the edit"]
+    C -- no --> E["Advisory<br/>told to the agent"]
+    E -. "new evidence" .-> C
+    D --> F["Cited<br/>every time it fires"]
+    F -- "overridden 3 times,<br/>work still passed" --> G["Overruled<br/>retired in public"]
 ```
 
-**The six checks** a sentence can become: a file that must change together with
-another (`co_change`), a file that must never be edited (`forbidden_edit`), a
-pattern no added line may contain (`must_not_appear`), a pattern no removed line
-may contain (`must_not_remove`), a pattern every changed file must contain
-(`must_appear`), and a command that must have run after a change (`must_run`).
+- **Proving** replays the rule against the repository's past commits. It must
+  catch the case that created it and stay silent on every commit that worked. A
+  rule no past commit could test does not bind either, because a check that
+  abstains and a check that approves look identical from outside. A commit that
+  a later commit had to fix is not counted as an example of good work.
+- **Binding** rules block; **advisory** rules are put in front of the agent as
+  guidance and are retried as new evidence arrives.
+- **Citations** record what happened each time a rule fired: complied or
+  overridden, passed or failed. A rule overridden three times by work that
+  succeeded anyway is retired and published, with the evidence, on the board.
+- **The gate** is deterministic and fails open: a crashed or slow check allows
+  the edit rather than blocking it by accident. The one exception is the agent
+  trying to turn the gate off, which is itself a binding rule.
 
-**Proving a rule.** A rule binds only after it is replayed against the
-repository's history and stays silent on every past commit that worked. A rule
-no past commit could test does not bind either: a check that abstains and a
-check that approves look identical from outside, and only one of them is
-evidence. A commit that a later commit had to fix is not counted as an example
-of good work.
-
-**Beyond your documents,** Injunct ships 25 built-in rules for mistakes agents
-make everywhere (committed secrets, leftover debugger breakpoints, destructive
-migrations, an agent editing the gate itself), learns habits from your commit
-history, and retires a rule in public once enough runs override it and succeed
-anyway.
-
-The full design, every check, the built-in rules and the architecture are in
+The full design, every check, the built-in rules and the data model are in
 [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md).
+
+## Everything it does
+
+**Learning rules**
+
+- `coverage --adopt` turns the guarded instructions in your agent documents into rules.
+- `init` reads your commit history for habits ("`models/` never changes without
+  `migrations/`") using support, confidence and an asymmetry test, and proposes
+  them as advisory; `confirm <n>` promotes one.
+- `rule "models/*.py needs migrations/"` adds a rule in one sentence.
+- `reject "forgot the migration"` files a rejection against the current change.
+  Injunct also learns from free signals: a file rewritten within one run, a
+  revert, tests that flipped from green to red.
+- 25 built-in rules for mistakes agents make everywhere, 9 of them binding:
+  committed AWS keys, private keys and tokens, TLS verification turned off,
+  leftover `pdb` or `debugger` statements, destructive migrations, a manifest
+  changed without its lockfile, and an agent editing the gate itself.
+- A rule learned independently in two repositories becomes global and applies
+  to the next one.
+
+**Proving and maintaining rules**
+
+- Every rule is replayed against history before it can block (see above), and
+  carries its receipt: how many past commits it was tested on and how many it
+  would have wrongly blocked.
+- `sweep` re-decides every binding rule from its citations; `off <n>` and
+  `on <n>` mute a rule without deleting the history behind it.
+
+**Enforcing**
+
+- **Claude Code** (`injunct claude`): denies a write, edit or shell command
+  before it lands, briefs the model on the rules at the start of a turn, and
+  re-checks after shell commands and before the turn ends. You see one line;
+  the model gets the full card.
+- **opencode** (`injunct opencode` with `injunct serve`), **git**
+  (`injunct hook`), **GitHub** ([`action.yml`](action.yml)) and **any CI**
+  (`injunct gate`, exit code 1).
+- `watch` reads git rather than the agent, so Cursor, any other editor or a
+  person typing by hand get the same decisions, live.
+- Every refusal names the next step, read from the repository itself, for
+  example `create migrations/009_patient.sql`.
+- Three modes, set per hook: `off`, `advise` (rules as prose, nothing blocked)
+  and `enforce` (rules in the prompt and the write refused).
+
+**Measuring and inspecting**
+
+- `coverage` (text, `--html`, `--md`, `--json`, `--badge`, `--suggest`) and
+  `hindsight`, described above.
+- `why <file>` lists the rules that apply to a file and where each came from;
+  `status` shows what was stopped this week; `docket` lists every case and the
+  rule it established; `dump` exports the ledger as JSON.
+- `board` serves six static pages: a front page, the live desk, the docket, the evidence, a
+  replay of 300 benchmark runs, and the overruled rules.
+
+**Showing it**
+
+- `demo` runs two agents on the same task side by side, one with Injunct and
+  one without; the one without breaks its app on screen.
+- `bench` reproduces the published benchmark (one seed takes about 25
+  seconds); `bench --compliance` sweeps how much depends on the agent obeying
+  the card; `live` drives the same comparison with a real opencode agent;
+  `replay` records a real session for the board.
+- `coverage --demo` and `hindsight --demo` run offline on a sample repository
+  with three planted mistakes.
+- Four [Agent Skills](skills/), including the slash commands `/injunct-check`,
+  `/injunct-coverage` and `/injunct-hindsight`.
 
 ## Results
 
