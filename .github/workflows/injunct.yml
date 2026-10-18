@@ -1,0 +1,20 @@
+# Injunct gates its own pull requests. Other repositories copy
+# examples/workflows/injunct.yml, which points at this action by name.
+name: injunct
+on:
+  pull_request:
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0            # the history is the evidence; a shallow clone has none
+      - uses: ./
+        env:
+          INJUNCT_API_KEY: ${{ secrets.INJUNCT_API_KEY }}   # a free Gemini API key, for coverage only
+        with:
+          coverage: ${{ secrets.INJUNCT_API_KEY != '' }}
