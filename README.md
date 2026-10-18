@@ -14,7 +14,8 @@ Autopsy tells the agent about the crash. Injunct takes the keys.
 - **Measured**: 300 runs, 53% → 70% first-try pass, repeat failures 58% → 31%
 - **Honest**: it publishes where it makes agents *worse*, and the 9 tasks it broke
 - **Free**: Python and the standard library. One SQLite file. No Docker, no
-  Postgres, no embedding API, no key required for any part of it
+  Postgres, no embedding API. The gate needs no key at all; `coverage` uses
+  Gemma 4, an open-weight model, through the free Gemini API
 - **Any agent**: blocks inside **Claude Code** and opencode; reads git, not the
   agent, so Cursor and a person typing by hand get the same treatment
 
@@ -22,7 +23,7 @@ Autopsy tells the agent about the crash. Injunct takes the keys.
 
 ## Contents
 
-1. [See it](#see-it) · 2. [Install](#install) · 3. [Use it](#use-it-on-your-own-repo)
+0. [Is your AGENTS.md enforced?](#is-your-agentsmd-enforced) · 1. [See it](#see-it) · 2. [Install](#install) · 3. [Use it](#use-it-on-your-own-repo)
 · 4. [Stop the write](#stop-the-write-before-it-lands) · 5. [Look at what it
 learned](#look-at-what-it-learned) · 6. [How a lesson becomes
 law](#how-a-lesson-becomes-law) · 7. [What it checks](#what-it-checks) ·
@@ -31,6 +32,66 @@ proven](#what-is-not-proven) · 10. [Against Autopsy](#against-autopsy) ·
 11. [Commands](#every-command) · 12. [Architecture](#architecture)
 
 Presenting it? [`docs/DEMO.md`](docs/DEMO.md) is the run sheet.
+
+---
+
+## Is your AGENTS.md enforced?
+
+Every repository now tells its agents what to do in prose: AGENTS.md,
+CLAUDE.md, CONTRIBUTING.md, copilot-instructions. An agent reads it, mostly
+follows it, and under pressure skims past it. Nobody knows which of those
+sentences would actually stop anything.
+
+```bash
+injunct coverage .                         # or: injunct coverage owner/name
+injunct coverage . --badge coverage.svg    # a README badge, drawn locally
+injunct coverage . --adopt                 # put the proven rules on the ledger
+```
+
+Every instruction lands in one of three places:
+
+| | means |
+|---|---|
+| **ENFORCED** | compiled to a check, replayed against the repository's own commits, and it held on every one that could test it. It can bind today. |
+| **checkable** | it compiles, but has not earned the right to block: no past commit could test it, it names files that do not exist, or **the history already breaks it** — and those commits are listed |
+| **unchecked** | no check can express it, and the reason is given: judgement, process, runtime, or vague |
+
+The model's job is narrow. Candidate sentences are found deterministically,
+so every one is a real line of the document. Gemma 4 says whether each is an
+instruction and, if it is, fills the blanks of one of six typed templates. It
+never writes a checker and never decides what binds — empanelment does that,
+against git history. Nothing a model writes is ever executed: "after X run Y"
+becomes `must_run`, which reads the commands a session ran rather than running
+anything.
+
+Setup, free and open-weight (a Gemini API key from Google AI Studio):
+
+```bash
+export INJUNCT_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai
+export INJUNCT_MODEL=gemma-4-26b-a4b-it
+export INJUNCT_API_KEY=...
+```
+
+Any OpenAI-compatible endpoint works the same way, including a local Ollama.
+Answers are cached, so a rerun is instant and the number does not drift.
+
+**On real repositories** (Gemma 4 26B, 18 Oct 2026):
+
+| repository | instructions | enforced | checkable | unchecked |
+|---|---|---|---|---|
+<!-- coverage-results -->
+
+**What this is not.** Most instructions in most agent documents are process
+and judgement — "write a regression test", "keep the change small" — and no
+deterministic check will ever enforce them. A low number is the finding, not a
+bug: it says how much of what you wrote is a suggestion. When the output ends
+in a WARNING, some model calls failed and the number is a floor.
+
+In CI, [`action.yml`](action.yml) rebuilds the ledger from the base branch,
+gates the pull request, and comments the coverage report; copy
+[`examples/workflows/injunct.yml`](examples/workflows/injunct.yml). For agents
+that load skills, [`skills/injunct/SKILL.md`](skills/injunct/SKILL.md) follows
+the Agent Skills open standard.
 
 ---
 

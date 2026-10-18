@@ -173,10 +173,11 @@ def test_it_fails_open_when_the_service_lies(repo):
 def test_the_installer_registers_both_events(repo):
     out = verbs.claude(repo)
     cfg = json.loads((repo / ".claude" / "settings.json").read_text(encoding="utf-8"))
-    assert out["hook"].is_file()
-    assert set(cfg["hooks"]) == {"PreToolUse", "UserPromptSubmit"}
+    assert out["config"].is_file()
+    assert not (repo / ".claude" / "hooks" / "injunct_gate.py").exists()   # settings only, no shim
+    assert set(cfg["hooks"]) == {"PreToolUse", "PostToolUse", "UserPromptSubmit", "Stop"}
     pre = cfg["hooks"]["PreToolUse"][0]
-    assert pre["matcher"] == "Write|Edit|MultiEdit|NotebookEdit"
+    assert pre["matcher"] == "Write|Edit|MultiEdit|NotebookEdit|Bash"   # a shell edit is a write too
     assert verbs.MARK in pre["hooks"][0]["command"]
 
 

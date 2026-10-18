@@ -1,5 +1,6 @@
 """The miner has to be conservative. A rule invented for a repo that has no
 pattern is worse than no rule, because it blocks work for no reason."""
+import os
 from pathlib import Path
 
 import pytest
@@ -73,7 +74,10 @@ def test_no_config_is_not_an_error(tmp_path):
 
 # --- against real history, because fixtures cannot prove restraint -----------
 
-REAL = Path(r"C:\Users\carbo\projects")
+# Opt-in: point INJUNCT_REAL_REPOS at a folder holding real clones. A real
+# repository keeps committing, so these are evidence on the day they are run,
+# not fixtures - they never run by default.
+REAL = Path(os.environ.get("INJUNCT_REAL_REPOS") or "/nonexistent")
 
 
 @pytest.mark.skipif(not (REAL / "caliper" / ".git").is_dir(), reason="needs caliper")

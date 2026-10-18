@@ -21,3 +21,6 @@ injunct = "injunct.__main__:main"
 
 [tool.setuptools]
 packages = ["injunct", "injunct.art", "injunct.bench"]
+
+[tool.setuptools.package-data]
+injunct = ["coverdemo.json"]

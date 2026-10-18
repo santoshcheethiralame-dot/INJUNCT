@@ -33,6 +33,7 @@ from __future__ import annotations
 import hashlib
 import threading
 import json
+import os
 import re
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
@@ -59,7 +60,7 @@ REASONS = ("judgement", "process", "runtime", "vague")
 NOT_AN_INSTRUCTION = "none"
 WORKERS = 4            # parallel model calls; free tiers allow this, and 429s back off
 HISTORY = 100          # commits replayed; enough to judge, quick on a laptop
-CACHE = Path.home() / ".injunct" / "coverage-cache.json"
+CACHE = Path(os.environ.get("INJUNCT_COVERAGE_CACHE") or Path.home() / ".injunct" / "coverage-cache.json")
 
 
 @dataclass

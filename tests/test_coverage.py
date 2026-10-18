@@ -186,3 +186,17 @@ def test_a_hard_wrapped_instruction_is_judged_whole():
     assert "This tool is fast." not in got                    # prose that instructs nothing
     assert not any("rm -rf" in t for t in got)                # code blocks are never instructions
     assert dict((t, ln) for ln, t in coverage.extract(doc))["Never edit client/generated.py."] == 5
+
+
+def test_the_demo_runs_offline_on_recorded_answers(monkeypatch):
+    """The stage demo must not depend on wifi, a key, or a rate limit."""
+    import tempfile
+    from injunct import coverdemo
+    monkeypatch.setattr(coverage, "CACHE", coverdemo.CACHE)
+    monkeypatch.setattr(coverage.provider, "MODEL", coverdemo.MODEL)
+    monkeypatch.setattr(coverage.provider, "chat",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("demo went to the network")))
+    s = coverage.run(coverdemo.build(Path(tempfile.mkdtemp()) / "clinic"))
+    assert (s["enforced"], s["checkable"], s["unchecked"]) == (2, 3, 4)
+    broken = {r["text"][:20]: r["broken_by"] for r in s["rules"]}
+    assert any("quick debug" in c for c in broken["Do not leave `print("])

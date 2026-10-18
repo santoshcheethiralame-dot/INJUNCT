@@ -199,6 +199,13 @@ def cmd_coverage(a) -> int:
     import json
 
     from . import coverage
+    if a.demo:
+        import tempfile
+
+        from . import coverdemo, provider
+        a.path = str(coverdemo.build(Path(tempfile.mkdtemp(prefix="injunct-demo-")) / "clinic"))
+        coverage.CACHE, provider.MODEL = coverdemo.CACHE, coverdemo.MODEL
+        print(f"  demo repository: {a.path}")
     s = coverage.run(a.path, use_model=not a.no_model, adopt=a.adopt)
     if a.badge:
         Path(a.badge).write_text(coverage.badge(s["percent"]), encoding="utf-8")
@@ -243,6 +250,8 @@ def register(sub) -> None:
     cv.add_argument("--badge", help="write an SVG badge to this path")
     cv.add_argument("--md", help="write a markdown report to this path")
     cv.add_argument("--json", action="store_true")
+    cv.add_argument("--demo", action="store_true",
+                    help="build the clinic demo repository and run on Gemma 4's recorded answers (offline)")
     cv.set_defaults(fn=cmd_coverage)
 
     i = sub.add_parser("init", help="learn this repo's habits from its own history")

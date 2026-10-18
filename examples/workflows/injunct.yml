@@ -1,0 +1,20 @@
+# Copy into .github/workflows/ of a repository that wants Injunct on its PRs.
+# Replace YOUR_ORG with the org that hosts Injunct.
+name: injunct
+on:
+  pull_request:
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0            # the history is the evidence; a shallow clone has none
+      - uses: YOUR_ORG/INJUNCT@main
+        env:
+          INJUNCT_API_KEY: ${{ secrets.INJUNCT_API_KEY }}   # a free Gemini API key, for coverage only
+        with:
+          coverage: ${{ secrets.INJUNCT_API_KEY != '' }}

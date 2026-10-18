@@ -1,0 +1,52 @@
+name: Injunct
+description: Refuse a pull request that breaks a rule this repository's own history proves, and report how much of AGENTS.md is enforced.
+branding:
+  icon: shield
+  color: gray-dark
+inputs:
+  coverage:
+    description: "Also run `injunct coverage`, adopt the proven rules, and comment the report on the PR (needs a model: set model-url, model and the INJUNCT_API_KEY secret)"
+    default: "false"
+  model-url:
+    description: OpenAI-compatible endpoint for coverage
+    default: https://generativelanguage.googleapis.com/v1beta/openai
+  model:
+    description: model id for coverage
+    default: gemma-4-26b-a4b-it
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - shell: bash
+      run: pip install -q "${{ github.action_path }}"
+
+    # The ledger is local state and is not committed, so a runner starts with
+    # none. Rebuild it from the base branch's own history, then let the PR's
+    # changes show up as uncommitted work - exactly what the gate reads.
+    - name: rebuild the ledger from the base branch
+      shell: bash
+      env:
+        BASE: ${{ github.event.pull_request.base.sha }}
+      run: |
+        git reset -q --soft "$BASE"
+        injunct init .
+
+    - name: coverage
+      if: inputs.coverage == 'true'
+      shell: bash
+      env:
+        INJUNCT_BASE_URL: ${{ inputs.model-url }}
+        INJUNCT_MODEL: ${{ inputs.model }}
+        GH_TOKEN: ${{ github.token }}
+        PR: ${{ github.event.pull_request.number }}
+      run: |
+        injunct coverage . --adopt --md injunct-coverage.md --badge injunct-coverage.svg
+        cat injunct-coverage.md >> "$GITHUB_STEP_SUMMARY"
+        gh pr comment "$PR" --body-file injunct-coverage.md --edit-last 2>/dev/null \
+          || gh pr comment "$PR" --body-file injunct-coverage.md
+
+    - name: gate
+      shell: bash
+      run: injunct gate .
