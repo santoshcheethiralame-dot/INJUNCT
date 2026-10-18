@@ -233,6 +233,10 @@ def cmd_coverage(a) -> int:
         Path(a.badge).write_text(coverage.badge(s["percent"]), encoding="utf-8")
     if a.md:
         Path(a.md).write_text(coverage.markdown(s), encoding="utf-8")
+    if a.html:
+        from . import report_html
+        Path(a.html).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.html).write_text(report_html.render(s), encoding="utf-8")
     if a.json:
         print(json.dumps(s, indent=2))
         return 0
@@ -348,6 +352,7 @@ def register(sub) -> None:
     cv.add_argument("--no-model", action="store_true", help="heuristic extraction, no model calls")
     cv.add_argument("--badge", help="write an SVG badge to this path")
     cv.add_argument("--md", help="write a markdown report to this path")
+    cv.add_argument("--html", help="write a self-contained visual report to this path")
     cv.add_argument("--json", action="store_true")
     cv.add_argument("--suggest", action="store_true",
                     help="propose rewrites of unchecked instructions that would be enforced today")

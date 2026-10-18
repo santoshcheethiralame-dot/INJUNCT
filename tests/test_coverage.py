@@ -342,3 +342,16 @@ def test_suggest_shows_only_rewrites_that_would_bind_today(repo, fake_model, mon
     assert got["Be careful with the schema."]["held"] >= 1
     assert s["percent_if_rewritten"] > s["percent"]
     assert "Rewrites that would be enforced today" in coverage.markdown(s)
+
+
+def test_the_html_report_is_self_contained_and_escapes_what_it_quotes(repo, fake_model, monkeypatch):
+    from injunct import report_html
+    monkeypatch.setitem(COMPILED, "Never write `<script>alert(1)</script>` in docs.",
+                        {"template": None, "kind": "vague", "why": "a test of escaping"})
+    (repo / "AGENTS.md").write_text(AGENTS + "- Never write `<script>alert(1)</script>` in docs.\n", encoding="utf-8")
+    _commit(repo, {}, "hostile line")
+    page = report_html.render(coverage.run(repo))
+    assert page.startswith("<!doctype html>") and "%" in page
+    assert "<script>" not in page                                  # quoted, never executed
+    assert "http://" not in page and "https://" not in page        # no network, opens from a file
+    assert "<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>" in page and "ENFORCED" in page
