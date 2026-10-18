@@ -197,10 +197,27 @@ def test_the_demo_runs_offline_on_recorded_answers(monkeypatch):
     monkeypatch.setattr(coverage.provider, "MODEL", coverdemo.MODEL)
     monkeypatch.setattr(coverage.provider, "chat",
                         lambda *a, **k: (_ for _ in ()).throw(AssertionError("demo went to the network")))
-    s = coverage.run(coverdemo.build(Path(tempfile.mkdtemp()) / "clinic"))
-    assert (s["enforced"], s["checkable"], s["unchecked"]) == (2, 3, 4)
-    broken = {r["text"][:20]: r["broken_by"] for r in s["rules"]}
-    assert any("quick debug" in c for c in broken["Do not leave `print("])
+    repo = coverdemo.build(Path(tempfile.mkdtemp()) / "clinic")
+    s = coverage.run(repo)
+    assert (s["enforced"], s["checkable"], s["unchecked"]) == (3, 2, 4)
+    assert {d["commit"].split(":", 1)[1].strip() for d in s["discounted"]} == {
+        "quick debug for the double-booking bug", "Add Visit model", "Silence the Appointment type error"}
+
+
+def test_a_commit_someone_fixed_is_not_evidence_of_good_work(monkeypatch):
+    """Trusting every commit, the history breaks all three rules; leaving out
+    the three commits a later commit had to fix, all three bind."""
+    import tempfile
+    from injunct import coverdemo
+    monkeypatch.setattr(coverage, "CACHE", coverdemo.CACHE)
+    monkeypatch.setattr(coverage.provider, "MODEL", coverdemo.MODEL)
+    repo = coverdemo.build(Path(tempfile.mkdtemp()) / "clinic")
+    trusting = coverage.run(repo, trust_history=True)
+    assert trusting["enforced"] == 0 and not trusting["discounted"]
+    honest = coverage.run(repo)                       # same ledger: the marking is recomputed, not stacked
+    assert honest["enforced"] == 3 and len(honest["discounted"]) == 3
+    again = coverage.run(repo)
+    assert again["enforced"] == 3 and len(again["discounted"]) == 3
 
 
 def test_a_sentence_that_fails_once_is_retried_and_not_reported(repo, fake_model, monkeypatch):

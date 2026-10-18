@@ -135,6 +135,20 @@ def introducers(repo: Path, sha: str, body: str, boundary: set[str]) -> set[str]
     return found
 
 
+def later_fixed(repo: Path, window: int = WINDOW) -> dict[str, str]:
+    """{commit that introduced a problem: the commit that fixed it}, within the window."""
+    boundary = _shallow(repo)
+    log = commits(repo, window)
+    in_window = {sha for sha, _, _ in log}
+    out: dict[str, str] = {}
+    for sha, subj, body in log:                      # newest first: keep the earliest fix
+        if FIX.search(subj) or REVERTS.search(body):
+            for b in introducers(repo, sha, body, boundary):
+                if b in in_window:
+                    out[b] = sha
+    return out
+
+
 def _rules(led: Ledger, repo: Path) -> list[dict]:
     return [h for h in led.holdings(repo=str(repo)) if h["template"] in REPLAYABLE]
 

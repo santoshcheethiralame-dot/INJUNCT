@@ -157,7 +157,11 @@ def record_history(repo: Path, led, limit: int = 40) -> int:
     from .change import Change
     repo = Path(repo).resolve()
     log = sh(f'git log -{limit} --no-merges --pretty=format:%H%x09%s', repo).stdout
-    have = {r["task"] for r in led.successful_runs(str(repo), limit=10_000)}
+    # A commit coverage set aside as `fixed-later` is still recorded; it must
+    # not come back as a fresh success the next time history is read.
+    have = {r["task"] for r in led.successful_runs(str(repo), limit=10_000)} | {
+        r["task"] for r in led.con.execute(
+            "SELECT task FROM runs WHERE repo=? AND result='fixed-later'", (str(repo),))}
     n = 0
     for line in reversed(log.splitlines()):          # oldest first, so ids read in order
         if chr(9) not in line:

@@ -91,6 +91,7 @@ const card = (verdicts: Verdict[]): string => {
     if (e.tested) lines.push(`  Tested: ${e.fire} fire, ${e["false"]} false positives.`)
     else if (e.taught) lines.push("  Tested: not empanelled - you wrote this rule yourself.")
     else if (e.mined) lines.push("  Tested: mined from this repo's history, not empanelled.")
+    if (e.documented) lines.push(`  From:   ${e.documented}`)
     // A verdict tells the agent it is wrong; an instruction tells it what to do.
     // Without this a small model retries the same edit and stalls.
     if (v.next) lines.push(`  DO THIS NEXT: ${v.next}`)

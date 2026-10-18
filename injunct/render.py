@@ -55,6 +55,10 @@ def agent_card(verdicts: list[dict]) -> str:
             lines.append("  Tested: mined from this repo's history, not empanelled.")
         elif e.get("tested"):
             lines.append(f"  Tested: {e.get('fire')} fire, {e.get('false')} false positives.")
+        # A rule compiled from the repository's own documents says which line
+        # it came from, so the agent can read the sentence it ignored.
+        if e.get("documented"):
+            lines.append(f"  From:   {e['documented']}")
         # A verdict tells the agent it is wrong; an instruction tells it what to
         # do. Without this a small model retries the same edit and stalls.
         if v.get("next"):
@@ -69,7 +73,10 @@ def halt_card(v, number: int | None = None, repo=None,
     n = number if number is not None else v.holding_id
     when = time.strftime("%d %b %Y", time.localtime(v.established)).upper()
     e = v.empanel or {}
-    if e.get("tested"):
+    if e.get("documented"):
+        receipt = (f"from {e['documented']}   held on {e.get('false', '?').split('/')[-1]}"
+                   f" past commits    cited {v.cited}")
+    elif e.get("tested"):
         receipt = (f"empanelled {e.get('fire','?')} fire  {e.get('false','?')} false"
                    f"    cited {v.cited}")
     elif e.get("taught"):

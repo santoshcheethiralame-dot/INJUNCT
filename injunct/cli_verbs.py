@@ -195,6 +195,20 @@ def cmd_claude(a) -> int:
     return 0
 
 
+def _demo_dir(path: str, coverdemo) -> Path:
+    """Build the demo where asked (fresh), or in a new temp folder."""
+    import shutil
+    import tempfile
+    if path in (".", ""):
+        return coverdemo.build(Path(tempfile.mkdtemp(prefix="injunct-demo-")) / "clinic")
+    dest = Path(path).resolve()
+    if dest.exists():
+        if not (dest / ".git").exists() or not (dest / "AGENTS.md").exists():
+            raise SystemExit(f"{dest} exists and is not a previous demo; refusing to overwrite it")
+        shutil.rmtree(dest, onerror=lambda f, p, e: (Path(p).chmod(0o700), f(p)))
+    return coverdemo.build(dest)
+
+
 def cmd_coverage(a) -> int:
     import json
 
@@ -203,10 +217,10 @@ def cmd_coverage(a) -> int:
         import tempfile
 
         from . import coverdemo, provider
-        a.path = str(coverdemo.build(Path(tempfile.mkdtemp(prefix="injunct-demo-")) / "clinic"))
+        a.path = str(_demo_dir(a.path, coverdemo))
         coverage.CACHE, provider.MODEL = coverdemo.CACHE, coverdemo.MODEL
         print(f"  demo repository: {a.path}")
-    s = coverage.run(a.path, use_model=not a.no_model, adopt=a.adopt)
+    s = coverage.run(a.path, use_model=not a.no_model, adopt=a.adopt, trust_history=a.trust_history)
     if a.badge:
         Path(a.badge).write_text(coverage.badge(s["percent"]), encoding="utf-8")
     if a.md:
@@ -221,6 +235,12 @@ def cmd_coverage(a) -> int:
     print(f"  {s['percent']}% of the instructions in {', '.join(s['docs'])} are enforced.")
     print(f"  {s['enforced']} enforced   {s['checkable']} checkable   {s['unchecked']} unchecked"
           f"   ({s['total']} instructions)")
+    if s.get("discounted"):
+        print()
+        print(f"  {len(s['discounted'])} commit(s) left out of the proof, because a later commit fixed them:")
+        for d in s["discounted"]:
+            print(f"    {d['commit']}")
+            print(f"      fixed by {d['fixed_by']}")
     print()
     mark = {"enforced": "ENFORCED ", "checkable": "checkable", "unchecked": "unchecked"}
     for r in s["rules"]:
@@ -250,7 +270,7 @@ def cmd_hindsight(a) -> int:
         import tempfile
 
         from . import coverdemo, provider
-        a.path = str(coverdemo.build(Path(tempfile.mkdtemp(prefix="injunct-demo-")) / "clinic"))
+        a.path = str(_demo_dir(a.path, coverdemo))
         coverage.CACHE, provider.MODEL = coverdemo.CACHE, coverdemo.MODEL
         print(f"  demo repository: {a.path}")
     repo = Path(a.path) if Path(a.path).exists() else None
@@ -306,6 +326,8 @@ def register(sub) -> None:
     cv.add_argument("--badge", help="write an SVG badge to this path")
     cv.add_argument("--md", help="write a markdown report to this path")
     cv.add_argument("--json", action="store_true")
+    cv.add_argument("--trust-history", action="store_true",
+                    help="count every commit as good work, even ones a later commit fixed")
     cv.add_argument("--demo", action="store_true",
                     help="build the clinic demo repository and run on Gemma 4's recorded answers (offline)")
     cv.set_defaults(fn=cmd_coverage)

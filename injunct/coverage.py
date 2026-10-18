@@ -311,6 +311,32 @@ def anchored(t: str, p: dict, files: list[str]) -> str | None:
 
 # --------------------------------------------------------------- the proof --
 
+def discount(led: Ledger, repo: Path, window: int = HISTORY) -> list[dict]:
+    """Take the commits that a later commit had to fix out of the evidence.
+
+    Empanelment treats every commit that landed as work that went right, and
+    so a rule the history once broke can never bind - even when the breaking
+    commit is exactly the one somebody came back and fixed. A commit that
+    needed a fix is not evidence of good work. These are marked `fixed-later`,
+    which the replay skips; the marking is recomputed on every run, so it
+    tracks the history rather than accumulating.
+    """
+    from . import hindsight
+    led.con.execute("UPDATE runs SET result='pass' WHERE repo=? AND result='fixed-later'", (str(repo),))
+    later = hindsight.later_fixed(repo, window)
+    out = []
+    for r in led.con.execute("SELECT id, task FROM runs WHERE repo=? AND arm='history' AND result='pass'",
+                             (str(repo),)).fetchall():
+        sha7 = r["task"].split(" ", 2)[1].rstrip(":")
+        hit = next((b for b in later if b.startswith(sha7)), None)
+        if hit:
+            led.con.execute("UPDATE runs SET result='fixed-later' WHERE id=?", (r["id"],))
+            out.append({"commit": r["task"].removeprefix("commit "),
+                        "fixed_by": hindsight._subject(repo, later[hit])})
+    led.con.commit()
+    return out
+
+
 def prove(led: Ledger, repo: Path, t: str, p: dict) -> tuple[str, dict, list[str]]:
     """Replay a documented rule against the commits that already landed.
 
@@ -331,13 +357,15 @@ def prove(led: Ledger, repo: Path, t: str, p: dict) -> tuple[str, dict, list[str
 
 # ------------------------------------------------------------------ the run --
 
-def run(target: str | Path, use_model: bool = True, adopt: bool = False) -> dict:
+def run(target: str | Path, use_model: bool = True, adopt: bool = False,
+        trust_history: bool = False) -> dict:
     repo, remote = _resolve(target)
     model = _Model(use_model)
     files = _files(repo)
     docs = find_docs(repo)
     led = Ledger(ledger_path(repo))
     mine.record_history(repo, led, limit=HISTORY)
+    discounted = [] if trust_history else discount(led, repo)
 
     found = [(doc.relative_to(repo).as_posix(), line, text) for doc in docs
              for line, text in extract(doc.read_text(encoding="utf-8", errors="replace"))]
@@ -380,7 +408,7 @@ def run(target: str | Path, use_model: bool = True, adopt: bool = False) -> dict
     if adopt:
         _adopt(led, repo, rules)
     led.close()
-    return _summary(repo, remote, docs, rules, model, unanswered)
+    return {**_summary(repo, remote, docs, rules, model, unanswered), "discounted": discounted}
 
 
 def _resolve(target) -> tuple[Path, str | None]:

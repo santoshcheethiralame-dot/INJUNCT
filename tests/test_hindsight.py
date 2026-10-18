@@ -70,3 +70,16 @@ def test_the_rule_catches_the_bad_commit_and_the_baseline_is_reported(repo):
     assert repo.bad[:7] in s["catches"][0]["introduced"]
     assert repo.fix[:7] in s["catches"][0]["fixed_by"]
     assert s["clean"] >= 2 and s["clean_fired"] == 0       # the rule is not firing on everything
+
+
+def test_the_demo_catches_every_planted_bug_with_a_binding_rule(monkeypatch):
+    import tempfile
+    from injunct import coverage, coverdemo, verbs
+    monkeypatch.setattr(coverage, "CACHE", coverdemo.CACHE)
+    monkeypatch.setattr(coverage.provider, "MODEL", coverdemo.MODEL)
+    repo = coverdemo.build(Path(tempfile.mkdtemp()) / "clinic")
+    verbs.install_pack(repo)
+    coverage.run(repo, adopt=True)
+    s = hindsight.run(repo)
+    assert (s["caught"], s["introducers"], s["caught_binding"]) == (3, 3, 3)
+    assert s["clean_fired"] < s["clean"]               # the rules are not firing on everything

@@ -1,13 +1,19 @@
 """A small repository whose AGENTS.md lands in every bucket coverage has.
 
-    injunct coverage --demo
+    injunct coverage --demo [DIR]       injunct hindsight --demo [DIR]
 
-The history is written so each outcome is earned rather than staged: models
-always moved with a migration, so that rule is proven; one hurried commit left
-a print() in app/, so the history itself breaks the no-print rule; the
-changelog was skipped twice. Gemma 4's answers for this exact repository ship
-with the package (coverdemo.json), so the demo runs with no network and no key,
-and any answer can be checked by rerunning against a live model.
+The history is written so each outcome is earned rather than staged. Three
+mistakes land and are each fixed later by a commit that rewrites the line the
+mistake wrote: a debug print() in app/, a model without its migration, and a
+`# type: ignore` in models/. Trusting every commit, the history breaks all
+three rules and none can bind (0%); leaving out the three commits a later
+commit had to fix, all three bind (33%), and hindsight catches every mistake
+with a binding rule. The changelog rule stays unproven, because "Cancel a
+booking" skipped it and nobody ever fixed that.
+
+Gemma 4's answers for this exact repository ship with the package
+(coverdemo.json), so the demo runs with no network and no key, and any answer
+can be checked by rerunning against a live model.
 
 Stdlib only. Deterministic: the same script builds the same repository twice.
 """
@@ -85,6 +91,30 @@ HISTORY = [
     ("Patient email", {
         "models/patient.py": "class Patient:\n    name: str\n    phone: str\n    email: str\n",
         "migrations/006_email.sql": "ALTER TABLE patient ADD email TEXT;\n",
+    }),
+    # Two more mistakes, each repaired later by a commit that rewrites the very
+    # line the mistake wrote - which is what lets SZZ trace the fix home.
+    ("Add Visit model", {
+        "models/visit.py": "class Visit:\n    patient: str\n    when: str\n",
+    }),
+    ("Silence the Appointment type error", {
+        "models/appointment.py": ("class Appointment:\n    slot: str\n    doctor: str\n"
+                                  "    room: int = None  # type: ignore\n"),
+    }),
+    ("Validate booking slots", {
+        "app/booking.py": ("def book(slot, doctor=None):\n    if not slot:\n        raise ValueError('slot')\n"
+                           "    return {'slot': slot, 'doctor': doctor}\n"),
+        "CHANGELOG.md": ("# Changelog\n- booking returns the doctor\n- fix double booking\n"
+                         "- booking slots are validated\n"),
+    }),
+    ("Fix Visit: add the missing migration and store a real date", {
+        "models/visit.py": "class Visit:\n    patient: str\n    when: date\n",
+        "migrations/007_visit.sql": "CREATE TABLE visit (patient TEXT, when DATE);\n",
+    }),
+    ("Fix Appointment.room properly instead of ignoring the type", {
+        "models/appointment.py": ("class Appointment:\n    slot: str\n    doctor: str\n"
+                                  "    room: int | None = None\n"),
+        "migrations/008_room.sql": "ALTER TABLE appointment ADD room INTEGER;\n",
     }),
 ]
 
