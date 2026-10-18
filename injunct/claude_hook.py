@@ -361,6 +361,16 @@ def stop(payload: dict, mode: str) -> tuple[int, str, str]:
     repo = _repo(payload)
     if not (Path(repo) / ".injunct" / "ledger.db").is_file():
         return 0, "", ""
+    if mode == "enforce":
+        # PreToolUse sees which files a write touches, not what it puts in
+        # them, so a content rule (a committed key, a leftover breakpoint) can
+        # only fire once the bytes are down. Checking the tree before the turn
+        # ends puts that fix in this turn instead of at commit time.
+        got = gate(repo, [])
+        if got.get("block") and got.get("verdicts"):
+            from . import render
+            return 2, "", ("Before you finish: the tree you left fires a binding rule. Fix it in this turn.\n\n"
+                           + render.agent_card(got["verdicts"]))
     cmd = _check_command(repo)
     if not cmd:
         return 0, "", ""

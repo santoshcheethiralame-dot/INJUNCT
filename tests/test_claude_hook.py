@@ -271,3 +271,18 @@ def test_the_person_gets_one_readable_line_when_a_write_is_blocked():
     assert line == ("Injunct blocked a write to patient.py: Changing a model requires adding a migration "
                     "in the same commit. (from AGENTS.md:7) Next: create migrations/009_patient.sql.")
     line.encode("ascii")
+
+
+def test_a_content_rule_is_caught_before_the_turn_ends(tmp_path):
+    """PreToolUse cannot see what a write puts in a file, so a leftover
+    breakpoint lands. The Stop hook must hand it back in the same turn."""
+    from injunct import claude_hook, coverdemo
+    repo = coverdemo.build(tmp_path / "clinic")
+    verbs.install_pack(repo)
+    booking = repo / "app" / "booking.py"
+    booking.write_text(booking.read_text(encoding="utf-8").replace(
+        "def book(slot, doctor=None):\n", "def book(slot, doctor=None):\n    breakpoint()\n", 1), encoding="utf-8")
+    code, _, err = claude_hook.stop({"cwd": str(repo), "hook_event_name": "Stop"}, "enforce")
+    assert code == 2 and "breakpoint" in err and "Before you finish" in err
+    # and it does not loop: a Stop that Claude Code marks as already continuing is left alone
+    assert claude_hook.stop({"cwd": str(repo), "stop_hook_active": True}, "enforce")[0] == 0
