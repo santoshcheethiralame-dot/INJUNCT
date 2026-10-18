@@ -191,8 +191,7 @@ flowchart LR
         g4["GitHub Action"]
         g5["gate · watch"]
     end
-    SRC --> c1
-    c3 --> GATE
+    SRC --> CORE --> GATE
 ```
 
 **A model only fills in a form.** When a rule starts as prose (a sentence in
@@ -206,13 +205,12 @@ available, a deterministic fallback reads the failure and the history itself.
 
 ```mermaid
 flowchart TB
-    A["Case<br/>a failure, a rejection,<br/>or a line in AGENTS.md"] --> B["Compile<br/>into a typed check"]
-    B --> C{"Prove<br/>fires on its own case,<br/>silent on past successes?"}
-    C -- yes --> D["Binding<br/>blocks the edit"]
-    C -- no --> E["Advisory<br/>told to the agent"]
-    E -. "new evidence" .-> C
-    D --> F["Cited<br/>every time it fires"]
-    F -- "overridden 3 times,<br/>work still passed" --> G["Overruled<br/>retired in public"]
+    A["Case → typed check"] --> C["Prove on past commits"]
+    C -- passes --> D["Binding: blocks"]
+    C -- fails --> E["Advisory: guides"]
+    E -. new evidence .-> C
+    D --> F["Cited when it fires"]
+    F -- "3 overrides that passed" --> G["Overruled in public"]
 ```
 
 - **Proving** replays the rule against the repository's past commits. It must
