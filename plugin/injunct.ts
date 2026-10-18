@@ -1,13 +1,10 @@
 // INJUNCT — an opencode plugin that refuses.
 //
-// Written against the same opencode hook surface as balebbae/autopsy, whose
-// plugin is the reference for this API. One deliberate difference, and it is
-// the whole point:
-//
-//   Autopsy's tool.execute.before is advisory by design — its own comment says
-//   it "never blocks a tool call, even if the service returns block=true".
-//   This one throws. A throw in tool.execute.before aborts the call, and the
-//   halt card goes back to the model as the tool's error.
+// Written against opencode's plugin hook surface. Memory plugins that use
+// tool.execute.before are usually advisory by design: they report a past
+// failure and let the call go ahead. This one throws, and that is the whole
+// point. A throw in tool.execute.before aborts the call, and the halt card goes
+// back to the model as the tool's error.
 //
 // Every decision is made by `python -m injunct serve`. This file is plumbing:
 // bounded timeouts, fail-open, and never a reason the agent stalls.
@@ -18,7 +15,7 @@ const CHECK = process.env.INJUNCT_CHECK ?? "python oracle.py"
 
 // off      nothing happens; the agent is untouched
 // advise   past failures are injected as prose, and nothing is ever blocked.
-//          This is Autopsy's design, and it is arm B of the benchmark.
+//          This is how advisory memory layers work, and it is arm B of the benchmark.
 // enforce  binding precedent stops the call. Default.
 const MODE = (process.env.INJUNCT_MODE ?? "enforce").toLowerCase()
 
@@ -140,7 +137,7 @@ const Injunct = async (ctx: {
       if (r?.text) output.system.push(r.text)
     },
 
-    // Enforcement. This is the line Autopsy declined to write.
+    // Enforcement. This is the line an advisory memory layer never writes.
     "tool.execute.before": async (input: { tool: string }, output: { args: Record<string, unknown> }) => {
       if (!repo || MODE !== "enforce") return
       const pending = pendingPaths(input.tool, output.args)

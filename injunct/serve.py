@@ -82,7 +82,7 @@ def _tree(repo: str, pending: list[str] | None = None) -> Change:
     """The tree as it stands, plus what the agent is about to touch.
 
     Judging a write before it lands is the difference between a gate and a
-    post-mortem. Autopsy could only ever report; this refuses.
+    post-mortem. An advisory memory layer can only ever report; this refuses.
     """
     ch = Change.from_git(Path(repo))
     for raw in pending or []:
@@ -117,7 +117,7 @@ def advise(repo: str, task: str, everything: bool = False) -> dict:
     """Persuasive authority as prose.
 
     With `everything`, binding rules are rendered as warnings too. That is arm B:
-    the same knowledge the gate holds, delivered the way Autopsy delivers it -
+    the same knowledge the gate holds, delivered the way advisory memory layers do -
     a paragraph in the prompt that the model is free to ignore.
     """
     led, root = _led(repo), str(Path(repo).resolve())

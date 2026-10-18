@@ -51,7 +51,7 @@ def test_arm_b_is_told_about_every_rule_the_gate_would_apply(repo):
 
 def test_arm_b_prose_is_marked_as_optional(repo):
     """It has to read as advice. If it reads as a command the arm is measuring
-    something other than what Autopsy actually does."""
+    something other than what an advisory memory layer actually does."""
     text = serve.advise(str(repo), "add a field", everything=True)["text"]
     assert "not enforced" in text.lower()
 

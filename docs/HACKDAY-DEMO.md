@@ -52,20 +52,20 @@ python -m injunct coverage clinic
 You will see:
 
 ```
-  33% of the instructions in AGENTS.md are enforced.
-  3 enforced   2 checkable   4 unchecked   (9 instructions)
+  33% of the instructions in AGENTS.md are guarded.
+  3 guarded   2 could be guarded   4 need a human   (9 instructions)
 ```
 
 Point at three things on screen:
 
-- **ENFORCED**, e.g. `co_change( models/* -> migrations/* )` "held on all 13
+- **GUARDED**, e.g. `co_change( models/* -> migrations/* )` "held on all 13
   past commits that could test it". Gemma 4 compiled the sentence; the
   repository's history proved it.
-- **checkable** "Never hand-edit `client/generated.py`": broken by
+- **could be guarded**: "Never hand-edit `client/generated.py`": broken by
   `Regenerate client from the spec`. The repository's own generator touches
   that file, so a plain "never edit" rule would block the team's own tooling.
   Coverage catches that before the rule ever binds.
-- **unchecked**, each with its reason: judgement, process, runtime. No tool
+- **needs a human**, each with its reason: judgement, process, runtime. No tool
   will ever enforce "keep functions small", and this says so.
 
 ## 2. "A commit someone had to fix is not evidence of good work" (45 s)
@@ -73,7 +73,7 @@ Point at three things on screen:
 Scroll to the top of the same output:
 
 ```
-  3 commit(s) left out of the proof, because a later commit fixed them:
+  3 commit(s) not counted as good work, because a later commit fixed them:
     744e19f: quick debug for the double-booking bug
       fixed by a1650dd Fix stray debug print in booking
     8e112ba: Add Visit model
@@ -89,8 +89,8 @@ python -m injunct coverage clinic --trust-history
 ```
 
 ```
-  0% of the instructions in AGENTS.md are enforced.
-  0 enforced   5 checkable   4 unchecked   (9 instructions)
+  0% of the instructions in AGENTS.md are guarded.
+  0 guarded   5 could be guarded   4 need a human   (9 instructions)
 ```
 
 Line to say: *trusting every commit, the bugs themselves make every rule look
@@ -182,15 +182,15 @@ python -m injunct coverage uv
 ```
 
 ```
-  3% of the instructions in AGENTS.md, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md are enforced.
-  2 enforced   3 checkable   58 unchecked   (63 instructions)
+  3% of the instructions in AGENTS.md, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md are guarded.
+  2 guarded   3 could be guarded   58 need a human   (63 instructions)
 ```
 
 - ENFORCED: no `#[allow(clippy::…)]` in Rust, and no `pull_request_target` in
   workflows (a security rule). Both held on 90 commits.
-- checkable: "avoid `matches!` and wildcard arms" was already broken by 5 of
+- could be guarded: "avoid `matches!` and wildcard arms" was already broken by 5 of
   uv's own recent commits, which coverage lists by name.
-- 58 unchecked: 22 process, 15 judgement, 12 runtime, 9 vague.
+- 58 need a human: 22 process, 15 judgement, 12 runtime, 9 vague.
 
 Then the prescription:
 
@@ -199,7 +199,7 @@ python -m injunct coverage uv --suggest
 ```
 
 ```
-  6 rewrite(s) that would be enforced today, each proven on this history (3% -> 13%):
+  6 rewrite(s) that would be guarded today, each proven on this history (3% -> 13%):
 ```
 
 Line to say: *most of what teams write for agents is process and judgement.

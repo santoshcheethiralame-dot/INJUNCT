@@ -123,7 +123,7 @@ def fallback(case: dict, ch: Change, past: list[Change] | None = None) -> tuple[
     # Correlation is not direction, and this path cannot fix that.
     #
     # mine.pairings settles direction with an asymmetry test, and it works on
-    # real history: caliper's results/ -> docs/ has reverse confidence 20%.
+    # real history: one research repository's results/ -> docs/ has reverse confidence 20%.
     # It CANNOT be used here. In a run's own short history nothing ever moves
     # alone - in the benchmark, migrations/ never once changes without models/,
     # so reverse confidence is 100% and the test would reject the single most

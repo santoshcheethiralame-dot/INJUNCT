@@ -38,11 +38,11 @@ rule. If the rule is wrong, tell the user; `python -m injunct off <id>` is their
 1. Run `python -m injunct coverage .` (or `python -m injunct coverage owner/name` for a public
    GitHub repository).
 2. Report the percentage and the three groups:
-   - ENFORCED: compiled to a check and proven on past commits.
-   - checkable: compiles, but not yet proven; the reason is printed, and
+   - GUARDED: compiled to a check and proven on past commits; it blocks once adopted.
+   - could be guarded: compiles, but not yet proven; the reason is printed, and
      "past commit(s) already break it" lists the commits.
-   - unchecked: no check can express it (judgement, process, runtime, vague).
+   - needs a human: no check can express it (judgement, process, runtime, vague).
 3. If the output ends with a WARNING about failed model calls, say the number
    is a floor, not a measurement.
-4. `python -m injunct coverage --adopt` puts the rules on the ledger so enforced ones
+4. `python -m injunct coverage --adopt` puts the rules on the ledger so guarded ones
    bind. Only run it if the user asks.

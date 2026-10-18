@@ -10,8 +10,8 @@ compatibility: Requires Python 3.10+, git, and the injunct package. Uses the mod
 1. From the repository root, run:
    `python -m injunct coverage . --suggest --html .injunct/coverage.html`
 2. Tell the user, in three short lines:
-   - the percentage enforced, and the enforced / checkable / unchecked counts;
-   - how many commits were left out of the proof because a later commit fixed them, if any;
+   - the percentage guarded, and the guarded / could be guarded / needs a human counts;
+   - how many commits were not counted as good work because a later commit fixed them, if any;
    - how many rewrites were suggested and the percentage they would reach.
 3. Show the report. If you have a tool that shows a file to the user (one that
    renders HTML in a side panel, for example), use it on

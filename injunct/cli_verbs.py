@@ -244,17 +244,17 @@ def cmd_coverage(a) -> int:
         print("  no agent documents here (AGENTS.md, CLAUDE.md, CONTRIBUTING.md, ...).")
         return 0
     print()
-    print(f"  {s['percent']}% of the instructions in {', '.join(s['docs'])} are enforced.")
-    print(f"  {s['enforced']} enforced   {s['checkable']} checkable   {s['unchecked']} unchecked"
+    print(f"  {s['percent']}% of the instructions in {', '.join(s['docs'])} are guarded.")
+    print(f"  {s['enforced']} guarded   {s['checkable']} could be guarded   {s['unchecked']} need a human"
           f"   ({s['total']} instructions)")
     if s.get("discounted"):
         print()
-        print(f"  {len(s['discounted'])} commit(s) left out of the proof, because a later commit fixed them:")
+        print(f"  {len(s['discounted'])} commit(s) not counted as good work, because a later commit fixed them:")
         for d in s["discounted"]:
             print(f"    {d['commit']}")
             print(f"      fixed by {d['fixed_by']}")
     print()
-    mark = {"enforced": "ENFORCED ", "checkable": "checkable", "unchecked": "unchecked"}
+    mark = {"enforced": "GUARDED  ", "checkable": "could be ", "unchecked": "human    "}
     for r in s["rules"]:
         text = r["text"] if len(r["text"]) <= 72 else r["text"][:69] + "..."
         print(f"  {mark[r['status']]}  {text}")
@@ -266,7 +266,7 @@ def cmd_coverage(a) -> int:
     if a.suggest:
         print()
         if s["suggestions"]:
-            print(f"  {len(s['suggestions'])} rewrite(s) that would be enforced today, each proven on this history"
+            print(f"  {len(s['suggestions'])} rewrite(s) that would be guarded today, each proven on this history"
                   f" ({s['percent']}% -> {s['percent_if_rewritten']}%):")
             for g in s["suggestions"]:
                 print(f"    {g['doc']}:{g['line']}  was: {g['was'][:70]}")

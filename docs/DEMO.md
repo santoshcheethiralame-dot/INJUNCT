@@ -250,9 +250,9 @@ opencode
 Ask it to add a field to a model. The write is **aborted before the bytes land**
 and the card goes back to the model as the tool's error.
 
-Worth naming: Autopsy's plugin has the same hook and its own comment says it
-*"never blocks a tool call, even if the service returns block=true."* Ours
-throws. That is the entire difference between the two projects in one line.
+Worth naming: an advisory memory plugin can sit on the same hook and still
+let every call through. Ours throws. That is the whole difference between
+advice and enforcement, in one line.
 
 ---
 

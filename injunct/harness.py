@@ -2,7 +2,7 @@
 is reproducible. Four tools, JSON actions, one interception point.
 
 Arms:  A - no memory at all
-       B - persuasive prose in the system prompt (what Autopsy does)
+       B - persuasive prose in the system prompt (how advisory memory layers work)
        C - binding precedent, enforced
 """
 from __future__ import annotations
