@@ -37,7 +37,11 @@ def agent_card(verdicts: list[dict]) -> str:
     Kept identical to the card the opencode plugin builds, because an agent
     should not be able to tell which harness refused it. A test asserts that.
     """
-    lines = ["BLOCKED BY INJUNCT - this exact change failed here before."]
+    # A rule compiled from AGENTS.md never failed here; saying it did would
+    # claim a history that does not exist.
+    documented = bool(verdicts) and all((v.get("empanel") or {}).get("documented") for v in verdicts)
+    lines = ["BLOCKED BY INJUNCT - this breaks a rule this repository wrote down, and its history proved it." if documented
+             else "BLOCKED BY INJUNCT - this exact change failed here before."]
     for v in verdicts:
         e = v.get("empanel") or {}
         lines.append("")
@@ -49,7 +53,9 @@ def agent_card(verdicts: list[dict]) -> str:
         # flattening them would claim evidence that was never gathered.
         # taught/mined first: their receipts carry a `tested` count too, but
         # "n/a (you wrote it) fire" is not a sentence anyone should read.
-        if e.get("taught"):
+        if e.get("documented"):
+            lines.append(f"  Tested: held on {str(e.get('false', '?')).split('/')[-1]} past commits, 0 false positives.")
+        elif e.get("taught"):
             lines.append("  Tested: not empanelled - you wrote this rule yourself.")
         elif e.get("mined"):
             lines.append("  Tested: mined from this repo's history, not empanelled.")

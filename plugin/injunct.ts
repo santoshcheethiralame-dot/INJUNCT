@@ -79,7 +79,13 @@ const card = (verdicts: Verdict[]): string => {
   // ASCII on purpose: the same card goes to stderr from the Claude Code hook,
   // and an em dash there dies on a cp1252 console - which would fail the write
   // OPEN rather than blocking it. render.agent_card must stay byte-identical.
-  const lines = ["BLOCKED BY INJUNCT - this exact change failed here before."]
+  // A rule compiled from AGENTS.md never failed here; saying it did would
+  // claim a history that does not exist.
+  const documented = verdicts.length > 0 &&
+    verdicts.every((v) => ((v.empanel ?? {}) as Record<string, string>).documented)
+  const lines = [documented
+    ? "BLOCKED BY INJUNCT - this breaks a rule this repository wrote down, and its history proved it."
+    : "BLOCKED BY INJUNCT - this exact change failed here before."]
   for (const v of verdicts) {
     lines.push("")
     lines.push(`  Holding No ${v.n}, established ${v.when}. ${v.says}`)
@@ -88,7 +94,8 @@ const card = (verdicts: Verdict[]): string => {
     // Three provenances, and they must not read as one. A rule replayed against
     // history has earned something a rule you typed has not.
     const e = (v.empanel ?? {}) as Record<string, string>
-    if (e.tested) lines.push(`  Tested: ${e.fire} fire, ${e["false"]} false positives.`)
+    if (e.documented) lines.push(`  Tested: held on ${String(e["false"] ?? "?").split("/").pop()} past commits, 0 false positives.`)
+    else if (e.tested) lines.push(`  Tested: ${e.fire} fire, ${e["false"]} false positives.`)
     else if (e.taught) lines.push("  Tested: not empanelled - you wrote this rule yourself.")
     else if (e.mined) lines.push("  Tested: mined from this repo's history, not empanelled.")
     if (e.documented) lines.push(`  From:   ${e.documented}`)

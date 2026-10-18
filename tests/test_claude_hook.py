@@ -234,3 +234,17 @@ def test_the_card_matches_the_opencode_plugin():
     # ASCII only, both sides: this card goes to stderr on a Windows console and
     # an unencodable character there makes the hook fail open instead of block.
     card.encode("ascii")
+
+
+def test_a_documented_rule_does_not_claim_it_failed_here_before():
+    ts = (verbs.ROOT / "plugin" / "injunct.ts").read_text(encoding="utf-8")
+    card = render.agent_card([{
+        "n": 1, "says": "Changing a model requires a migration.", "rule": "co_change( models/* -> migrations/* )",
+        "reason": "models/patient.py changed", "next": "create migrations/009_patient.sql", "when": "18 Oct 2026",
+        "empanel": {"fire": "n/a (documented)", "false": "0/13", "tested": 13, "documented": "AGENTS.md:7"}}])
+    assert card.startswith("BLOCKED BY INJUNCT - this breaks a rule this repository wrote down, and its history proved it.") and "BLOCKED BY INJUNCT - this breaks a rule this repository wrote down, and its history proved it." in ts
+    assert "failed here before" not in card
+    for line in ("  Tested: held on 13 past commits, 0 false positives.", "  From:   AGENTS.md:7"):
+        assert line in card, line
+    assert "Tested: held on" in ts and "From:   " in ts
+    card.encode("ascii")

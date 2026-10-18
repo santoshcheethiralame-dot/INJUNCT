@@ -7,6 +7,10 @@ compatibility: Requires Python 3.10+, git, and the injunct package (pip install 
 
 # Injunct
 
+Run every command as `python -m injunct ...`: the `injunct` script is often
+not on PATH (Windows installs it into a Scripts folder), and the module form
+works wherever the package is installed.
+
 Injunct turns rules into checks that run on the working tree and refuse a bad
 change before it lands. A rule only binds after it has been replayed against
 the repository's own git history and stayed silent on work that already
@@ -14,7 +18,7 @@ shipped.
 
 ## Before editing a file
 
-1. Run `injunct why <file>` from the repository root.
+1. Run `python -m injunct why <file>` from the repository root.
 2. Every line marked BINDING is a rule that will refuse the change if it is
    broken. Plan the edit so it satisfies each one (for example, add the
    migration in the same change as the model).
@@ -24,14 +28,14 @@ shipped.
 ## When a change is refused
 
 The refusal names the rule, the case that established it, and the next step,
-such as a file to create. Do the next step, then run `injunct gate .`; it
+such as a file to create. Do the next step, then run `python -m injunct gate .`; it
 exits 0 when nothing binding fires. Do not edit `.injunct/`, `.git/hooks/` or
 `.claude/settings.json` to get around a refusal: that is itself a binding
-rule. If the rule is wrong, tell the user; `injunct off <id>` is their call.
+rule. If the rule is wrong, tell the user; `python -m injunct off <id>` is their call.
 
 ## Measuring agent instructions
 
-1. Run `injunct coverage .` (or `injunct coverage owner/name` for a public
+1. Run `python -m injunct coverage .` (or `python -m injunct coverage owner/name` for a public
    GitHub repository).
 2. Report the percentage and the three groups:
    - ENFORCED: compiled to a check and proven on past commits.
@@ -40,5 +44,5 @@ rule. If the rule is wrong, tell the user; `injunct off <id>` is their call.
    - unchecked: no check can express it (judgement, process, runtime, vague).
 3. If the output ends with a WARNING about failed model calls, say the number
    is a floor, not a measurement.
-4. `injunct coverage --adopt` puts the rules on the ledger so enforced ones
+4. `python -m injunct coverage --adopt` puts the rules on the ledger so enforced ones
    bind. Only run it if the user asks.
