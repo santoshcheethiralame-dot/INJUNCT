@@ -1,0 +1,666 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Injunct — the desk</title>
+<link rel="stylesheet" href="motion.css">
+<style>
+  /* Light, warm, and lit from the upper left. Tokens match
+     injunct/art/clerk.py so the page and the sprites cannot drift. */
+  :root{
+    --mortar:#E8DCCA; --brick:#CE9A7C; --brick-dk:#A5665D;
+    --board:#C9A27A;  --board-dk:#A16E5B;
+    --wood:#B0764C;   --wood-dk:#8D4535; --wood-deep:#6E442B;
+    --sage:#9FB08F;   --sage-dk:#778D70;
+    --paper:#FDF6E7;  --paper-2:#EADDC4; --paper-3:#D3C2A4;
+    --ink:#4A382E;    --ink-soft:#6B5546;
+    --phos:#5FC18A;   --amber:#F0B44E;   --coral:#E06B63;
+    --px:4;
+  }
+  *{box-sizing:border-box}
+  /* Below the room the page is FLOOR, not wall. Brick under the floorboards
+     read as the building turned inside out. */
+  body{margin:0;background:var(--board) url("sprites/floor.png") repeat;
+       background-size:256px 96px;color:var(--ink);
+       font:14px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif;
+       -webkit-font-smoothing:antialiased}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+         padding:13px 24px;background:var(--paper);
+         border-bottom:4px solid var(--wood-dk);flex-wrap:wrap}
+  .wm{font:400 20px/1 Georgia,serif;color:var(--ink)}
+  .wm b{color:var(--coral);font-weight:400}
+  .status{display:flex;align-items:center;gap:9px;color:var(--ink-soft);font-size:13px}
+  .status .bulb{width:10px;height:10px;border-radius:50%;background:#C3B7A6;
+                border:2px solid var(--ink)}
+  .status.live .bulb{background:var(--phos)}
+  .status.halt .bulb{background:var(--coral)}
+  .status.replay .bulb{background:var(--amber)}
+
+  main{margin:0;padding:0 0 48px}
+  /* the paperwork sits on a continuation of the floor, not on bare wall */
+  .undercroft{padding:0 0 56px;image-rendering:pixelated}
+
+  /* ---- the room ---- */
+  /* The stage spans the viewport so the wall and floor reach both edges; the
+     furniture lives in a centred .room inside it. Letting the page background
+     show beside the room is what made it look like a picture pasted on. */
+  .stage{position:relative;width:100%;image-rendering:pixelated;overflow:hidden}
+  .room{position:absolute;top:0;left:50%;transform:translateX(-50%)}
+  #wall,#floor{position:absolute;left:0;right:0;image-rendering:pixelated}
+  #wall{top:0}
+  #floor{bottom:0;border-top:4px solid var(--wood-deep)}
+  .sprite{position:absolute;image-rendering:pixelated;background-repeat:no-repeat}
+  .sprite.clickable{cursor:pointer}
+  .sprite.clickable:hover{filter:brightness(1.08) saturate(1.1)}
+
+  /* Pips, not words. Each drawer shows its count as marks so the room stays
+     free of text - a label a sprite cannot change does not belong on it. */
+  .pips{position:absolute;display:flex;gap:3px;align-items:center;z-index:4;
+        pointer-events:none}
+  .pips i{width:5px;height:5px;border-radius:50%;background:var(--ink);
+          box-shadow:0 0 0 1px rgba(255,255,255,.5)}
+  .pips.none i{background:transparent;box-shadow:inset 0 0 0 1px var(--ink-soft)}
+
+  #chartline{position:absolute;z-index:4;pointer-events:none}
+
+  /* the lamp actually lights the desk, and the pool takes the verdict colour */
+  #pool{position:absolute;border-radius:50%;pointer-events:none;z-index:3}
+
+  /* ---- the stamped card ---- */
+  #halt{position:absolute;display:none;z-index:6;
+        background:var(--paper);border:4px solid var(--ink);
+        box-shadow:6px 6px 0 rgba(74,56,46,.22);padding:14px 16px}
+  /* The card is the one thing on this screen with weight (docs/DESIGN.md law 4):
+     it comes down like the stamp it represents, in three steps, and the desk
+     takes the recoil. Everything else on the page stays under 300ms and light. */
+  #halt.on{display:block;animation:vd-stamp var(--t-heavy) steps(3) both;cursor:pointer}
+  #halt.on:hover{transform:translateY(-2px)}
+  #halt.on:hover .no{color:var(--ink)}
+  /* four pushpins, so it reads as pinned rather than floating */
+  #halt::before,#halt::after{content:"";position:absolute;width:12px;height:12px;
+    border-radius:50%;background:var(--coral);border:3px solid var(--ink);top:-8px}
+  #halt::before{left:14px} #halt::after{right:14px}
+  #halt .no{font-family:ui-monospace,Consolas,monospace;font-size:10px;
+            letter-spacing:.18em;color:var(--coral);text-transform:uppercase}
+  #halt .says{font:400 18px/1.35 Georgia,serif;margin:7px 0 9px}
+  #halt .why{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;
+             color:var(--ink-soft)}
+  #halt .next{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;
+              background:var(--amber);border:2px solid var(--ink);
+              display:inline-block;padding:4px 8px;margin-top:10px}
+
+
+  /* The board is never blank. With no halt showing it carries the last thing
+     that actually happened, taken from the ledger - the halt card sits over
+     it when a rule fires. */
+  #lastcard{position:absolute;z-index:5;display:none;
+        background:var(--paper);border:4px solid var(--ink);
+        box-shadow:6px 6px 0 rgba(74,56,46,.22);padding:13px 15px;
+        transform:rotate(-.7deg)}
+  #lastcard.on{display:block}
+  #lastcard::before,#lastcard::after{content:"";position:absolute;width:12px;
+    height:12px;border-radius:50%;background:var(--ink-soft);
+    border:3px solid var(--ink);top:-8px}
+  #lastcard::before{left:16px} #lastcard::after{right:16px}
+  #lastcard .no{font-family:ui-monospace,Consolas,monospace;font-size:10px;
+                letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+  #lastcard .says{font:400 17px/1.35 Georgia,serif;margin:7px 0 8px}
+  #lastcard .out{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+                 color:var(--ink-soft)}
+  #lastcard .out b{font-weight:400;color:var(--ink)}
+  #lastcard a{color:inherit;text-decoration:none}
+
+  /* ---- the ledger: the office's own paperwork ----
+     Ruled stock with a red margin and punched holes, butted straight up
+     against the floor so the page reads as one continuous place rather than
+     a scene with a list underneath it. */
+  /* The summary is a strip fixed to the bottom edge of the room, spanning its
+     full width, so it reads as part of the wall rather than a card left lying
+     on the floorboards. */
+  .ledger{margin:0 auto;padding:0;position:relative;top:-8px}
+  /* One long list of seventeen rules is a wall of text. It folds. */
+  #ledgerfold summary{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+                      list-style:none;cursor:pointer;user-select:none;
+                      background:var(--wood);border:4px solid var(--ink);
+                      border-left:0;border-right:0;
+                      box-shadow:0 6px 0 rgba(74,56,46,.22);
+                      padding:12px 22px;margin:0 0 16px;color:var(--paper)}
+  #ledgerfold summary h2{color:var(--paper)}
+  #ledgerfold summary .hint{color:#E7D2BB}
+  #ledgerfold summary:hover h2{color:var(--amber)}
+  .chev{border-left-color:var(--paper)}
+  #ledgerfold summary::-webkit-details-marker{display:none}
+  #ledgerfold summary:hover h2{color:#8D4535}
+  .chev{width:0;height:0;border-left:9px solid var(--ink);
+        border-top:6px solid transparent;border-bottom:6px solid transparent;
+        transition:transform .001s steps(1);align-self:center}
+  #ledgerfold[open] .chev{transform:rotate(90deg)}
+
+  /* the list hangs in a wooden frame, like everything else on these walls */
+  .board{border:8px solid var(--wood);outline:4px solid var(--ink);
+         outline-offset:-12px;background:var(--wood-dk);padding:10px;
+         box-shadow:0 8px 0 rgba(74,56,46,.22)}
+  .ledger h2{font:400 20px/1.3 Georgia,serif;margin:0}
+  .ledger .hint{color:var(--ink-soft);font-size:12.5px;
+                font-family:ui-monospace,Consolas,monospace}
+  .sheetpad{background:var(--paper);border:4px solid var(--ink);
+            box-shadow:8px 8px 0 rgba(74,56,46,.20);padding:4px 4px 4px 40px;
+            position:relative;
+            background-image:linear-gradient(to right,
+              transparent 0 34px, #E0A9A2 34px 36px, transparent 36px);
+            background-repeat:no-repeat}
+  /* punched holes down the margin, like a page out of a binder */
+  .sheetpad::before{content:"";position:absolute;left:13px;top:0;bottom:0;width:12px;
+    background-image:radial-gradient(circle at 6px 6px, var(--mortar) 5px, transparent 6px);
+    background-size:12px 46px;background-repeat:repeat-y;
+    box-shadow:inset 0 0 0 0 transparent}
+  .seat{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;
+        border-bottom:2px solid var(--paper-2);font-size:13.5px}
+  .seat:last-child{border-bottom:none}
+  .seat{cursor:pointer}
+  .seat:hover{background:#FFFBF0}
+  .seat i{width:9px;height:9px;border-radius:50%;flex:none;margin-top:5px;
+          background:#CFC3AF;border:2px solid var(--ink)}
+  .seat .who{flex:1;min-width:0}
+  .seat .why{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;
+             color:var(--ink-soft);margin-top:4px}
+  .seat .dom{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+             letter-spacing:.16em;text-transform:uppercase;color:#A2937F}
+  .v-halt{background:#FBEDEA}
+  .v-halt i{background:var(--coral)} .v-halt .who{color:#A83C33}
+  .v-note i{background:var(--amber)}
+  .v-skip i{background:#C3B7A6}
+  .v-clear .who{color:var(--ink-soft)}
+
+  .empty{border:4px dashed var(--wood-dk);padding:34px 26px;text-align:center;
+         max-width:600px;margin:0 auto;background:var(--paper)}
+  .empty .big{font:400 19px/1.4 Georgia,serif;margin-bottom:10px}
+  .empty p{color:var(--ink-soft);font-size:13px;margin:0 auto;max-width:52ch}
+  .empty code{background:var(--paper-2);padding:2px 7px;border:2px solid var(--paper-3)}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+
+<header>
+  <div class="wm">Injunct<b>.</b></div>
+  <div class="status" id="status"><span class="bulb"></span><span id="statustext">no service</span></div>
+</header>
+
+<main>
+  <div class="stage" id="stage">
+    <div id="wall"></div>
+    <div id="floor"></div>
+    <div class="room" id="room">
+    <div id="pool"></div>
+    <div id="lastcard">
+      <div class="no" id="lastno"></div>
+      <div class="says" id="lastsays"></div>
+      <div class="out" id="lastout"></div>
+    </div>
+    <div id="halt">
+      <div class="no" id="haltno"></div>
+      <div class="says" id="haltsays"></div>
+      <div class="why" id="haltwhy"></div>
+      <div class="next" id="haltnext"></div>
+    </div>
+    </div>
+  </div>
+
+  <div class="undercroft">
+  <div class="ledger">
+    <details id="ledgerfold">
+      <summary>
+        <span class="chev"></span>
+        <h2 id="ledgerhead">Nothing has been judged yet.</h2>
+        <span class="hint" id="ledgerhint"></span>
+      </summary>
+      <div class="board"><div class="sheetpad" id="seats"></div></div>
+    </details>
+  </div>
+  </div>
+</main>
+
+<script>
+const SERVICE = new URLSearchParams(location.search).get("service") || "http://127.0.0.1:4000";
+
+// The largest INTEGER scale at which the whole room fits. A fractional scale
+// would blur every sprite, and a fixed one clipped the shelf off the left edge
+// on anything narrower than 1600px.
+let PX = 4;
+function chooseScale(){
+  const fit = Math.floor((window.innerWidth - 24) / 350);
+  PX = Math.max(2, Math.min(4, fit));
+}
+chooseScale();
+
+// Logical room, multiplied by PX. Spacing is deliberate: an earlier pass put
+// six things on one wall and it read as clutter.
+// clerkCut is how far down the clerk the desk edge falls. At 46 it cut the
+// belt and he read as STANDING behind a low desk. At 42 it cut him at the
+// collar and he read as a television sitting on the desk - the head is 34 of
+// his 74 rows, so anything under ~46 leaves no body at all. At 54 he floated:
+// the chair back landed under him and turned into a plinth. 49 puts the desk
+// edge across his chest, which is where a seated person meets one.
+// Narrower than it looks: a 420-wide room forced the scale down to 3 and the
+// centrepiece shrank with it. At 340 the same screen fits scale 4.
+const ROOM = { w: 350, h: 226, deskTop: 140, clerkCut: 49, floorTop: 158 };
+
+const LAYOUT = [
+  // Three big pieces have to share 350: bookcase 104, desk 168, cabinet 60.
+  // Every x below is chosen so none of them touch - the desk and the lamp were
+  // overlapping the bookcase when the room was 10px narrower.
+  { piece: "bookcase",  x: 2,   y: 18,  layer: "back" },   //   2..106
+  // The race runs on its own server, because it boots two applications. If
+  // that server is not up the link is dead, so the page checks first and only
+  // makes the window a door when there is something behind it.
+  { piece: "window",    x: 128, y: 14,  layer: "back", id: "sprite-window",
+    go: "http://127.0.0.1:8900/", title: "watch the race" },
+  { piece: "corkboard", x: 228, y: 12,  layer: "back", id: "sprite-cork",
+    go: "chart.html", title: "the evidence" },
+
+  { piece: "cabinet",   x: 288, y: 100, layer: "back", go: "cabinet.html",
+    title: "the docket", id: "sprite-cabinet" },
+
+  // the centrepiece
+  { piece: "desk",      x: 114, y: 140, layer: "front" },   // 114..282
+  { piece: "lamp",      x: 116, y: 92,  layer: "front" },   //  92 + 48 = 140
+  // Clear of the clerk at 174..222: his arms show at the top of the desk line
+  // and the mug was sitting on his right hand.
+  { piece: "mug",       x: 150, y: 123, layer: "front" },   // 123 + 17 = 140
+  { piece: "intray",    x: 234, y: 119, layer: "front",     // 119 + 21 = 140
+    go: "tape.html", title: "the tape" },
+  // In the tray's upper tier, not across its front. 118 + 11 = 129, which
+  // lands on the solid lower tier at 127.
+  { piece: "papers",    x: 240, y: 118, layer: "front", id: "sprite-papers" },
+
+  // floor, clear of everything above
+  { piece: "bigplant",  x: 38,  y: 164, layer: "front" },   // stands on the floor
+                                                            // below the bookcase plinth
+  { piece: "plant",     x: 292, y: 178, layer: "front" },   // 178 + 44 = 222
+];
+
+let OFFICE = null, CLERK = null, clerkTimer = null, clerkQueued = null;
+let REPLAY = null, replayOn = false, replayAt = [], MODE = "off";
+let LASTSTATE = "dormant", LASTVERDICT = null;
+
+// ---- building the room --------------------------------------------------
+
+function place(meta, spec, stage){
+  const b = meta.pieces[spec.piece];
+  const el = document.createElement("div");
+  el.className = "sprite" + (spec.go ? " clickable" : "");
+  if (spec.go){
+    el.onmouseenter = () => clerkState("watching", false);
+    el.onmouseleave = () => clerkState(LASTSTATE, false);
+  }
+  if (spec.id) el.id = spec.id;
+  el.style.cssText = `left:${spec.x * PX}px; top:${spec.y * PX}px;
+    width:${b.w * PX}px; height:${b.h * PX}px;
+    background-image:url("sprites/office.png");
+    background-size:${meta.sheet.w * PX}px ${meta.sheet.h * PX}px;
+    background-position:-${b.x * PX}px -${b.y * PX}px;`;
+  if (spec.go){
+    el.title = spec.title || "";
+    el.onclick = () => location.href = spec.go;
+  }
+  stage.appendChild(el);
+  return el;
+}
+
+function mountClerk(meta, stage){
+  const el = document.createElement("div");
+  el.className = "sprite";
+  el.id = "clerk";
+  // Centred behind the desk (140..288) and in front of the chair at 183.
+  el.style.cssText = `left:${174 * PX}px; top:${(ROOM.deskTop - ROOM.clerkCut) * PX}px;
+    width:${meta.frame.w * PX}px; height:${meta.frame.h * PX}px;
+    background-image:url("sprites/clerk.png");
+    background-size:auto ${meta.frame.h * PX}px;`;
+  // No z-index. The clerk had one and the desk did not, so he painted OVER the
+  // furniture and no amount of moving him down could make him look seated -
+  // the occlusion that sells it was never happening.
+  stage.appendChild(el);
+}
+
+function clerkState(state, remember = true){
+  if (!CLERK || !CLERK.meta.states[state]) return;
+  if (remember) LASTSTATE = state;
+  // A queued follow-up belongs to an older event. On reconnect the history
+  // replays in milliseconds and a stale "then file it" would land after the
+  // latest verdict and contradict it.
+  clearTimeout(clerkQueued); clerkQueued = null;
+  const el = document.getElementById("clerk");
+  const frames = CLERK.meta.states[state], ms = CLERK.meta.timing[state];
+  const loop = CLERK.meta.loop[state];
+  let i = 0;
+  const show = () => el.style.backgroundPosition =
+    `-${frames[i] * CLERK.meta.frame.w * PX}px 0`;
+  clearInterval(clerkTimer); show();
+  if (frames.length < 2) return;
+  clerkTimer = setInterval(() => {
+    i++;
+    if (i >= frames.length){
+      if (!loop){ clearInterval(clerkTimer); i = frames.length - 1; show(); return; }
+      i = 0;
+    }
+    show();
+  }, ms);
+}
+
+// ---- data drawn into the furniture, without words -----------------------
+
+function pipsAt(stage, x, y, n, id){
+  const el = document.createElement("div");
+  el.className = "pips" + (n ? "" : " none");
+  el.id = id;
+  el.style.cssText = `left:${x * PX}px; top:${y * PX}px;`;
+  el.innerHTML = (n ? Array(Math.min(n, 8)).fill("<i></i>").join("") : "<i></i>");
+  stage.appendChild(el);
+}
+
+const POOL = {
+  idle:    "rgba(240,180,78,.30)",
+  reading: "rgba(240,180,78,.40)",
+  halt:    "rgba(224,107,99,.42)",
+  cleared: "rgba(95,193,138,.38)",
+  off:     "rgba(0,0,0,0)",
+};
+function lampColour(kind){
+  const pool = document.getElementById("pool");
+  if (pool) pool.style.background =
+    `radial-gradient(ellipse at 50% 45%, ${POOL[kind] || POOL.idle} 0%, rgba(0,0,0,0) 72%)`;
+}
+
+// ---- the stream ---------------------------------------------------------
+
+let stream = null, sawAnything = false;
+
+function setStatus(kind, text){
+  const s = document.getElementById("status");
+  s.className = "status" + (kind ? " " + kind : "");
+  document.getElementById("statustext").textContent = text;
+}
+
+function connect(){
+  if (stream) return;
+  try { stream = new EventSource(SERVICE + "/v1/events"); } catch { return offline(); }
+  stream.onopen = () => { setStatus("live", "watching"); clerkState("watching"); lampColour("idle"); };
+  stream.onerror = () => {
+    stream.close(); stream = null; offline();
+    setTimeout(connect, replayOn ? 30000 : 4000);
+  };
+  stream.onmessage = (e) => {
+    let ev; try { ev = JSON.parse(e.data); } catch { return; }
+    stopReplay();                 // a real session outranks the recording
+    MODE = "live";
+    handle(ev);
+  };
+}
+
+// Every event takes the same path whether it arrived down the wire or out of
+// the recording, so the replay cannot drift from the live view.
+function handle(ev){
+  if (ev.kind === "watch.start"){
+    say("live", "watching " + (ev.repo || "").split(/[\\/]/).pop());
+    clerkState("watching");
+  }
+  if (ev.kind === "sitting") sitting(ev);
+  if (ev.kind === "recovered"){
+    document.getElementById("halt").classList.remove("on");
+    showLast();
+    clerkState("cleared"); lampColour("cleared");
+    clerkQueued = setTimeout(() => clerkState("filing"), 700);
+    say("live", "cleared");
+  }
+}
+
+// The pill never claims to be live when it is playing a recording.
+function say(kind, text){
+  if (MODE === "replay") return setStatus("replay", "replay · " + text);
+  setStatus(kind, text);
+}
+
+function offline(){
+  if (REPLAY && (REPLAY.events || []).length){ MODE = "replay"; return startReplay(); }
+  MODE = "off";
+  setStatus("", "no service on " + SERVICE);
+  clerkState("dormant"); lampColour("off");
+  showLast();
+  if (!sawAnything){
+    document.getElementById("seats").innerHTML = `<div class="empty">
+      <div class="big">Nobody is at the desk.</div>
+      <p>Run <code>python -m injunct watch</code> in a repository, then edit a file with
+      any agent or any editor. Every rule's decision appears here as it happens.</p></div>`;
+  }
+}
+
+// ---- the recording ------------------------------------------------------
+// A real session, captured from the same watcher this page listens to, so the
+// desk demonstrates the tool instead of reporting that nobody started one. It
+// is labelled a replay wherever it shows, and a live service stops it.
+
+function startReplay(){
+  if (replayOn) return;
+  replayOn = true;
+  const evs = REPLAY.events || [];
+  const loop = () => {
+    replayAt.forEach(clearTimeout);
+    replayAt = evs.map(ev => setTimeout(() => handle(ev), ev.t));
+    replayAt.push(setTimeout(loop, evs[evs.length - 1].t + 4600));
+  };
+  loop();
+}
+
+function stopReplay(){
+  replayOn = false;
+  replayAt.forEach(clearTimeout);
+  replayAt = [];
+}
+
+// The board carries the last verdict in the ledger whenever no card is up.
+function showLast(){
+  const el = document.getElementById("lastcard");
+  if (el && LASTVERDICT) el.classList.add("on");
+}
+
+// The desk flinches when the stamp lands on it. Runs on the stage rather than
+// the card so the whole room moves together, and it is the only shake on the
+// page - a screen where several things jolt reads as a fault, not a decision.
+let joltTimer = null;
+function jolt(after){
+  clearTimeout(joltTimer);
+  joltTimer = setTimeout(() => {
+    const st = document.querySelector(".stage");
+    if (!st) return;
+    st.classList.remove("vd-jolt"); void st.offsetWidth;
+    st.classList.add("vd-jolt");
+    setTimeout(() => st.classList.remove("vd-jolt"), 400);
+  }, after);
+}
+
+function sitting(ev){
+  sawAnything = true;
+  const seats = ev.seats || [];
+  const halted = seats.filter(s => s.verdict === "halt");
+  const skipped = seats.some(s => s.verdict === "skip");
+
+  // The paper stack appearing IS the signal that a change landed; the
+  // filenames belong in the ledger, not floating over the bricks.
+  document.getElementById("sprite-papers").style.display =
+    (ev.touched && ev.touched.length) ? "" : "none";
+
+  if (halted.length){
+    const v = halted[0];
+    document.getElementById("haltno").textContent =
+      `Holding No ${v.holding_id} · ${v.domain} · open the file`;
+    document.getElementById("halt").onclick =
+      () => location.href = `cabinet.html#${v.status || "binding"}/${v.holding_id}`;
+    document.getElementById("haltsays").textContent = v.says;
+    document.getElementById("haltwhy").textContent = v.reason || "";
+    const nx = document.getElementById("haltnext");
+    nx.textContent = v.next ? "do this next: " + v.next : "";
+    nx.style.display = v.next ? "" : "none";
+    const card = document.getElementById("halt");
+    card.classList.remove("on"); void card.offsetWidth;   // restart on a re-halt
+    card.classList.add("on");
+    document.getElementById("lastcard").classList.remove("on");
+    clerkState("halt"); lampColour("halt");
+    // The blow lands on frame 7 of the stamp arc, so the desk takes the recoil
+    // then rather than on arrival - the shake reads as caused by the stamp
+    // instead of as a separate effect happening nearby.
+    jolt(Math.round(6.5 * 70));
+    say("halt", "halted");
+  } else {
+    document.getElementById("halt").classList.remove("on");
+    showLast();
+    clerkState(skipped ? "skip" : "reading"); lampColour("reading");
+    say("live", skipped ? "a rule could not be evaluated" : "reading");
+  }
+
+  renderSeats(ev, seats, halted.length);
+}
+
+function renderSeats(ev, seats, haltCount){
+  const when = new Date((ev.at || 0) * 1000).toLocaleTimeString();
+  const tally = {};
+  seats.forEach(s => tally[s.verdict] = (tally[s.verdict] || 0) + 1);
+  document.getElementById("ledgerhead").textContent = haltCount
+    ? `${haltCount} rule${haltCount > 1 ? "s" : ""} stopped this change.`
+    : "Nothing objects.";
+  document.getElementById("ledgerhint").textContent =
+    `${when} · ${seats.length} looked · ` +
+    ["halt", "note", "skip", "clear"].filter(v => tally[v])
+      .map(v => `${tally[v]} ${v}`).join(" · ");
+
+  const order = { halt: 0, note: 1, skip: 2, clear: 3 };
+  seats.sort((a, b) => order[a.verdict] - order[b.verdict] || a.holding_id - b.holding_id);
+  // The panel deals itself out: one row every 35ms, in verdict order, so the
+  // halts land first and the eye follows the list down instead of being handed
+  // a finished block. Four steps each - light, because the card has the weight.
+  document.getElementById("seats").innerHTML = seats.map((s, i) => {
+    const to = `cabinet.html#${s.status || "binding"}/${s.holding_id}`;
+    return `
+    <div class="seat v-${s.verdict} vd-rise" style="--d:${Math.min(i, 14) * 35}ms"
+         tabindex="0" role="link" title="open holding no ${s.holding_id}"
+         onclick="location.href='${to}'"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();location.href='${to}'}">
+      <i></i>
+      <div class="who">${s.says}
+        ${s.reason ? `<div class="why">${s.reason}</div>` : ""}</div>
+      <span class="dom">${s.domain}</span>
+    </div>`;
+  }).join("");
+}
+
+const OUTCOMES = {
+  complied_pass:   "complied, and the work passed",
+  complied_fail:   "complied, and the work failed anyway",
+  overridden_pass: "overridden, and the work passed",
+  overridden_fail: "overridden, and the work failed",
+};
+
+// The most recent citation in the ledger. Real, dated, and it means the board
+// is never an empty rectangle on a page that has nothing else to show.
+function lastVerdict(d){
+  let best = null;
+  (d.holdings || []).forEach(h => (h.citations || []).forEach(c => {
+    if (!best || c.at > best.c.at) best = { h, c };
+  }));
+  if (!best) return;
+  LASTVERDICT = best;
+  const when = new Date(best.c.at * 1000).toISOString().slice(0, 10);
+  document.getElementById("lastno").textContent =
+    `last verdict · holding no ${best.h.id}`;
+  document.getElementById("lastsays").textContent = best.h.says;
+  document.getElementById("lastout").innerHTML =
+    `<b>${OUTCOMES[best.c.outcome] || best.c.outcome}</b> · ${when}`;
+  document.getElementById("lastcard").onclick =
+    () => location.href = `cabinet.html#${best.h.status}/${best.h.id}`;
+  document.getElementById("lastcard").style.cursor = "pointer";
+  if (!document.getElementById("halt").classList.contains("on")) showLast();
+}
+
+// ---- boot ---------------------------------------------------------------
+
+Promise.all([
+  fetch("sprites/office.json").then(r => r.json()),
+  fetch("sprites/clerk.json").then(r => r.json()),
+  fetch("replay.json").then(r => r.json()).catch(() => null),
+]).then(([office, clerk, replay]) => {
+  OFFICE = office; CLERK = { meta: clerk }; REPLAY = replay;
+  const stage = document.getElementById("stage");
+  stage.style.height = ROOM.h * PX + "px";
+
+  // wall and floor, tiled from single pieces of the sheet
+  const wall = document.getElementById("wall"), floorEl = document.getElementById("floor");
+  const bw = office.pieces.brick, fl = office.pieces.floor;
+  wall.style.cssText += `height:${ROOM.floorTop * PX}px;
+    background:url("sprites/brick.png") repeat;
+    background-size:${bw.w * PX}px ${bw.h * PX}px;`;
+  floorEl.style.cssText += `height:${(ROOM.h - ROOM.floorTop) * PX}px;
+    background:url("sprites/floor.png") repeat;
+    background-size:${fl.w * PX}px ${fl.h * PX}px;`;
+
+  const room = document.getElementById("room");
+  room.style.width = ROOM.w * PX + "px";
+  document.querySelector(".ledger").style.width = ROOM.w * PX + "px";
+  room.style.height = ROOM.h * PX + "px";
+  for (const spec of LAYOUT.filter(s => s.layer === "back")) place(office, spec, room);
+  mountClerk(clerk, room);
+  for (const spec of LAYOUT.filter(s => s.layer === "front")) place(office, spec, room);
+
+  // the halt card lands on the desk, in front of the clerk
+  const desk = LAYOUT.find(l => l.piece === "desk");
+  // Pinned to the notice board, not laid across the desk. A verdict that
+  // covers the furniture it is judging hides the thing you came to look at.
+  const cork = LAYOUT.find(l => l.piece === "corkboard");
+  Object.assign(document.getElementById("halt").style, {
+    left: (cork.x + 8) * PX + "px", top: (cork.y + 9) * PX + "px",
+    width: 100 * PX + "px",
+  });
+  // lamp pool
+  const lp = LAYOUT.find(l => l.piece === "lamp");
+  Object.assign(document.getElementById("pool").style, {
+    left: (lp.x - 24) * PX + "px", top: (ROOM.deskTop - 28) * PX + "px",
+    width: 80 * PX + "px", height: 54 * PX + "px",
+  });
+  lampColour("off");
+
+  // the card the board carries when nothing is halting
+  Object.assign(document.getElementById("lastcard").style, {
+    left: (cork.x + 8) * PX + "px", top: (cork.y + 9) * PX + "px",
+    width: 100 * PX + "px",
+  });
+
+  // drawer counts as pips, so no words go on the furniture
+  fetch("data.json").then(r => r.json()).then(d => {
+    const c = d.counts || {}, cab = LAYOUT.find(l => l.piece === "cabinet");
+    [c.binding, c.persuasive, c.overruled, c.cases].forEach((n, i) =>
+      pipsAt(room, cab.x + 9, cab.y + 12 + i * 23, n || 0, "pips-" + i));
+    lastVerdict(d);
+  }).catch(() => {});
+
+  // A door to a server that is not running is worse than no door.
+  fetch("http://127.0.0.1:8900/state", { mode: "no-cors" })
+    .catch(() => {
+      const w = document.getElementById("sprite-window");
+      if (!w) return;
+      w.classList.remove("clickable");
+      w.onclick = null;
+      w.title = "the race needs `injunct demo` running";
+    });
+
+  document.getElementById("sprite-papers").style.display = "none";
+  clerkState("dormant");
+  connect();
+  // EventSource takes a moment to fail; without this the page sits dormant
+  // for four seconds before the recording starts.
+  setTimeout(() => { if (MODE === "off") offline(); }, 900);
+
+  let last = PX;
+  addEventListener("resize", () => {
+    chooseScale();
+    if (PX !== last) location.reload();   // integer rescale: rebuild cleanly
+    last = PX;
+  });
+}).catch(() => offline());
+</script>

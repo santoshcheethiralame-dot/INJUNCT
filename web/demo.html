@@ -1,0 +1,358 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Injunct - the race</title>
+<link rel="stylesheet" href="motion.css">
+<style>
+  /* The office palette, same tokens as every other page. This was the last
+     surface still in the old dark theme, which made the one screen a judge
+     actually watches look like it came from a different project. */
+  :root{
+    --board:#C9A27A;
+    --wood:#B0764C; --wood-dk:#8D4535; --wood-deep:#6E442B;
+    --paper:#FDF6E7; --paper-2:#EADDC4; --paper-3:#D3C2A4;
+    --ink:#4A382E; --ink-soft:#6B5546; --casing:#C7C2B3;
+    --phos:#5FC18A; --amber:#F0B44E; --coral:#E06B63;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--board);color:var(--ink);
+       font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;
+       -webkit-font-smoothing:antialiased}
+
+  /* The race happens in the same room as everything else: brick behind, boards
+     under foot, and the clerk standing between the two machines he is judging.
+     It was a bare page on a flat colour, which made the one screen a judge
+     actually watches look like it belonged to a different project. */
+  .stage{position:relative;min-height:100vh;overflow:hidden;
+         display:flex;flex-direction:column}
+  #wall,#floor{position:absolute;left:0;right:0;image-rendering:pixelated;z-index:0}
+  #wall{top:0;border-bottom:9px solid var(--wood)}
+  #floor{bottom:0;border-top:4px solid var(--wood-deep)}
+  .stage > header,.stage > .panes,.stage > footer{position:relative;z-index:2}
+  .panes{flex:1}
+
+  /* A strip of floor under the race, so he has somewhere to stand. Wedged
+     between the two panes he was a sliver behind them; down here he is the
+     third thing on screen and he reacts to the verdict. */
+  .yard{position:relative;z-index:2;height:150px}
+  #clerk,#plinth{position:absolute;left:50%;transform:translateX(-50%);
+                 image-rendering:pixelated;background-repeat:no-repeat;
+                 pointer-events:none}
+  #clerk{z-index:1;bottom:44px}
+  #plinth{z-index:2;bottom:0}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:18px;
+         padding:13px 24px;background:var(--paper);
+         border-bottom:4px solid var(--wood-dk);flex-wrap:wrap}
+  .wm{font:400 20px/1 Georgia,serif}
+  .wm i{color:var(--coral);font-style:normal}
+  .task{flex:1;text-align:center;min-width:260px}
+  .task b{display:block;font:400 15px/1.3 Georgia,serif;color:var(--ink)}
+  /* One plain sentence per beat. "Migration" means nothing to most of a room;
+     "the database was never told" means something to everyone in it. */
+  .task .why{font-size:12.5px;color:var(--ink-soft);margin-top:3px;
+             min-height:17px}
+  /* One clock. Both panes are judged by it, so it is the only thing here
+     allowed to be loud. */
+  .clk{font-family:ui-monospace,Consolas,monospace;font-size:22px;color:var(--ink);
+       font-variant-numeric:tabular-nums;background:var(--amber);
+       border:4px solid var(--ink);padding:2px 12px;
+       box-shadow:4px 4px 0 rgba(74,56,46,.22)}
+
+  .panes{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:22px 22px 6px}
+  .p{min-width:0;background:var(--paper);border:4px solid var(--ink);
+     box-shadow:8px 8px 0 rgba(74,56,46,.22);padding:16px 18px 18px}
+  .ph{display:flex;align-items:baseline;justify-content:space-between;
+      gap:10px;flex-wrap:wrap;margin-bottom:12px;
+      border-bottom:3px solid var(--paper-2);padding-bottom:8px}
+  .arm{font-family:ui-monospace,Consolas,monospace;font-size:10px;
+       letter-spacing:.2em;text-transform:uppercase;color:var(--ink)}
+  .meta{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;color:var(--ink-soft)}
+  /* The running app, which is the whole point: you do not have to read code
+     to see one of these go blank. */
+  iframe{width:100%;height:232px;border:4px solid var(--ink);background:var(--paper-2)}
+  .tr{font-family:ui-monospace,Consolas,monospace;font-size:11px;line-height:1.8;
+      color:var(--ink-soft);margin-top:11px;min-height:74px}
+  .tr b{color:var(--ink);font-weight:400}
+  .tr .h{color:var(--coral)}
+
+  .verd{margin-top:10px;display:inline-flex;align-items:center;gap:8px;
+        padding:5px 12px;border:3px solid var(--ink-soft);background:var(--paper-2);
+        font-family:ui-monospace,Consolas,monospace;
+        font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+  .verd.f{border-color:var(--coral);color:var(--coral);background:#FBEAE7}
+  .verd.p{border-color:#3E8F63;color:#2F7A50;background:#E9F7EF}
+  .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+
+  /* Every rule that looked, on BOTH sides, because the emptiness on the left
+     is the argument. Twenty-two lines of text buried the card; a dot each says
+     the same thing in one glance and leaves the card room to land. */
+  .panel{margin-top:12px;border-top:3px solid var(--paper-2);padding-top:10px;
+         min-height:74px}
+  .panel .hd{font-family:ui-monospace,Consolas,monospace;font-size:9px;
+             letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);
+             margin-bottom:8px}
+  .panel .hd b{font-weight:400;color:var(--ink)}
+  .panel .hd em{font-style:normal;color:var(--coral)}
+  .dots{display:flex;flex-wrap:wrap;gap:4px}
+  .dots i{width:13px;height:13px;border:2px solid var(--ink);
+          background:var(--paper-2);cursor:default}
+  .dots i.v-clear{background:var(--phos)}
+  .dots i.v-note{background:var(--amber)}
+  .dots i.v-halt{background:var(--coral);
+                 box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--coral)}
+  .panel .none{font:400 13.5px/1.4 Georgia,serif;color:var(--ink-soft);
+               max-width:34ch}
+  .panel .fired{margin-top:9px;font-family:ui-monospace,Consolas,monospace;
+                font-size:10.5px;color:var(--coral)}
+
+  /* The same halt card as the desk: manila tab, ruled paper, hard shadow. */
+  .halt{position:relative;margin-top:20px;background:var(--paper);
+        border:4px solid var(--ink);padding:14px 16px 15px;
+        box-shadow:7px 7px 0 rgba(74,56,46,.22)}
+  .halt .tag{position:absolute;left:14px;top:-21px;padding:3px 12px;line-height:11px;
+             background:var(--coral);color:var(--paper);border:4px solid var(--ink);
+             border-bottom:none;font-family:ui-monospace,Consolas,monospace;
+             font-size:9px;letter-spacing:.18em;text-transform:uppercase}
+  .halt .say{font:400 17px/1.35 Georgia,serif;margin:4px 0 10px}
+  .halt .rule{display:inline-block;font-family:ui-monospace,Consolas,monospace;
+              font-size:11px;color:var(--ink-soft);background:var(--paper-2);
+              border:2px solid var(--paper-3);padding:5px 9px;margin-bottom:11px}
+  .rc{display:flex;gap:16px;flex-wrap:wrap;font-family:ui-monospace,Consolas,monospace;
+      font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  .rc b{display:block;font:400 15px/1.2 Georgia,serif;color:var(--ink);
+        margin-top:3px;letter-spacing:0;text-transform:none}
+  .rc .g{color:#2F7A50}
+
+  footer{display:flex;justify-content:space-between;align-items:center;gap:14px;
+         flex-wrap:wrap;padding:12px 24px;background:var(--paper);
+         border-top:4px solid var(--wood-dk);
+         font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+         letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  footer b{color:var(--ink);font-weight:400}
+  button{font-family:ui-monospace,Consolas,monospace;font-size:10.5px;
+         letter-spacing:.14em;text-transform:uppercase;color:var(--ink);
+         background:var(--paper);border:4px solid var(--ink);
+         box-shadow:4px 4px 0 rgba(74,56,46,.22);
+         padding:7px 14px;cursor:pointer;margin-left:8px}
+  button:hover{color:var(--coral)}
+  button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(74,56,46,.22)}
+
+  @media (max-width:760px){.panes{grid-template-columns:1fr}}
+</style>
+
+<div class="stage">
+<div id="wall"></div>
+<div id="floor"></div>
+<header>
+  <div class="wm">Injunct<i>.</i></div>
+  <div class="task"><b id="task"></b><div class="why" id="why"></div></div>
+  <div class="clk" id="clk">00:00</div>
+</header>
+
+<div class="panes">
+  <div class="p">
+    <div class="ph"><div class="arm">Without memory</div><div class="meta">arm A &middot; ledger off</div></div>
+    <iframe id="fa" scrolling="no" src="http://127.0.0.1:8901/"></iframe>
+    <div class="tr" id="ta"></div>
+    <div class="panel">
+      <div class="hd">nothing is watching this change</div>
+      <div class="none">No ledger, so no rule looks at anything. Every mistake
+        here is a first mistake, every time.</div>
+    </div>
+    <div class="verd" id="va"><span class="dot"></span>running</div>
+  </div>
+  <div class="p">
+    <div class="ph"><div class="arm">With Injunct</div><div class="meta">arm C &middot; ledger on</div></div>
+    <iframe id="fc" scrolling="no" src="http://127.0.0.1:8902/"></iframe>
+    <div class="tr" id="tc"></div>
+    <div class="panel" id="seats"></div>
+    <div id="card"></div>
+    <div class="verd" id="vc"><span class="dot"></span>running</div>
+  </div>
+</div>
+
+<div class="yard">
+  <div id="plinth"></div>
+  <div id="clerk"></div>
+</div>
+
+<footer>
+  <span id="ledger">LEDGER</span>
+  <span><button onclick="play()">Play</button><button onclick="step()">Step</button><button onclick="reset()">Reset</button></span>
+</footer>
+</div>
+
+<script>
+var t0 = Date.now(), playing = null;
+
+// ---- the room ----------------------------------------------------------
+// Wall, floor and the clerk, at the same integer scale as every other page.
+// He is a readout, not a mascot: he watches while it runs, halts when the gate
+// fires, and files once the right-hand agent has fixed it.
+
+var PX = 3, CLERK = null, clerkTimer = null;
+
+function mountRoom(){
+  Promise.all([
+    fetch("sprites/office.json").then(function(r){ return r.json(); }),
+    fetch("sprites/clerk.json").then(function(r){ return r.json(); })
+  ]).then(function(res){
+    var office = res[0]; CLERK = res[1];
+    var bw = office.pieces.brick, fl = office.pieces.floor, FLOOR = 42;
+    document.getElementById("wall").style.cssText +=
+      "bottom:" + (FLOOR * PX) + "px; background:url('sprites/brick.png') repeat;" +
+      "background-size:" + (bw.w * PX) + "px " + (bw.h * PX) + "px;";
+    document.getElementById("floor").style.cssText +=
+      "height:" + (FLOOR * PX) + "px; background:url('sprites/floor.png') repeat;" +
+      "background-size:" + (fl.w * PX) + "px " + (fl.h * PX) + "px;";
+
+    var d = office.pieces.desk;
+    document.getElementById("plinth").style.cssText +=
+      "width:" + (d.w * PX) + "px;" +
+      "height:" + (d.h * PX) + "px; background-image:url('sprites/office.png');" +
+      "background-size:" + (office.sheet.w * PX) + "px " + (office.sheet.h * PX) + "px;" +
+      "background-position:-" + (d.x * PX) + "px -" + (d.y * PX) + "px;";
+
+    var f = CLERK.frame;
+    document.getElementById("clerk").style.cssText +=
+      "width:" + (f.w * PX) + "px;" +
+      "height:" + (f.h * PX) + "px; background-image:url('sprites/clerk.png');" +
+      "background-size:auto " + (f.h * PX) + "px;";
+    clerkState("watching");
+  }).catch(function(){ /* no sprites: the race still runs */ });
+}
+
+function clerkState(state){
+  if (!CLERK || !CLERK.states[state]) return;
+  var el = document.getElementById("clerk");
+  var frames = CLERK.states[state], ms = CLERK.timing[state], loop = CLERK.loop[state];
+  var i = 0;
+  var show = function(){
+    el.style.backgroundPosition = "-" + (frames[i] * CLERK.frame.w * PX) + "px 0";
+  };
+  clearInterval(clerkTimer); show();
+  if (frames.length < 2) return;
+  clerkTimer = setInterval(function(){
+    i++;
+    if (i >= frames.length){
+      if (!loop){ clearInterval(clerkTimer); i = frames.length - 1; show(); return; }
+      i = 0;
+    }
+    show();
+  }, ms);
+}
+
+mountRoom();
+
+setInterval(function(){
+  var s = Math.floor((Date.now() - t0) / 1000);
+  document.getElementById("clk").textContent =
+    String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+}, 200);
+
+function reloadApps(){
+  ["fa", "fc"].forEach(function(id){
+    var f = document.getElementById(id);
+    f.src = f.src.split("?")[0] + "?t=" + Date.now();
+  });
+}
+
+function trace(el, lines){
+  el.innerHTML = lines.map(function(l){
+    return l.indexOf("HALTED") > -1
+      ? "<div><b>" + l.replace("HALTED", "") + "</b><span class=\"h\">HALTED</span></div>"
+      : "<div><b>" + l + "</b></div>";
+  }).join("");
+}
+
+function mark(id, ok){
+  var el = document.getElementById(id);
+  el.className = "verd " + (ok ? "p" : "f");
+  el.innerHTML = "<span class=\"dot\"></span>" + (ok ? "app still standing" : "app is down");
+}
+
+function render(s){
+  document.getElementById("task").textContent = s.task;
+  document.getElementById("why").textContent = s.why || "";
+  trace(document.getElementById("ta"), s.trace.A);
+  trace(document.getElementById("tc"), s.trace.C);
+  var c = s.counts || {};
+  document.getElementById("ledger").innerHTML =
+    "LEDGER &middot; " + (c.cases || 0) + " CASES &middot; <b>" + (c.binding || 0) +
+    " BINDING</b> &middot; " + (c.persuasive || 0) + " ADVISORY &middot; " +
+    (c.overruled || 0) + " OVERRULED";
+
+  var seats = s.seats || [];
+  var halted = seats.filter(function(x){ return x.verdict === "halt"; });
+  var cleared = seats.length - halted.length;
+  document.getElementById("seats").innerHTML = seats.length
+    ? "<div class=\"hd\"><b>" + seats.length + "</b> rules looked &middot; <b>" +
+        cleared + "</b> said fine" +
+        (halted.length ? " &middot; <em>" + halted.length + " stopped it</em>" : "") +
+      "</div><div class=\"dots\">" +
+      seats.map(function(x){
+        return "<i class=\"v-" + x.verdict + "\" title=\"No " + x.n + " - " +
+               x.says.replace(/"/g, "") + "\"></i>";
+      }).join("") + "</div>" +
+      (halted.length ? "<div class=\"fired\">No " + halted[0].n + " &middot; " +
+        halted[0].domain + "</div>" : "")
+    : "";
+
+  if (s.blocked){
+    var b = s.blocked, e = b.empanel || {};
+    document.getElementById("card").innerHTML =
+      "<div class=\"halt\"><div class=\"tag\">HALT &middot; BINDING HOLDING No " + b.n +
+      " &middot; " + b.when + "</div><div class=\"say\">" + b.says + "</div>" +
+      "<div class=\"rule\">" + b.rule + "</div><div class=\"rc\">" +
+      "<div>EMPANELLED<b class=\"g\">" + (e.fire || "-") + " fire &middot; " + (e["false"] || "-") + " false</b></div>" +
+      "<div>CITED<b>" + b.cited + " times</b></div>" +
+      "<div>OVERRULED<b>never</b></div></div></div>";
+    clerkState("halt");
+  }
+
+  if (s.step >= s.total){
+    var v = s.verdict || {};
+    mark("va", !!v.A);
+    mark("vc", !!v.C);
+    // The gate fired and the work still landed, so the citation gets filed.
+    clerkState(v.C ? "filing" : "skip");
+    if (playing){ clearInterval(playing); playing = null; }
+  } else if (!s.blocked){
+    clerkState(s.step ? "reading" : "watching");
+  }
+  reloadApps();
+}
+
+function step(){ return fetch("/step").then(function(r){ return r.json(); }).then(render); }
+
+function reset(){
+  return fetch("/reset").then(function(r){ return r.json(); }).then(function(s){
+    t0 = Date.now();
+    ["va", "vc"].forEach(function(i){
+      var e = document.getElementById(i);
+      e.className = "verd";
+      e.innerHTML = "<span class=\"dot\"></span>running";
+    });
+    document.getElementById("card").innerHTML = "";
+    clerkState("watching");
+    render(s);
+  });
+}
+
+// Press play on a finished run and it plays again.
+//
+// It used to start an interval, ask the server for the next step, get back
+// "finished" because the state lives on the server and the previous run had
+// already reached the end, and re-render the same frame. Nothing moved and
+// nothing said why - which reads exactly like a dead button.
+function play(){
+  if (playing) return;
+  var go = function(){ playing = setInterval(step, 2400); step(); };
+  fetch("/state").then(function(r){ return r.json(); }).then(function(s){
+    if (s.step >= s.total) return reset().then(go);
+    go();
+  }).catch(go);
+}
+
+fetch("/state").then(function(r){ return r.json(); }).then(render);
+</script>

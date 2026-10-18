@@ -1,0 +1,323 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Injunct — the tape</title>
+<link rel="stylesheet" href="motion.css">
+<style>
+  :root{
+    --mortar:#E8DCCA; --board:#C9A27A;
+    --wood:#B0764C; --wood-dk:#8D4535; --wood-deep:#6E442B;
+    --paper:#FDF6E7; --paper-2:#EADDC4; --paper-3:#D3C2A4;
+    --ink:#4A382E; --ink-soft:#6B5546;
+    --phos:#5FC18A; --amber:#F0B44E; --coral:#E06B63;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--board);color:var(--ink);
+       font:14px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif;
+       -webkit-font-smoothing:antialiased}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+         padding:13px 24px;background:var(--paper);
+         border-bottom:4px solid var(--wood-dk);flex-wrap:wrap}
+  .wm{font:400 20px/1 Georgia,serif}
+  .wm b{color:var(--coral);font-weight:400}
+  .back{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+        letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+        text-decoration:none;border-bottom:2px solid var(--wood)}
+  .back:hover{color:var(--coral)}
+
+  .stage{position:relative;width:100%;overflow:hidden;padding:30px 22px 44px}
+  #wall,#floor{position:absolute;left:0;right:0;image-rendering:pixelated}
+  #wall{top:0;border-bottom:9px solid var(--wood)}
+  #floor{bottom:0;border-top:4px solid var(--wood-deep)}
+
+  .rig{position:relative;z-index:1;width:max-content;max-width:100%;margin:0 auto}
+  #printer{image-rendering:pixelated;background-repeat:no-repeat;margin:0 auto -6px;
+           display:block}
+
+  /* Continuous stationery: sprocket margins down both edges, perforated off
+     the printer above it. The holes are CSS - a sprite would have to know how
+     tall the strip is, and the strip is as tall as the data. */
+  .strip{position:relative;background:var(--paper);border:4px solid var(--ink);
+         padding:26px 52px 30px;box-shadow:10px 10px 0 rgba(74,56,46,.22)}
+  .sprocket{position:absolute;top:0;bottom:0;width:32px;
+            background-image:radial-gradient(circle at 16px 12px,
+              var(--wood-deep) 4.5px, transparent 5px);
+            background-size:32px 24px}
+  .sprocket.l{left:0;border-right:3px dashed var(--paper-3)}
+  .sprocket.r{right:0;border-left:3px dashed var(--paper-3)}
+
+  h1{font:400 27px/1.2 Georgia,serif;margin:0 0 3px}
+  .stand{font-family:ui-monospace,Consolas,monospace;font-size:10.5px;
+         letter-spacing:.15em;text-transform:uppercase;color:var(--ink-soft);
+         margin:0 0 16px}
+  .lede{font:400 16.5px/1.45 Georgia,serif;margin:0 0 22px;max-width:64ch}
+  .lede b{font-weight:400;color:var(--coral)}
+
+  /* The head to head. Two arms of coloured squares side by side read as
+     "both are noisy"; the same data asked "who won this task" reads as what
+     it is, which is 34 to 9. Nothing is recomputed - it is the same rows. */
+  .score{display:flex;flex-wrap:wrap;align-items:flex-end;gap:26px;
+         margin:0 0 24px;padding:16px 18px;background:var(--paper-2);
+         border:3px solid var(--paper-3)}
+  .score .big{font:400 40px/1 Georgia,serif}
+  .score .big em{font-style:normal;color:#2F7A50}
+  .score .big s{text-decoration:none;color:var(--coral)}
+  .score .who{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+              letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+              margin-top:5px}
+  .score .said{flex:1 1 240px;font:400 15px/1.4 Georgia,serif;min-width:200px}
+
+  .arm{margin-bottom:22px;overflow-x:auto}
+  .arm.h2h .m.win{background:var(--phos)}
+  .arm.h2h .m.loss{background:var(--coral)}
+  .arm.h2h .m.tie{background:var(--paper);border-color:var(--paper-3)}
+  .armhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+           border-bottom:3px solid var(--paper-2);padding-bottom:6px;margin-bottom:10px}
+  .armhead b{font:400 20px/1 Georgia,serif}
+  .armhead .what{font-size:13.5px;color:var(--ink-soft)}
+  .armhead .n{margin-left:auto;font-family:ui-monospace,Consolas,monospace;
+              font-size:11.5px;letter-spacing:.1em;color:var(--ink)}
+
+  .row{display:flex;align-items:center;gap:12px;margin-bottom:3px}
+  .row > i{font-style:normal;font-family:ui-monospace,Consolas,monospace;
+         font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+         color:var(--ink-soft);width:52px;text-align:right;flex:0 0 auto}
+  .cells{display:flex;gap:3px}
+  .m{width:16px;height:16px;border:2px solid var(--ink);flex:0 0 auto;
+     background:var(--paper-2)}
+  .m.pass{background:var(--phos)}
+  .m.fail{background:var(--coral)}
+  /* A ring means the gate fired on this run. A green ring is the whole
+     argument in one mark: it was stopped, and the work landed anyway. */
+  .m.blocked{box-shadow:inset 0 0 0 3px var(--paper)}
+  .m.off{background:var(--paper-2);box-shadow:none;border-color:var(--paper-3)}
+
+  .trend{display:flex;flex-wrap:wrap;gap:14px;margin:20px 0 0;
+         border-top:3px solid var(--paper-2);padding-top:16px}
+  .trend div{flex:1 1 190px}
+  .trend b{display:block;font:400 20px/1.15 Georgia,serif}
+  .trend span{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+              letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;
+          font-size:12.5px;color:var(--ink-soft);align-items:center}
+  .legend span{display:flex;align-items:center;gap:7px}
+  .legend .m{width:13px;height:13px}
+
+  .run{margin-top:20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .run button{font-family:ui-monospace,Consolas,monospace;font-size:10.5px;
+        letter-spacing:.14em;text-transform:uppercase;color:var(--ink);
+        padding:9px 16px;background:var(--paper);border:4px solid var(--ink);
+        box-shadow:5px 5px 0 rgba(74,56,46,.22);cursor:pointer}
+  .run button:hover{color:var(--coral)}
+  .run button:active{transform:translate(2px,2px);box-shadow:3px 3px 0 rgba(74,56,46,.22)}
+  .run .clock{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;
+              letter-spacing:.1em;color:var(--ink-soft)}
+
+  .foot{position:relative;z-index:1;width:max-content;max-width:100%;
+        margin:32px auto 0;font-family:ui-monospace,Consolas,monospace;
+        font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+        color:var(--wood-deep)}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header>
+  <div class="wm">Injunct<b>.</b></div>
+  <span style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+    <a class="back" href="chart.html">see the evidence →</a>
+    <a class="back" href="desk.html">&larr; back to the desk</a>
+  </span>
+</header>
+
+<div class="stage" id="stage">
+  <div id="wall"></div>
+  <div id="floor"></div>
+
+  <div class="rig">
+    <div id="printer"></div>
+    <div class="strip">
+      <div class="sprocket l"></div><div class="sprocket r"></div>
+      <h1>The tape</h1>
+      <p class="stand" id="stand"></p>
+      <p class="lede" id="lede"></p>
+      <div class="score" id="score"></div>
+      <div id="arms"></div>
+      <div class="trend" id="trend"></div>
+      <div class="legend">
+        <span><i class="m pass"></i> passed</span>
+        <span><i class="m fail"></i> failed</span>
+        <span><i class="m pass blocked"></i> the gate fired, and it passed anyway</span>
+        <span>each row is one seed &middot; left to right is the order the tasks ran</span>
+      </div>
+      <div class="run">
+        <button id="play">run the tape</button>
+        <span class="clock" id="clock"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const PX = 3, FLOOR = 58, PER_SEED = 30;
+const ARMS = [["A", "no memory"], ["C", "binding gates"]];
+
+let TAPE = null, N = 0, timer = null;
+
+const pct = v => Math.round(v * 100) + "%";
+
+// Pass rate over the first and last third of a seed's run. Arm C climbs
+// because precedents establish part way through; arm A has nothing to
+// accumulate, so it does not. That difference is the page.
+function trend(rows, from, to){
+  let hit = 0, n = 0;
+  rows.forEach((r, i) => {
+    const k = i % PER_SEED;
+    if (k >= from && k < to){ n++; hit += r.p; }
+  });
+  return n ? hit / n : 0;
+}
+
+// Same 150 tasks, run twice. Who actually won each one?
+function headToHead(){
+  const a = TAPE.A || [], c = TAPE.C || [];
+  const marks = a.map((x, i) => {
+    const y = c[i] || {};
+    if (y.p && !x.p) return "win";
+    if (x.p && !y.p) return "loss";
+    return "tie";
+  });
+  const won = marks.filter(m => m === "win").length;
+  const lost = marks.filter(m => m === "loss").length;
+
+  document.getElementById("score").innerHTML = `
+    <div><div class="big"><em>${won}</em> &ndash; <s>${lost}</s></div>
+      <div class="who">tasks the gate won, and lost</div></div>
+    <div class="said">Every task was run twice, and on ${won + lost} of them the
+      two arms disagreed. The gated agent took <b>${won}</b> of those.</div>`;
+
+  let rows = "";
+  const seeds = Math.ceil(marks.length / PER_SEED);
+  for (let s = 0; s < seeds; s++){
+    rows += `<div class="row"><i>seed ${s + 1}</i><div class="cells">` +
+      marks.slice(s * PER_SEED, (s + 1) * PER_SEED).map((m, k) => {
+        const i = s * PER_SEED + k;
+        const t = m === "win" ? "the gate won this one"
+                : m === "loss" ? "the gate lost this one" : "both arms agreed";
+        return `<i class="m ${m}" title="${(a[i] || {}).task || ""} - ${t}"></i>`;
+      }).join("") + `</div></div>`;
+  }
+  return `<div class="arm h2h"><div class="armhead"><b>A vs C</b>
+    <span class="what">who won each task</span>
+    <span class="n">${won} won &middot; ${lost} lost &middot; ${
+      marks.length - won - lost} drawn</span></div>${rows}</div>`;
+}
+
+function build(){
+  document.getElementById("arms").innerHTML = ARMS.map(([arm, what]) => {
+    const rows = TAPE[arm] || [];
+    const seeds = Math.ceil(rows.length / PER_SEED);
+    let cells = "";
+    for (let s = 0; s < seeds; s++){
+      const slice = rows.slice(s * PER_SEED, (s + 1) * PER_SEED);
+      cells += `<div class="row"><i>seed ${s + 1}</i><div class="cells">` +
+        slice.map((r, k) => `<i class="m ${r.p ? "pass" : "fail"}${
+          r.b ? " blocked" : ""}" data-i="${s * PER_SEED + k}" data-arm="${arm}"
+          title="${r.task}${r.t ? " · trap: " + r.t : " · no trap"}${
+          r.b ? " · blocked" : ""} · ${r.p ? "passed" : "failed"}"></i>`).join("") +
+        `</div></div>`;
+    }
+    return `<div class="arm"><div class="armhead"><b>${arm}</b>
+      <span class="what">${what}</span>
+      <span class="n" id="n-${arm}"></span></div>${cells}</div>`;
+  }).join("") + headToHead();
+  tally(N);
+
+  const t = ARMS.map(([arm]) => {
+    const rows = TAPE[arm] || [];
+    return `<div><b>${pct(trend(rows, 0, 10))} &rarr; ${pct(trend(rows, 20, 30))}</b>
+      <span>arm ${arm} &middot; first ten tasks of a seed, then the last ten</span></div>`;
+  }).join("");
+  document.getElementById("trend").innerHTML = t;
+}
+
+// How many marks are showing, and what they add up to so far.
+function tally(upto){
+  ARMS.forEach(([arm]) => {
+    const rows = (TAPE[arm] || []).slice(0, upto);
+    const passed = rows.reduce((n, r) => n + r.p, 0);
+    const el = document.getElementById("n-" + arm);
+    if (el) el.textContent = `${passed} / ${rows.length} passed`;
+  });
+  document.querySelectorAll(".m[data-i]").forEach(el => {
+    el.classList.toggle("off", Number(el.dataset.i) >= upto);
+  });
+  const total = (TAPE.A || []).length;
+  document.getElementById("clock").textContent =
+    upto >= total ? `${total} runs, both arms` : `run ${upto} of ${total}`;
+}
+
+function play(){
+  if (timer){ stop(); return; }
+  N = 0; tally(0);
+  document.getElementById("play").textContent = "stop";
+  timer = setInterval(() => {
+    N += 1;
+    tally(N);
+    if (N >= (TAPE.A || []).length) stop();
+  }, 22);
+}
+function stop(){
+  clearInterval(timer); timer = null;
+  document.getElementById("play").textContent = "run it again";
+}
+
+document.getElementById("play").onclick = play;
+
+Promise.all([
+  fetch("report.json").then(r => r.json()).catch(() => null),
+  fetch("sprites/office.json").then(r => r.json()),
+]).then(([rep, office]) => {
+  const strip = document.querySelector(".strip");
+  if (!rep || !rep.tape || !rep.tape.A || !rep.tape.A.length){
+    strip.innerHTML = `<h1>The tape is empty.</h1>
+      <p class="lede">Run <code>python -m injunct bench --arms A,C
+      --seeds 1,2,3,4,5</code>, then <code>python -m injunct board</code>
+      to dump it, and reload.</p>`;
+    return;
+  }
+  TAPE = rep.tape;
+  N = TAPE.A.length;
+
+  document.getElementById("stand").textContent =
+    `${rep.runs} runs · ${rep.tasks} tasks · ${rep.seeds.length} seeds · ` +
+    `agent=${rep.agent} · ${rep.generated}`;
+
+  const a = rep.metrics.A, c = rep.metrics.C;
+  document.getElementById("lede").innerHTML =
+    `Every task run twice - same seed, same order, once with no memory and once
+     with binding gates. <b>${pct(c.pass_rate)} against ${pct(a.pass_rate)}
+     overall</b>, and the gated arm gets better as it goes while the other one
+     cannot: arm C greens toward the right of every row, because the precedents
+     that stop it were established earlier in that same run.`;
+  build();
+
+  document.getElementById("foot").textContent = "source: bench/report.json";
+
+  const b = office.pieces.printer, sh = office.sheet;
+  document.getElementById("printer").style.cssText =
+    `width:${b.w * PX}px; height:${b.h * PX}px;
+     background-image:url("sprites/office.png");
+     background-size:${sh.w * PX}px ${sh.h * PX}px;
+     background-position:-${b.x * PX}px -${b.y * PX}px;`;
+  const bw = office.pieces.brick, fl = office.pieces.floor;
+  document.getElementById("wall").style.cssText +=
+    `bottom:${FLOOR * PX}px; background:url("sprites/brick.png") repeat;
+     background-size:${bw.w * PX}px ${bw.h * PX}px;`;
+  document.getElementById("floor").style.cssText +=
+    `height:${FLOOR * PX}px; background:url("sprites/floor.png") repeat;
+     background-size:${fl.w * PX}px ${fl.h * PX}px;`;
+});
+</script>

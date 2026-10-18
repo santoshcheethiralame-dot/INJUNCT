@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "injunct"
+version = "0.1.0"
+description = "A confirmed failure becomes a binding check, not a paragraph."
+readme = "README.md"
+requires-python = ">=3.12"
+# The gate, the ledger and the CLI are stdlib only, on purpose: the thing that
+# blocks a write has to install anywhere without argument.
+dependencies = []
+
+[project.optional-dependencies]
+# Only the sprite generator needs these, and only when regenerating the art.
+art = ["pillow>=10"]
+
+[project.scripts]
+injunct = "injunct.__main__:main"
+
+[tool.setuptools]
+packages = ["injunct", "injunct.art", "injunct.bench"]

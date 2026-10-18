@@ -1,0 +1,5705 @@
+{
+  "generated": "2026-09-10 03:47",
+  "agent": "synthetic",
+  "p_recall": 0.5,
+  "arms": [
+    "A",
+    "C"
+  ],
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "tasks": 30,
+  "runs": 300,
+  "seconds": 154.3,
+  "metrics": {
+    "A": {
+      "runs": 150,
+      "pass_rate": 0.5333,
+      "trap_pass_rate": 0.3913,
+      "repeat_failure_rate": 0.5814,
+      "repeat_seen": 86,
+      "false_positive_rate": 0.0,
+      "blocks": 0
+    },
+    "C": {
+      "runs": 150,
+      "pass_rate": 0.74,
+      "trap_pass_rate": 0.6609,
+      "repeat_failure_rate": 0.2209,
+      "repeat_seen": 86,
+      "false_positive_rate": 0.0857,
+      "blocks": 87
+    }
+  },
+  "by_trap": {
+    "handedit_generated": {
+      "A": 0.3333,
+      "C": 0.4
+    },
+    "plugin_without_declaration": {
+      "A": 0.25,
+      "C": 0.525
+    },
+    "schema_without_migration": {
+      "A": 0.575,
+      "C": 0.875
+    },
+    "types_without_regen": {
+      "A": 0.35,
+      "C": 0.7
+    }
+  },
+  "curve": {
+    "A": [
+      {
+        "from": 0,
+        "to": 5,
+        "n": 23,
+        "pass_rate": 0.3043
+      },
+      {
+        "from": 6,
+        "to": 11,
+        "n": 24,
+        "pass_rate": 0.4583
+      },
+      {
+        "from": 12,
+        "to": 17,
+        "n": 20,
+        "pass_rate": 0.45
+      },
+      {
+        "from": 18,
+        "to": 23,
+        "n": 25,
+        "pass_rate": 0.44
+      },
+      {
+        "from": 24,
+        "to": 29,
+        "n": 23,
+        "pass_rate": 0.3043
+      }
+    ],
+    "C": [
+      {
+        "from": 0,
+        "to": 5,
+        "n": 23,
+        "pass_rate": 0.3043
+      },
+      {
+        "from": 6,
+        "to": 11,
+        "n": 24,
+        "pass_rate": 0.5417
+      },
+      {
+        "from": 12,
+        "to": 17,
+        "n": 20,
+        "pass_rate": 0.6
+      },
+      {
+        "from": 18,
+        "to": 23,
+        "n": 25,
+        "pass_rate": 0.92
+      },
+      {
+        "from": 24,
+        "to": 29,
+        "n": 23,
+        "pass_rate": 0.913
+      }
+    ]
+  },
+  "regressions": [],
+  "rows": [
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 0,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 1,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 2,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 3,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 4,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 5,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 6,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 7,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 8,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 9,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 10,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 11,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 12,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 13,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 14,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 15,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 16,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 17,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 18,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 19,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 20,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 21,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 22,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 23,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 24,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 25,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 26,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 27,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 28,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 1,
+      "order": 29,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 0,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 1,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 2,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 3,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 4,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 5,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 6,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 7,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 8,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 9,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 10,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 11,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 12,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 13,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 14,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 15,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 16,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 17,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 18,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 19,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 20,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 21,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 22,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 23,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 24,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 25,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 26,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 27,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 28,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 2,
+      "order": 29,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 0,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 1,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 2,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 3,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 4,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 5,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 6,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 7,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 8,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 9,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 10,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 11,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 12,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 13,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 14,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 15,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 16,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 17,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 18,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 19,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 20,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 21,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 22,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 23,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 24,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 25,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 26,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 27,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 28,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 3,
+      "order": 29,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 0,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 1,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 2,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 3,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 4,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 5,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 6,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 7,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 8,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 9,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 10,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 11,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 12,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 13,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 14,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 15,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 16,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 17,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 18,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 19,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 20,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 21,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 22,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 23,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 24,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 25,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 26,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 27,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 28,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 4,
+      "order": 29,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 0,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 1,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 2,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 3,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 4,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 5,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 6,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 7,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 8,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 9,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 10,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 11,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 12,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 13,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 14,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 15,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 16,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 17,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 18,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 19,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 20,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 21,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 22,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 23,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 24,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 25,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 26,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 27,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 28,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "A",
+      "seed": 5,
+      "order": 29,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 0,
+        "binding": 0,
+        "persuasive": 0,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 0,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 1,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 2,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 3,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 4,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 5,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 6,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 7,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 8,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 9,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 10,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 11,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 12,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 13,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 14,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 15,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 16,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3,
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 17,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 18,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 19,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3,
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 20,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        1,
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 21,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        1,
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 22,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 23,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 24,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 25,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3,
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 26,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3,
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 27,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 28,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 1,
+      "order": 29,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 0,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 1,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 2,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 3,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 4,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 5,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 6,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 7,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 8,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 9,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 10,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 11,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 12,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 13,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 14,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 15,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 16,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        1,
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 17,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 18,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 19,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        1,
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 20,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 21,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 22,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3,
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 23,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 24,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        4
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 25,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3,
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 26,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 27,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 28,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 2,
+      "order": 29,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 5,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 0,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 1,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 2,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 3,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 4,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 5,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 6,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 7,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 8,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 9,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 10,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 11,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 12,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 13,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 14,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 15,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 16,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 17,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 1,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 18,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 19,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        1,
+        2,
+        4,
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 20,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 21,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 22,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        1,
+        2,
+        4,
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 23,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 24,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        1,
+        2,
+        4,
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 25,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 26,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 27,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 28,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 3,
+      "order": 29,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        5
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 7,
+        "binding": 6,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 0,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 1,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 2,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 3,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 4,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 5,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 6,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 2,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 7,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 8,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 9,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 10,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 11,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 12,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 13,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 14,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 15,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 16,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 17,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 18,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 19,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 1,
+      "fired": [
+        1,
+        4,
+        5
+      ],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 20,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 21,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        1,
+        4,
+        5,
+        6,
+        8
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 22,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 23,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 24,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 25,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 1,
+      "fired": [
+        7
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 26,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        1,
+        4,
+        5,
+        8
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 27,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 28,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 4,
+      "order": 29,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        2
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 8,
+        "persuasive": 1,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 0,
+      "task": "clinic-field-allergy",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 1,
+      "task": "registry-shift_roster",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 2,
+      "task": "typegen-appointment-room",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 3,
+      "task": "clinic-field-dob",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 4,
+      "task": "clinic-copy-2",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 5,
+      "task": "clinic-copy-1",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 6,
+      "task": "registry-docs-2",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 7,
+      "task": "registry-stock_alert",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 8,
+      "task": "typegen-patient-verified",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 9,
+      "task": "typegen-patient-notes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 10,
+      "task": "registry-docs-1",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 11,
+      "task": "clinic-field-referred_by",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 12,
+      "task": "typegen-patient-balance",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 13,
+      "task": "typegen-readme",
+      "repo": "typegen",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 14,
+      "task": "registry-no_show_flag",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 15,
+      "task": "clinic-field-insurer",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 16,
+      "task": "clinic-field-last_seen",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 17,
+      "task": "clinic-field-email",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 18,
+      "task": "clinic-field-blood_group",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 19,
+      "task": "typegen-appointment-minutes",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        6
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 20,
+      "task": "clinic-field-phone_verified",
+      "repo": "clinic",
+      "trap": "schema_without_migration",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        3
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 21,
+      "task": "typegen-appointment-confirmed",
+      "repo": "typegen",
+      "trap": "types_without_regen",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        6
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 22,
+      "task": "registry-bulk_import",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 23,
+      "task": "registry-docs-0",
+      "repo": "registry",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 24,
+      "task": "registry-recall_letter",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": false,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 1,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 25,
+      "task": "registry-gst_invoice",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 26,
+      "task": "typegen-patient-email",
+      "repo": "typegen",
+      "trap": "handedit_generated",
+      "passed": true,
+      "blocked": 1,
+      "fired": [
+        6
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 27,
+      "task": "registry-waitlist",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        1,
+        4,
+        7,
+        8,
+        9
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 28,
+      "task": "clinic-copy-0",
+      "repo": "clinic",
+      "trap": "",
+      "passed": true,
+      "blocked": 0,
+      "fired": [],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    },
+    {
+      "arm": "C",
+      "seed": 5,
+      "order": 29,
+      "task": "registry-audit_log",
+      "repo": "registry",
+      "trap": "plugin_without_declaration",
+      "passed": true,
+      "blocked": 2,
+      "fired": [
+        1,
+        4,
+        7,
+        8,
+        9
+      ],
+      "skipped": 0,
+      "ledger": {
+        "cases": 9,
+        "binding": 7,
+        "persuasive": 2,
+        "overruled": 0
+      }
+    }
+  ],
+  "caveats": [
+    "The agent is synthetic: it performs each companion action with probability p_recall from a seeded generator. The SAME seed gives the SAME behaviour in every arm, so the only difference between arms is enforcement.",
+    "Arm B (prose in the system prompt) was NOT run. Its entire mechanism is whether a language model obeys a paragraph, which a synthetic agent cannot answer. No number is reported for it.",
+    "A blocked run is allowed to continue and can still pass, so a false positive costs wasted work rather than a failure.",
+    "All 3 false positives are one rule: co_change(docs/*.md -> registry.py). Empanelment did not catch it because no past successful run had ever touched docs/ alone, so the false-positive test passed vacuously. The deeper limit is that co-occurrence gives correlation, not direction - docs/ and registry.py always moved together, so the useful rule and the useless one are equally supported by the data.",
+    "handedit_generated moved from 33% to 40% once must_run existed. It is the hardest class because a hand-edit and a regeneration touch exactly the same path; only the command distinguishes them, and only where commands are visible."
+  ]
+}

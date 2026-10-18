@@ -1,0 +1,75 @@
+{
+  "recorded": "2026-09-11 08:56",
+  "repo": "clinic",
+  "source": "C:/Users/carbo/projects/hackathons/injunct/.bench/C/1/ledger.db",
+  "events": [
+    {
+      "seq": 1,
+      "at": 1789097174.2313356,
+      "kind": "watch.start",
+      "repo": "C:\\Users\\carbo\\projects\\hackathons\u000boiddire\\.bench\\C\\1\\clinic",
+      "port": 4000,
+      "t": 0
+    },
+    {
+      "seq": 2,
+      "at": 1789097174.2401912,
+      "kind": "sitting",
+      "touched": [
+        "models/patient.py"
+      ],
+      "halted": true,
+      "seats": [
+        {
+          "holding_id": 4,
+          "template": "co_change",
+          "domain": "structure",
+          "says": "Changing models/*.py means changing migrations/ too.",
+          "status": "binding",
+          "verdict": "halt",
+          "reason": "models/patient.py changed, nothing under migrations/** did",
+          "next": "create migrations/105_patient.sql",
+          "took_ms": 0
+        }
+      ],
+      "t": 2600
+    },
+    {
+      "seq": 3,
+      "at": 1789097174.2566361,
+      "kind": "sitting",
+      "touched": [
+        "migrations/105_next_visit.sql",
+        "models/patient.py"
+      ],
+      "halted": false,
+      "seats": [
+        {
+          "holding_id": 4,
+          "template": "co_change",
+          "domain": "structure",
+          "says": "Changing models/*.py means changing migrations/ too.",
+          "status": "binding",
+          "verdict": "clear",
+          "reason": "",
+          "next": "",
+          "took_ms": 0
+        }
+      ],
+      "t": 5200
+    },
+    {
+      "seq": 4,
+      "at": 1789097174.2566361,
+      "kind": "recovered",
+      "holdings": [
+        4
+      ],
+      "touched": [
+        "migrations/105_next_visit.sql",
+        "models/patient.py"
+      ],
+      "t": 7800
+    }
+  ]
+}

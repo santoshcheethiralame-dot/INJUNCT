@@ -1,0 +1,457 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Injunct — the evidence</title>
+<link rel="stylesheet" href="motion.css">
+<style>
+  :root{
+    --mortar:#E8DCCA; --board:#C9A27A;
+    --wood:#B0764C; --wood-dk:#8D4535; --wood-deep:#6E442B;
+    --paper:#FDF6E7; --paper-2:#EADDC4; --paper-3:#D3C2A4;
+    --ink:#4A382E; --ink-soft:#6B5546;
+    --casing:#C7C2B3;
+    --phos:#5FC18A; --amber:#F0B44E; --coral:#E06B63;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--board);color:var(--ink);
+       font:14px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif;
+       -webkit-font-smoothing:antialiased}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+         padding:13px 24px;background:var(--paper);
+         border-bottom:4px solid var(--wood-dk);flex-wrap:wrap}
+  .wm{font:400 20px/1 Georgia,serif}
+  .wm b{color:var(--coral);font-weight:400}
+  .back{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+        letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+        text-decoration:none;border-bottom:2px solid var(--wood)}
+  .back:hover{color:var(--coral)}
+
+  .stage{position:relative;width:100%;overflow:hidden;padding:34px 22px 44px}
+  #wall,#floor{position:absolute;left:0;right:0;image-rendering:pixelated}
+  #wall{top:0;border-bottom:9px solid var(--wood)}
+  #floor{bottom:0;border-top:4px solid var(--wood-deep)}
+  .sprite{position:absolute;image-rendering:pixelated;background-repeat:no-repeat}
+
+  .board{position:relative;z-index:1;max-width:960px;margin:0 auto}
+
+  /* Everything on this wall is a sheet of paper held up by four pins. The
+     pins are sprites; the sheets are not, because the numbers on them have
+     to stay legible at full contrast - the moment a caveat is harder to read
+     than a sprite, the design law has been broken. */
+  .sheet{position:relative;background:var(--paper);border:4px solid var(--ink);
+         box-shadow:9px 9px 0 rgba(74,56,46,.22);padding:22px 26px 18px}
+  .sheet .pin{position:absolute;width:30px;height:30px;image-rendering:pixelated;
+              background-repeat:no-repeat;background-size:30px 30px}
+  .askew{transform:rotate(-.35deg)}
+
+  h1{font:400 27px/1.2 Georgia,serif;margin:0 0 3px}
+  .stand{font-family:ui-monospace,Consolas,monospace;font-size:10.5px;
+         letter-spacing:.15em;text-transform:uppercase;color:var(--ink-soft);
+         margin:0 0 18px}
+  .lede{font:400 17px/1.45 Georgia,serif;margin:0 0 20px;max-width:62ch}
+  .lede b{font-weight:400;color:var(--coral)}
+
+  svg{display:block;width:100%;height:auto;overflow:visible}
+  .ax{stroke:var(--ink);stroke-width:2.5;fill:none}
+  .grid{stroke:var(--paper-3);stroke-width:1.5}
+  .base{stroke:var(--ink-soft);stroke-width:2.5;stroke-dasharray:7 6;fill:none}
+  .line{stroke:var(--ink);stroke-width:4;fill:none;
+        stroke-linejoin:miter;stroke-linecap:square}
+  .harm{fill:var(--coral);opacity:.17}
+  .tick{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+        fill:var(--ink-soft);letter-spacing:.08em}
+  .val{font-family:ui-monospace,Consolas,monospace;font-size:12px;fill:var(--ink)}
+  .cap{font:400 14px Georgia,serif;fill:var(--ink)}
+  .cap.bad{fill:var(--coral)}
+  .dot{fill:var(--paper);stroke:var(--ink);stroke-width:3.5}
+  .dot.bad{fill:var(--coral);stroke:var(--ink)}
+
+  /* the headline: four numbers, each an A against a C */
+  .score{display:flex;flex-wrap:wrap;gap:16px;margin:0 0 26px}
+  .score div{flex:1 1 180px;padding:12px 14px 11px;background:var(--paper-2);
+             border:3px solid var(--paper-3)}
+  .score b{display:block;font:400 27px/1.15 Georgia,serif}
+  .score b i{font-style:normal;color:var(--ink-soft);font-size:19px}
+  .score b em{font-style:normal;color:var(--coral)}
+  .score span{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+              letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft)}
+
+  /* one bar pair per trap class: every one of them moved */
+  .traps{border-top:3px solid var(--paper-2);padding-top:18px}
+  .traps h2{font:400 17px/1.3 Georgia,serif;margin:0 0 14px}
+  .trap{display:flex;align-items:center;gap:12px;margin-bottom:11px;flex-wrap:wrap}
+  .trap .nm{flex:0 0 210px;font-family:ui-monospace,Consolas,monospace;
+            font-size:11px;color:var(--ink-soft)}
+  .trap .bars{flex:1 1 220px;min-width:180px;display:block}
+  .trap .bar{display:block;height:13px;border:2px solid var(--ink);
+             margin-bottom:3px;position:relative;background:var(--paper)}
+  .trap .bar > span{position:absolute;left:0;top:0;bottom:0;display:block}
+  .trap .bar.a span{background:var(--paper-3)}
+  .trap .bar.c span{background:var(--phos)}
+  .trap .n{flex:0 0 96px;font-family:ui-monospace,Consolas,monospace;
+           font-size:11px;color:var(--ink)}
+
+  .reading{display:flex;flex-wrap:wrap;gap:14px;margin:22px 0 0;
+           border-top:3px solid var(--paper-2);padding-top:16px}
+  .reading div{flex:1 1 150px}
+  .reading b{display:block;font:400 21px/1.15 Georgia,serif}
+  .reading span{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+                letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft)}
+
+  /* the caveats, on smaller sheets */
+  .slips{display:flex;flex-wrap:wrap;gap:34px;margin-top:52px}
+  .slip{flex:1 1 260px;padding:18px 20px 16px}
+  .slip h3{font:400 16px/1.3 Georgia,serif;margin:0 0 7px}
+  .slip p{font-size:13px;color:var(--ink-soft);margin:0}
+  .slip code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;
+             background:var(--paper-2);border:1px solid var(--paper-3);padding:1px 4px}
+  .slip .tag{position:absolute;top:-16px;left:18px;padding:3px 10px;
+             line-height:11px;background:var(--amber);border:3px solid var(--ink);
+             font-family:ui-monospace,Consolas,monospace;font-size:9px;
+             letter-spacing:.15em;text-transform:uppercase}
+  .slip.measured .tag,.slip.unproven .tag{background:var(--coral);color:var(--paper)}
+
+  .foot{position:relative;z-index:1;max-width:960px;margin:40px auto 0;
+        font-family:ui-monospace,Consolas,monospace;font-size:10.5px;
+        letter-spacing:.11em;text-transform:uppercase;color:var(--wood-deep)}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---- the data arrives, the page does not perform ----------------------
+     docs/DESIGN.md law 2 keeps the evidence sober: our strongest asset is that
+     we measured ourselves honestly, and a chart that bounces undercuts it. So
+     only the MARKS animate - bars to their value, the curve left to right -
+     once, stepped, no loop, no easing.
+
+     Everything is readable before any of it runs and after all of it has: the
+     class below is added by script and removed again when the run is over, so
+     the resting state is always the plain one. A frozen tab cannot leave a bar
+     at zero. */
+  @keyframes bar-grow{ from{ transform:scaleX(0) } to{ transform:scaleX(1) } }
+  .drawn .trap .bar > span{ transform-origin:left center;
+    animation:bar-grow 420ms steps(7) both; animation-delay:var(--d,0ms) }
+
+  @keyframes line-draw{ to{ stroke-dashoffset:0 } }
+  .drawn .line{ animation:line-draw 900ms steps(14) both }
+
+  @keyframes mark-in{ from{ opacity:0 } to{ opacity:1 } }
+  .drawn .dot,.drawn .val{ animation:mark-in 1ms steps(1) both;
+    animation-delay:var(--d,0ms) }
+
+  @keyframes zone-in{ from{ opacity:0 } to{ opacity:1 } }
+  .drawn .harm{ animation:zone-in 1ms steps(1) both; animation-delay:620ms }
+
+  @media (prefers-reduced-motion:reduce){
+    .drawn .trap .bar > span,.drawn .line,.drawn .dot,.drawn .val,.drawn .harm{
+      animation:none !important }
+  }
+</style>
+
+<header>
+  <div class="wm">Injunct<b>.</b></div>
+  <span style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+    <a class="back" href="tape.html">see it run →</a>
+    <a class="back" href="desk.html">&larr; back to the desk</a>
+  </span>
+</header>
+
+<div class="stage" id="stage">
+  <div id="wall"></div>
+  <div id="floor"></div>
+
+  <div class="board">
+    <div class="sheet askew" id="result">
+      <h1>Does it work?</h1>
+      <p class="stand" id="headstand"></p>
+      <p class="lede" id="headlede"></p>
+      <div class="score" id="score"></div>
+      <div id="traps"></div>
+    </div>
+
+    <div class="sheet" id="main" style="margin-top:52px">
+      <h1>How much of this depends on the agent</h1>
+      <p class="stand" id="stand"></p>
+      <p class="lede" id="lede"></p>
+      <div id="plot"></div>
+      <div class="reading" id="reading"></div>
+    </div>
+
+    <div class="slips" id="slips"></div>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+let PX = 3;
+const FLOOR = 58;            // rows of floorboard at the bottom, as elsewhere
+
+// The plot, in its own coordinate space. Nothing here is a sprite: the chart
+// carries numbers, and numbers are never drawn in bitmap type.
+const W = 880, H = 400, L = 78, R = 26, T = 24, B = 62;
+
+let PINCSS = "";
+
+function pinAll(el){
+  [["-13px", "-15px"], ["calc(100% - 17px)", "-15px"],
+   ["-13px", "calc(100% - 15px)"], ["calc(100% - 17px)", "calc(100% - 15px)"]]
+  .forEach(([x, y]) => {
+    const p = document.createElement("div");
+    p.className = "pin";
+    p.style.cssText = `left:${x}; top:${y};` + PINCSS;
+    el.appendChild(p);
+  });
+}
+
+const fmt = v => (v * 100).toFixed(0) + "%";
+
+function plot(c){
+  const curve = c.curve.slice().sort((a, b) => a.p_comply - b.p_comply);
+  const base = c.baseline_A.pass_rate;
+  const lo = 0.45, hi = 0.80;                    // y window, chosen to hold both
+  const X = p => L + p * (W - L - R);
+  const Y = v => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+
+  // Where the curve crosses the no-memory baseline: everything left of it is
+  // the zone where the tool is a cost and not a benefit.
+  let cross = 1;
+  for (let i = 1; i < curve.length; i++){
+    const a = curve[i - 1], b = curve[i];
+    if (a.pass_rate < base && b.pass_rate >= base){
+      cross = a.p_comply + (base - a.pass_rate) /
+              (b.pass_rate - a.pass_rate) * (b.p_comply - a.p_comply);
+      break;
+    }
+  }
+
+  const path = curve.map((p, i) =>
+    `${i ? "L" : "M"}${X(p.p_comply).toFixed(1)},${Y(p.pass_rate).toFixed(1)}`).join("");
+
+  const yticks = [0.5, 0.6, 0.7, 0.8];
+  const svg = `
+  <svg viewBox="0 0 ${W} ${H}" role="img"
+       aria-label="First-try pass rate against how often the agent does what the gate says">
+    <rect class="harm" x="${X(0)}" y="${T}" width="${X(cross) - X(0)}"
+          height="${H - T - B}"/>
+    ${yticks.map(v => `<line class="grid" x1="${L}" y1="${Y(v)}" x2="${W - R}" y2="${Y(v)}"/>
+      <text class="tick" x="${L - 12}" y="${Y(v) + 4}" text-anchor="end">${fmt(v)}</text>`).join("")}
+
+    <line class="base" x1="${L}" y1="${Y(base)}" x2="${W - R}" y2="${Y(base)}"/>
+    <text class="cap" x="${W - R}" y="${Y(base) - 11}" text-anchor="end">
+      no memory at all &middot; ${fmt(base)}</text>
+
+    <path class="line" d="${path}"/>
+    ${curve.map((p, i) => {
+      const bad = p.pass_rate < base;
+      // The end points sit on the axes, so their labels are anchored inward
+      // rather than centred - centred, the first one hangs off the chart.
+      const end = i === 0 ? "start" : i === curve.length - 1 ? "end" : "middle";
+      const dx = i === 0 ? 10 : i === curve.length - 1 ? -10 : 0;
+      return `<rect class="dot${bad ? " bad" : ""}" x="${X(p.p_comply) - 6}"
+                y="${Y(p.pass_rate) - 6}" width="12" height="12"/>
+              <text class="val" x="${X(p.p_comply) + dx}" y="${Y(p.pass_rate) - 15}"
+                text-anchor="${end}">${fmt(p.pass_rate)}</text>`;
+    }).join("")}
+
+    <line class="ax" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}"/>
+    <line class="ax" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>
+    ${curve.map(p => `<text class="tick" x="${X(p.p_comply)}" y="${H - B + 22}"
+        text-anchor="middle">${fmt(p.p_comply)}</text>`).join("")}
+    <text class="tick" x="${L}" y="${H - B + 44}">how often the agent does what the gate says &rarr;</text>
+
+    <text class="cap bad" x="${X(0) + 10}" y="${H - B - 14}">
+      below ${fmt(cross)} compliance the gate does not pay for itself</text>
+  </svg>`;
+  document.getElementById("plot").innerHTML = svg;
+  return { base, cross, curve };
+}
+
+// The result, first, because it is the result. The caveats below are real and
+// they stay - but a page that opens on what is unproven has buried the thing
+// three hundred runs were spent measuring.
+const TRAPNAMES = {
+  handedit_generated:        "editing a generated file by hand",
+  plugin_without_declaration:"adding a plugin, not declaring it",
+  schema_without_migration:  "changing a model, no migration",
+  types_without_regen:       "changing the API, not the client types",
+};
+
+function headline(r){
+  if (!r || !r.metrics || !r.metrics.C){
+    document.getElementById("result").style.display = "none";
+    return;
+  }
+  const a = r.metrics.A, c = r.metrics.C;
+  document.getElementById("headstand").textContent =
+    `${r.runs} runs · ${r.tasks} tasks · ${r.seeds.length} seeds · ` +
+    `arm A against arm C · agent=${r.agent} · ${r.generated}`;
+  document.getElementById("headlede").innerHTML =
+    `Identical tasks, identical seeds, identical order. The only thing that
+     differs is whether the agent is allowed to be stopped by what it already
+     learned. <b>It passes half again as often, and falls into a trap it has
+     already seen half as often.</b>`;
+
+  // Count runs, not block events, so this agrees with the tape.
+  const tape = (r.tape && r.tape.C) || [];
+  const stopped = {
+    runs: tape.filter(x => x.b).length,
+    passed: tape.filter(x => x.b && x.p).length,
+  };
+  const pp = (x, y) => `<b>${fmt(x)} <i>&rarr;</i> ${fmt(y)}</b>`;
+  document.getElementById("score").innerHTML = `
+    <div>${pp(a.pass_rate, c.pass_rate)}<span>first-try pass rate</span></div>
+    <div>${pp(a.trap_pass_rate, c.trap_pass_rate)}<span>on tasks with a trap</span></div>
+    <div><b>${fmt(a.repeat_failure_rate)} <i>&rarr;</i>
+      ${fmt(c.repeat_failure_rate)}</b>
+      <span>fell for the same trap twice</span></div>
+    <div><b>${stopped.passed} of ${stopped.runs}</b>
+      <span>stopped, and passed anyway</span></div>
+    <div><b>${fmt(c.false_positive_rate)}</b>
+      <span>false alarms on clean work</span></div>`;
+
+  const bt = r.by_trap || {};
+  document.getElementById("traps").innerHTML = `<div class="traps">
+    <h2>Every trap class moved, and none of them moved backwards.</h2>
+    ${Object.entries(bt).map(([k, v], i) => `
+      <div class="trap">
+        <span class="nm">${TRAPNAMES[k] || k}</span>
+        <span class="bars">
+          <span class="bar a"><span style="width:${v.A * 100}%; --d:${i * 90}ms"></span></span>
+          <span class="bar c"><span style="width:${v.C * 100}%; --d:${i * 90 + 45}ms"></span></span>
+        </span>
+        <span class="n">${fmt(v.A)} &rarr; ${fmt(v.C)}</span>
+      </div>`).join("")}
+  </div>`;
+}
+
+
+// ---- the one animation this page gets ------------------------------------
+// Bars grow to their value, the compliance curve draws left to right, the
+// markers and the harmful zone arrive as it passes them. Once. Then the class
+// comes off and the page is back to plain CSS.
+//
+// Removing it matters more than adding it: an animation that holds its own
+// "from" state forever is one frozen tab away from a chart of empty bars, and
+// this is the page the whole argument rests on. setTimeout fires in a hidden
+// tab even when rAF does not, so the resting state is always reachable.
+function drawIn(){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  // The curve lives under #main and the trap bars under #result, so the class
+  // goes on the body - scoping it to either one silently animates half the
+  // page, which is exactly what the first attempt did.
+  const root = document.body;
+
+  const line = root.querySelector("path.line");
+  if (line && line.getTotalLength){
+    const len = Math.ceil(line.getTotalLength());
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+  // Each marker waits for the curve to reach it.
+  root.querySelectorAll(".dot, .val").forEach((el, i, all) => {
+    const per = Math.max(1, Math.floor(all.length / 2));
+    el.style.setProperty("--d", `${140 + Math.floor(i / 2) * (760 / per)}ms`);
+  });
+
+  root.classList.add("drawn");
+  setTimeout(() => {
+    root.classList.remove("drawn");
+    if (line){ line.style.strokeDasharray = ""; line.style.strokeDashoffset = ""; }
+  }, 1500);
+}
+
+function slips(c, r){
+  const worst = c.curve.reduce((a, b) => a.pass_rate < b.pass_rate ? a : b);
+  const best  = c.curve.reduce((a, b) => a.pass_rate > b.pass_rate ? a : b);
+  const fp = Math.max(...c.curve.map(p => p.false_positive_rate),
+                      c.baseline_A.false_positive_rate);
+
+  const items = [];
+
+  // The separate arm A / arm C benchmark, which is a different run set from
+  // the curve above and has to be labelled as one.
+  if (r && r.regressions && r.metrics && r.metrics.C){
+    const n = r.regressions.length;
+    const by = {};
+    r.regressions.forEach(x => { by[x.trap] = (by[x.trap] || 0) + 1; });
+    const top = Object.entries(by).sort((a, b) => b[1] - a[1])[0];
+    items.push(["measured", `${n} of ${r.metrics.C.runs} runs regressed`,
+      `In a separate ${r.runs}-run benchmark (${r.seeds.length} seeds, arms
+       ${r.arms.join(" and ")}), arm C passed ${(r.metrics.C.pass_rate * 100).toFixed(1)}%
+       against arm A's ${(r.metrics.A.pass_rate * 100).toFixed(1)}% - but ${n} tasks
+       passed without memory and failed with it${top ?
+       `, ${top[1]} of them on <code>${top[0]}</code>` : ""}. A result that
+       showed the tool never hurts would be the less trustworthy one.`]);
+  }
+
+  items.push(["unproven", "What is not measured yet",
+    `Prose-in-the-prompt, which is what Autopsy actually does, has no number
+     on this page. The claim "warnings are optional, gates are not" is
+     therefore half proven: we can show gates beat no memory, not that they
+     beat warnings.`]);
+
+  items.push(["unproven", "The agent is scripted, not a live model",
+    `These are scripted runs against seeded repos with planted traps, at a
+     fixed ${(c.p_recall * 100).toFixed(0)}% chance of recalling the right
+     precedent - not a live model. It isolates the mechanism; it does not
+     prove the mechanism survives contact with one.`]);
+
+  document.getElementById("slips").innerHTML = items.map(([cls, h, t]) => `
+    <div class="sheet slip ${cls}"><span class="tag">${cls}</span>
+      <h3>${h}</h3><p>${t}</p></div>`).join("");
+
+  document.getElementById("reading").innerHTML = `
+    <div><b>${fmt(worst.pass_rate)}</b><span>ignored every card</span></div>
+    <div><b>${fmt(c.baseline_A.pass_rate)}</b><span>no memory at all</span></div>
+    <div><b>${fmt(best.pass_rate)}</b><span>did what every card said</span></div>
+    <div><b>${fmt(c.baseline_A.repeat_failure_rate - best.repeat_failure_rate)}</b>
+      <span>fewer repeat failures</span></div>`;
+}
+
+Promise.all([
+  fetch("compliance.json").then(r => r.json()).catch(() => null),
+  fetch("report.json").then(r => r.json()).catch(() => null),
+]).then(([c, r]) => {
+  if (!c){
+    document.getElementById("main").innerHTML =
+      `<h1>No evidence on file.</h1><p class="lede">Run
+       <code>python -m injunct bench --compliance</code> and reload.</p>`;
+    return;
+  }
+  const runs = c.curve.reduce((n, p) => n + p.runs, 0) + c.baseline_A.runs;
+  document.getElementById("stand").textContent =
+    `${runs} runs · ${c.tasks} tasks · ${c.seeds.length} seeds · ${c.generated}`;
+
+  const { base, cross } = plot(c);
+  document.getElementById("lede").innerHTML =
+    `The gate is not the mechanism — the instruction is. What decides the size
+     of the gain is how often the agent does what the card tells it, and above
+     <b>${fmt(cross)} compliance every point beats working with no memory at
+     all</b>, reaching ${fmt(Math.max(...c.curve.map(p => p.pass_rate)))} first-try
+     pass when the card is always followed. Below that the gate costs a run and
+     returns nothing, which is why every halt names the exact next action
+     instead of saying "do the missing work".`;
+  headline(r);
+  slips(c, r);
+  document.getElementById("foot").textContent =
+    "source: bench/compliance.json" + (r ? " · bench/report.json" : "");
+  // after everything is in the DOM and measurable
+  requestAnimationFrame(drawIn);
+
+  // wall, floor and the pins that hold the paper up
+  fetch("sprites/office.json").then(x => x.json()).then(office => {
+    const b = office.pieces.pin, sh = office.sheet, k = 30 / b.w;
+    PINCSS = `background-image:url("sprites/office.png");
+      background-size:${sh.w * k}px ${sh.h * k}px;
+      background-position:-${b.x * k}px -${b.y * k}px;`;
+    const bw = office.pieces.brick, fl = office.pieces.floor;
+    document.getElementById("wall").style.cssText +=
+      `bottom:${FLOOR * PX}px; background:url("sprites/brick.png") repeat;
+       background-size:${bw.w * PX}px ${bw.h * PX}px;`;
+    document.getElementById("floor").style.cssText +=
+      `height:${FLOOR * PX}px; background:url("sprites/floor.png") repeat;
+       background-size:${fl.w * PX}px ${fl.h * PX}px;`;
+    document.querySelectorAll(".sheet").forEach(pinAll);
+  });
+});
+</script>

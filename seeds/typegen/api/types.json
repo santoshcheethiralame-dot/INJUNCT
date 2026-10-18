@@ -1,0 +1,4 @@
+{
+  "Patient": {"id": "int", "name": "str", "phone": "str"},
+  "Appointment": {"id": "int", "patient_id": "int", "at": "str"}
+}

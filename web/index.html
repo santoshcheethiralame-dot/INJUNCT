@@ -1,0 +1,116 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Injunct — the records office</title>
+<link rel="stylesheet" href="office.css">
+<link rel="stylesheet" href="motion.css">
+<style>
+  /* The front door. Deliberately the plainest page in the building: it is a
+     directory, and a directory that needs explaining is a bad one. */
+  .wrap{ max-width:980px; margin:0 auto; padding:48px 24px 80px }
+  .head{ border-bottom:3px solid var(--line); padding-bottom:28px; margin-bottom:36px }
+  h1{ margin:0 0 6px; font-size:34px; letter-spacing:-.01em }
+  .tag{ color:var(--amber); font-family:ui-monospace,Consolas,monospace;
+        font-size:10px; letter-spacing:.18em; text-transform:uppercase }
+  .lede{ max-width:62ch; margin:18px 0 0; color:var(--paper) }
+  .lede b{ color:var(--phos) }
+
+  .rows{ display:grid; gap:14px; margin:0 0 40px }
+  a.row{ display:grid; grid-template-columns:150px 1fr; gap:20px; align-items:baseline;
+         padding:18px 20px; background:var(--panel); border:3px solid var(--line);
+         text-decoration:none; color:inherit; position:relative;
+         transition:border-color var(--t-tick) steps(2),
+                    transform var(--t-tick) steps(2) }
+  /* One step sideways, the width of a pixel at this scale. A door that slides
+     open over a curve belongs to a different building. */
+  a.row:hover,a.row:focus-visible{ border-color:var(--amber); transform:translateX(3px) }
+  /* The office stamps things. A row answers by showing the mark it would
+     leave, rather than by glowing. */
+  a.row::after{ content:"\00BB"; position:absolute; right:18px; top:50%;
+                margin-top:-10px; color:var(--amber); opacity:0;
+                transition:opacity var(--t-tick) steps(2) }
+  a.row:hover::after,a.row:focus-visible::after{ opacity:1 }
+  a.row .name{ font-family:ui-monospace,Consolas,monospace; font-size:12px;
+               letter-spacing:.1em; text-transform:uppercase; color:var(--amber) }
+  a.row .what{ color:var(--paper-dim) }
+
+  /* The doors deal themselves out on load, top to bottom. Four steps each,
+     one row every 60ms - the page is assembled in front of you, then still. */
+  a.row{ animation:vd-rise var(--t-beat) steps(4) both; animation-delay:var(--d,0ms) }
+
+  .note{ border-left:3px solid var(--dim); padding:2px 0 2px 16px; margin:26px 0;
+         color:var(--paper-dim); max-width:68ch }
+  .note b{ color:var(--paper) }
+  .num{ display:flex; gap:34px; flex-wrap:wrap; margin:30px 0 0;
+        padding-top:26px; border-top:3px solid var(--line) }
+  .num div{ min-width:120px }
+  .num .v{ font-size:26px; color:var(--phos) }
+  .num .v.bad{ color:var(--stamp) }
+  .num .k{ font-family:ui-monospace,Consolas,monospace; font-size:10px;
+           letter-spacing:.14em; text-transform:uppercase; color:var(--dim) }
+  code{ font-family:ui-monospace,Consolas,monospace; font-size:12px; color:var(--amber) }
+  @media (max-width:640px){ a.row{ grid-template-columns:1fr; gap:6px } }
+</style>
+
+<div class="wrap">
+  <div class="head">
+    <div class="tag">the records office</div>
+    <h1>Injunct</h1>
+    <p class="lede">
+      A coding agent forgets a lesson the moment the conversation ends. This
+      turns a confirmed failure into a <b>check that blocks the next change
+      repeating it</b> — deterministic, executable, and cited to the run that
+      established it. Before any rule is allowed to refuse anything, it is
+      replayed against this repository's own history: it must catch its own
+      case, and stay silent on work that already succeeded.
+    </p>
+  </div>
+
+  <div class="rows">
+    <a class="row" style="--d:0ms" href="cabinet.html">
+      <span class="name">The docket</span>
+      <span class="what">Every rule on file, in drawers by authority. Open one to see
+        the case behind it, the receipt that earned it the right to block, and
+        every time it has been cited since.</span>
+    </a>
+    <a class="row" style="--d:60ms" href="chart.html">
+      <span class="name">The evidence</span>
+      <span class="what">Does it help, and where does it hurt — including the compliance
+        zone where the tool makes an agent <i>worse</i> than no memory at all.</span>
+    </a>
+    <a class="row" style="--d:120ms" href="tape.html">
+      <span class="name">The tape</span>
+      <span class="what">Three hundred runs replayed in about three seconds, arm A
+        against arm C, in the order they actually ran.</span>
+    </a>
+    <a class="row" style="--d:180ms" href="desk.html">
+      <span class="name">The desk</span>
+      <span class="what">Every rule's decision as a change lands. Live while
+        <code>injunct watch</code> runs; otherwise a real recorded session,
+        labelled as a replay.</span>
+    </a>
+    <a class="row" style="--d:240ms" href="overruled.html">
+      <span class="name">Overruled</span>
+      <span class="what">How a rule loses its authority. Three runs that overrode it
+        and succeeded anyway, and it retires itself in public.</span>
+    </a>
+  </div>
+
+  <div class="note">
+    <b>The race is not here.</b> It runs two copies of one app side by side and
+    needs a server behind it, so it lives at <code>python -m injunct demo</code>
+    on port 8900 rather than on this static site.
+  </div>
+
+  <div class="note">
+    Every page on this site reads a frozen copy of the ledger and renders with
+    nothing running. No build step, no framework, no request leaves your
+    browser.
+  </div>
+
+  <div class="num">
+    <div><div class="v">53% &rarr; 70%</div><div class="k">first-try pass</div></div>
+    <div><div class="v">58% &rarr; 31%</div><div class="k">repeat failure</div></div>
+    <div><div class="v">34 &ndash; 9</div><div class="k">won &ndash; lost</div></div>
+    <div><div class="v bad">9</div><div class="k">regressions published</div></div>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+# Publish the records office.
+#
+# The site is already static - every page reads a frozen copy of the ledger and
+# the benchmark out of web/, and nothing on it runs Python. So this uploads the
+# directory as it stands rather than building anything, which also means what a
+# visitor sees is exactly what is committed and reviewable.
+#
+# web/demo.html is deliberately left out of the index: the race drives two live
+# apps on their own ports and cannot work on a static host.
+name: pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: The site must not depend on anything running
+        run: |
+          test -f web/index.html
+          for f in data.json report.json compliance.json replay.json; do
+            test -s "web/$f" || { echo "web/$f is missing or empty"; exit 1; }
+          done
+
+      # Pages has to be switched on once by someone with admin on the repo, and
+      # neither a push token nor this workflow's token can do it. That is a
+      # setting, not a broken build, so it says so and stops rather than going
+      # red on every commit until somebody notices.
+      - id: check
+        name: Is Pages switched on?
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/${{ github.repository }}/pages" >/dev/null 2>&1; then
+            echo "on=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "on=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Pages is not enabled. A repo admin needs to set" \
+                 "Settings -> Pages -> Source: GitHub Actions, once. Everything" \
+                 "else here is ready and this workflow will publish on the next push."
+          fi
+
+      - if: steps.check.outputs.on == 'true'
+        uses: actions/configure-pages@v5
+      - if: steps.check.outputs.on == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - if: steps.check.outputs.on == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4

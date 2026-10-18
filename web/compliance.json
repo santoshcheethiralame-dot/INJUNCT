@@ -1,0 +1,78 @@
+{
+  "generated": "2026-09-10 11:47",
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "tasks": 30,
+  "p_recall": 0.5,
+  "baseline_A": {
+    "runs": 90,
+    "pass_rate": 0.5889,
+    "trap_pass_rate": 0.4638,
+    "repeat_failure_rate": 0.5,
+    "repeat_seen": 50,
+    "false_positive_rate": 0.0,
+    "blocks": 0,
+    "recovery_rate": null
+  },
+  "curve": [
+    {
+      "runs": 90,
+      "pass_rate": 0.5333,
+      "trap_pass_rate": 0.3913,
+      "repeat_failure_rate": 0.6458,
+      "repeat_seen": 48,
+      "false_positive_rate": 0.0,
+      "blocks": 62,
+      "recovery_rate": 0.4324,
+      "p_comply": 0.0
+    },
+    {
+      "runs": 90,
+      "pass_rate": 0.6,
+      "trap_pass_rate": 0.4783,
+      "repeat_failure_rate": 0.5208,
+      "repeat_seen": 48,
+      "false_positive_rate": 0.0,
+      "blocks": 55,
+      "recovery_rate": 0.5946,
+      "p_comply": 0.25
+    },
+    {
+      "runs": 90,
+      "pass_rate": 0.6778,
+      "trap_pass_rate": 0.5797,
+      "repeat_failure_rate": 0.375,
+      "repeat_seen": 48,
+      "false_positive_rate": 0.0,
+      "blocks": 50,
+      "recovery_rate": 0.7838,
+      "p_comply": 0.5
+    },
+    {
+      "runs": 90,
+      "pass_rate": 0.6889,
+      "trap_pass_rate": 0.5942,
+      "repeat_failure_rate": 0.3542,
+      "repeat_seen": 48,
+      "false_positive_rate": 0.0,
+      "blocks": 49,
+      "recovery_rate": 0.8108,
+      "p_comply": 0.75
+    },
+    {
+      "runs": 90,
+      "pass_rate": 0.7444,
+      "trap_pass_rate": 0.6667,
+      "repeat_failure_rate": 0.25,
+      "repeat_seen": 48,
+      "false_positive_rate": 0.0,
+      "blocks": 46,
+      "recovery_rate": 0.8974,
+      "p_comply": 1.0
+    }
+  ],
+  "harmful_at_or_below": 0.25
+}

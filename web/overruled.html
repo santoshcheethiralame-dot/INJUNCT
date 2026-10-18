@@ -1,0 +1,337 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Injunct — overruled</title>
+<link rel="stylesheet" href="motion.css">
+<style>
+  :root{
+    --mortar:#E8DCCA; --board:#C9A27A;
+    --wood:#B0764C; --wood-dk:#8D4535; --wood-deep:#6E442B;
+    --paper:#FDF6E7; --paper-2:#EADDC4; --paper-3:#D3C2A4;
+    --ink:#4A382E; --ink-soft:#6B5546;
+    --casing:#C7C2B3;
+    --phos:#5FC18A; --amber:#F0B44E; --coral:#E06B63;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--board);color:var(--ink);
+       font:14px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif;
+       -webkit-font-smoothing:antialiased}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+         padding:13px 24px;background:var(--paper);
+         border-bottom:4px solid var(--wood-dk);flex-wrap:wrap}
+  .wm{font:400 20px/1 Georgia,serif}
+  .wm b{color:var(--coral);font-weight:400}
+  .back{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+        letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+        text-decoration:none;border-bottom:2px solid var(--wood)}
+  .back:hover{color:var(--coral)}
+
+  .stage{position:relative;width:100%;overflow:hidden;padding-bottom:34px}
+  #wall,#floor{position:absolute;left:0;right:0;image-rendering:pixelated}
+  #wall{top:0;border-bottom:9px solid var(--wood)}
+  #floor{bottom:0;border-top:4px solid var(--wood-deep)}
+
+  .hall{position:relative;z-index:1;display:flex;flex-wrap:wrap;
+        justify-content:center;align-items:flex-start;gap:38px;padding:16px 22px 0}
+  .room{position:relative;flex:0 0 auto}
+  .sprite{position:absolute;image-rendering:pixelated;background-repeat:no-repeat}
+  .opening{position:absolute;overflow:hidden;pointer-events:none}
+  .dlabel{position:absolute;pointer-events:none;text-align:center;
+          font-family:ui-monospace,Consolas,monospace;font-size:9px;
+          letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+  .dcount{position:absolute;pointer-events:none;
+          font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--ink)}
+
+  .cards{flex:1 1 470px;max-width:610px;padding-top:18px}
+
+  .plate{display:inline-block;margin:0 0 26px 7px;padding:8px 20px 10px;
+         background:var(--paper);border:4px solid var(--ink);
+         box-shadow:0 0 0 4px var(--casing), 0 0 0 7px var(--ink),
+                    8px 8px 0 rgba(74,56,46,.22)}
+  .plate h2{font:400 22px/1.25 Georgia,serif;margin:0}
+  .plate .sub{color:var(--ink-soft);font-size:11px;margin:3px 0 0;
+              font-family:ui-monospace,Consolas,monospace;
+              letter-spacing:.14em;text-transform:uppercase}
+
+  .leaf{position:relative;margin:0 0 26px;padding:15px 17px 16px;
+        background:var(--paper);border:4px solid var(--ink);
+        box-shadow:7px 7px 0 rgba(74,56,46,.22)}
+  .leaf::before{content:attr(data-no);position:absolute;left:16px;top:-22px;
+        padding:3px 13px;line-height:11px;
+        background:var(--amber);border:4px solid var(--ink);border-bottom:none;
+        font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+        letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+  .leaf.quiet::before{background:var(--paper-2)}
+  .leaf h3{font:400 18px/1.35 Georgia,serif;margin:0 0 8px}
+  .leaf p{margin:0 0 10px;font-size:13.5px;color:var(--ink-soft)}
+  .leaf p:last-child{margin-bottom:0}
+  .leaf b{font-weight:400;color:var(--ink)}
+
+  /* every binding rule and the evidence standing against it */
+  .stand{border-top:3px solid var(--paper-2);margin-top:4px}
+  .stand .r{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+            padding:9px 0;border-bottom:2px solid var(--paper-2)}
+  .stand .r:last-child{border-bottom:none}
+  .stand .no{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+             letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+             width:44px;flex:0 0 auto}
+  .stand .says{flex:1 1 220px;font-size:13.5px}
+  .stand .says a{color:var(--ink);text-decoration:none;
+                 border-bottom:2px solid var(--paper-3)}
+  .stand .says a:hover{color:var(--coral);border-color:var(--coral)}
+  .stand .score{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+                color:var(--ink-soft);flex:0 0 auto}
+  .stand .score b{color:var(--ink);font-weight:400}
+  .stand .score em{font-style:normal;color:var(--coral)}
+
+  .struck{position:relative;padding:22px 24px;text-align:center;
+          background:var(--paper);border:4px dashed var(--ink-soft);margin-top:22px}
+  .struck::before{content:"nothing filed";position:absolute;left:16px;top:-22px;
+        padding:3px 13px;line-height:11px;background:var(--paper-2);
+        border:4px dashed var(--ink-soft);border-bottom:none;
+        font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+        letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+  .struck .big{font:400 17px/1.4 Georgia,serif;margin-bottom:8px}
+  .struck p{color:var(--ink-soft);font-size:12.5px;margin:0 auto;max-width:48ch}
+
+  /* a retired rule, once there is one: face up and struck through */
+  .dead .says{text-decoration:line-through;text-decoration-color:var(--coral);
+              text-decoration-thickness:3px}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header>
+  <div class="wm">Injunct<b>.</b></div>
+  <a class="back" href="cabinet.html#overruled">&larr; back to the cabinet</a>
+</header>
+
+<div class="stage" id="stage">
+  <div id="wall"></div>
+  <div id="floor"></div>
+  <div class="hall">
+    <div class="room" id="room"></div>
+    <div class="cards" id="cards"></div>
+  </div>
+</div>
+
+<script>
+let PX = 3;
+const ROOM = { w: 370, h: 306, floorTop: 264 };
+const CAB_X = 200, CAB_Y = 60, DRAWER_X = 207, LID = 20;
+const DRAWERS = [
+  { key: "binding",    label: "binding",   y: 76  },
+  { key: "persuasive", label: "advisory",  y: 126 },
+  { key: "overruled",  label: "overruled", y: 176 },
+  { key: "all",        label: "all",       y: 226 },
+];
+// The plant that normally stands here has been moved out: the clerk is on
+// this page and he needs the floor.
+const PROPS = [
+  ["window",   34,  40],
+  ["clock",   148,  62],
+  ["bookcase", 26, 144],
+  ["bin",     340, 264],
+];
+const COUNTER_THRESHOLD = 3;      // matches injunct/overrule.py
+
+let OFFICE = null, CLERK = null, DATA = null, clerkTimer = null;
+
+function put(meta, piece, x, y, cls){
+  const b = meta.pieces[piece];
+  const el = document.createElement("div");
+  el.className = "sprite " + (cls || "");
+  el.style.cssText = `left:${x * PX}px; top:${y * PX}px;
+    width:${b.w * PX}px; height:${b.h * PX}px;
+    background-image:url("sprites/office.png");
+    background-size:${meta.sheet.w * PX}px ${meta.sheet.h * PX}px;
+    background-position:-${b.x * PX}px -${b.y * PX}px;`;
+  return el;
+}
+
+function rulesIn(key){
+  const h = (DATA && DATA.holdings) || [];
+  return key === "all" ? h : h.filter(r => r.status === key);
+}
+
+// For and against, exactly as injunct/overrule.py counts them: a run that
+// complied and passed, or overrode and failed, is evidence the rule was
+// right. Only a run that overrode it and succeeded anyway is evidence
+// against.
+function standing(h){
+  const c = h.citations || [];
+  return {
+    against: c.filter(x => x.outcome === "overridden_pass").length,
+    for: c.filter(x => x.outcome === "complied_pass" ||
+                       x.outcome === "overridden_fail").length,
+  };
+}
+
+function label(d, isOpen, el){
+  const lab = document.createElement("div");
+  lab.className = "dlabel";
+  lab.style.cssText = `left:${(isOpen ? 45 : 38) * PX}px;
+    top:${(isOpen ? LID + 8 : 8) * PX}px; width:${41 * PX}px;`;
+  lab.textContent = d.label;
+  el.appendChild(lab);
+  if (isOpen) return;
+  const cnt = document.createElement("div");
+  cnt.className = "dcount";
+  cnt.style.cssText = `left:${96 * PX}px; top:${7 * PX}px;`;
+  cnt.textContent = rulesIn(d.key).length;
+  el.appendChild(cnt);
+}
+
+// The clerk appears on exactly two pages: the desk, where he has live state
+// to report, and this one, where the animation is the mechanism. He plays it
+// once and holds the last frame - a loop would make retirement look routine.
+function mountClerk(room){
+  const el = document.createElement("div");
+  el.className = "sprite";
+  el.id = "clerk";
+  const f = CLERK.frame;
+  el.style.cssText = `left:${140 * PX}px; top:${(292 - f.h) * PX}px;
+    width:${f.w * PX}px; height:${f.h * PX}px;
+    background-image:url("sprites/clerk.png");
+    background-size:auto ${f.h * PX}px;`;
+  room.appendChild(el);
+
+  const frames = CLERK.states.overruled, ms = CLERK.timing.overruled;
+  let i = 0;
+  const show = () => el.style.backgroundPosition =
+    `-${frames[i] * f.w * PX}px 0`;
+  show();
+  clearInterval(clerkTimer);
+  clerkTimer = setInterval(() => {
+    i++;
+    if (i >= frames.length){ clearInterval(clerkTimer); i = frames.length - 1; }
+    show();
+  }, ms);
+}
+
+function render(){
+  const room = document.getElementById("room");
+  room.innerHTML = "";
+  room.style.width = ROOM.w * PX + "px";
+  room.style.height = ROOM.h * PX + "px";
+
+  PROPS.forEach(([piece, x, y]) => room.appendChild(put(OFFICE, piece, x, y)));
+  room.appendChild(put(OFFICE, "cab_body", CAB_X, CAB_Y));
+
+  const open_ = "overruled";
+  DRAWERS.filter(d => d.key !== open_).forEach(d => {
+    const el = put(OFFICE, "cab_drawer", DRAWER_X, d.y);
+    label(d, false, el);
+    room.appendChild(el);
+  });
+  const d = DRAWERS.find(x => x.key === open_);
+  const el = put(OFFICE, "cab_open", CAB_X, d.y);
+  label(d, true, el);
+  room.appendChild(el);
+
+  // No files. The drawer is open and there is nothing standing in it, which
+  // is the page - drawing one anyway would be the only real failure here.
+  const retired = rulesIn("overruled");
+  if (retired.length){
+    const clip = document.createElement("div");
+    clip.className = "opening";
+    clip.style.cssText = `left:${(CAB_X + 7) * PX}px; top:${(d.y - 3) * PX}px;
+      width:${118 * PX}px; height:${(LID + 1) * PX}px;`;
+    const n = retired.length;
+    const pitch = n < 2 ? 0 : Math.max(6, Math.min(24, Math.floor((118 - 26) / (n - 1))));
+    const x0 = Math.round((118 - (26 + (n - 1) * pitch)) / 2);
+    retired.forEach((r, i) =>
+      clip.appendChild(put(OFFICE, ["file_l", "file_m", "file_r"][i % 3],
+                           x0 + i * pitch, 3 + (i % 2))));
+    room.appendChild(clip);
+  }
+
+  mountClerk(room);
+  renderCards(retired);
+}
+
+function renderCards(retired){
+  const binding = rulesIn("binding");
+  const closest = binding
+    .map(h => ({ h, s: standing(h) }))
+    .sort((a, b) => b.s.against - a.s.against);
+  const anyAgainst = closest.some(x => x.s.against > 0);
+
+  document.getElementById("cards").innerHTML = `
+    <div class="plate"><h2>Overruled</h2>
+      <p class="sub">${retired.length} retired &middot; ${binding.length}
+      binding rules standing</p></div>
+
+    <div class="leaf" data-no="the mechanism">
+      <h3>A rule can lose its authority.</h3>
+      <p>Every time a binding rule fires, the outcome is written down: whether
+      the agent complied, and whether the work passed. A run that complied and
+      passed, or overrode the rule and failed, is evidence the rule was right.
+      <b>Only a run that overrode it and succeeded anyway counts against it.</b></p>
+      <p>At <b>${COUNTER_THRESHOLD}</b> runs against, with more against than for,
+      the rule is retired. It stops blocking anything and it is filed here,
+      struck through, with the evidence that killed it.</p>
+      <p>A memory layer that can only accumulate is one that can only get more
+      wrong. Publishing what we retracted, with the runs that beat it, is
+      cheaper credibility than any feature - and it is the reason the word
+      binding means something here.</p>
+    </div>
+
+    <div class="leaf quiet" data-no="the standing">
+      <h3>Where every binding rule stands</h3>
+      <p>${anyAgainst
+        ? "Counter-evidence has started to accumulate. Nothing has crossed the line yet."
+        : `Nothing has been overridden yet, so nothing is close. These are the
+           rules that would be retired first if it started.`}</p>
+      <div class="stand">${binding.length ? closest.map(({ h, s }) => `
+        <div class="r">
+          <span class="no">no ${h.id}</span>
+          <span class="says"><a href="cabinet.html#binding/${h.id}">${h.says}</a></span>
+          <span class="score"><b>${s.for}</b> for &middot;
+            ${s.against ? `<em>${s.against}</em>` : "<b>0</b>"} against &middot;
+            ${Math.max(0, COUNTER_THRESHOLD - s.against)} more to retire</span>
+        </div>`).join("")
+        : `<p style="padding-top:12px">No rule is binding yet, so none can be
+           overruled.</p>`}</div>
+    </div>
+
+    ${retired.length ? retired.map(h => `
+      <div class="leaf dead" data-no="retired">
+        <h3 class="says">${h.says}</h3>
+        <p>Retired after ${standing(h).against} runs overrode it and succeeded
+        anyway. <a href="cabinet.html#overruled/${h.id}">Read the file</a>.</p>
+      </div>`).join("")
+      : `<div class="struck"><div class="big">The drawer is empty, and that is
+        the honest state.</div>
+        <p>Across ${(DATA.counts || {}).cases || 0} cases, no run has yet
+        overridden a binding rule and succeeded anyway. When one does three
+        times, the rule it beat will be filed here rather than quietly
+        dropped.</p></div>`}`;
+}
+
+Promise.all([
+  fetch("sprites/office.json").then(r => r.json()),
+  fetch("sprites/clerk.json").then(r => r.json()),
+  fetch("data.json").then(r => r.json()).catch(() => ({counts:{}, holdings:[]})),
+]).then(([office, clerk, data]) => {
+  OFFICE = office; CLERK = clerk; DATA = data;
+  const stage = document.getElementById("stage");
+  const below = window.innerHeight - stage.getBoundingClientRect().top;
+  const stageH = Math.max(ROOM.h * PX, below);
+  stage.style.minHeight = stageH + "px";
+
+  const rest = ROOM.floorTop * PX;
+  const drop = Math.min(Math.max(0, Math.round(stageH * 0.72) - rest), 160);
+  const floorY = rest + drop;
+  document.getElementById("room").style.marginTop = drop + "px";
+
+  const bw = office.pieces.brick, fl = office.pieces.floor;
+  document.getElementById("wall").style.cssText +=
+    `height:${floorY}px; background:url("sprites/brick.png") repeat;
+     background-size:${bw.w * PX}px ${bw.h * PX}px;`;
+  document.getElementById("floor").style.cssText +=
+    `top:${floorY}px; background:url("sprites/floor.png") repeat;
+     background-size:${fl.w * PX}px ${fl.h * PX}px;`;
+  render();
+});
+</script>

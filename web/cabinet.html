@@ -1,0 +1,577 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Injunct — the docket</title>
+<link rel="stylesheet" href="motion.css">
+<style>
+  :root{
+    --mortar:#E8DCCA; --board:#C9A27A;
+    --wood:#B0764C; --wood-dk:#8D4535; --wood-deep:#6E442B;
+    --sage:#9FB08F; --sage-dk:#778D70;
+    --paper:#FDF6E7; --paper-2:#EADDC4; --paper-3:#D3C2A4;
+    --ink:#4A382E; --ink-soft:#6B5546;
+    --casing:#C7C2B3;
+    --phos:#5FC18A; --amber:#F0B44E; --coral:#E06B63;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--board);color:var(--ink);
+       font:14px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif;
+       -webkit-font-smoothing:antialiased}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+         padding:13px 24px;background:var(--paper);
+         border-bottom:4px solid var(--wood-dk);flex-wrap:wrap}
+  .wm{font:400 20px/1 Georgia,serif}
+  .wm b{color:var(--coral);font-weight:400}
+  .back{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+        letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+        text-decoration:none;border-bottom:2px solid var(--wood)}
+  .back:hover{color:var(--coral)}
+
+  .stage{position:relative;width:100%;overflow:hidden;padding-bottom:34px}
+  #wall,#floor{position:absolute;left:0;right:0;image-rendering:pixelated}
+  #wall{top:0;border-bottom:9px solid var(--wood)}
+  #floor{bottom:0;border-top:4px solid var(--wood-deep)}
+
+  /* The hall: cabinet on the left, the contents of the open drawer beside it. */
+  .hall{position:relative;z-index:1;display:flex;flex-wrap:wrap;
+        justify-content:center;align-items:flex-start;gap:38px;padding:16px 22px 0}
+  .room{position:relative;flex:0 0 auto}
+  .sprite{position:absolute;image-rendering:pixelated;background-repeat:no-repeat}
+  .drawer{cursor:pointer}
+  .drawer:hover{filter:brightness(1.07)}
+  /* The files stand in the drawer and are cut off by its front edge, so they
+     are clipped to the interior rather than drawn short. The clip itself must
+     not swallow clicks meant for the drawer behind it; the files must. */
+  .opening{position:absolute;overflow:hidden;pointer-events:none}
+  .opening .sprite{pointer-events:auto;cursor:pointer}
+  .opening .sprite:hover{filter:brightness(1.08)}
+
+  /* A drawer slides. docs/DESIGN.md law 3 puts drawers at steps(4), and this
+     is the one thing on this page carrying weight - the files that come out of
+     it afterwards are deliberately lighter. Four steps over 240ms is close
+     enough to a real drawer's travel that the eye reads mass. */
+  @keyframes drawer-out{
+    from{ transform:translateY(-9px) }
+    to  { transform:none }
+  }
+  .drawer-opening{ animation:drawer-out 240ms steps(4) both }
+  /* The interior is revealed by the front travelling, not by a fade: a drawer
+     whose contents dissolve into view is a drawer made of glass. */
+  @keyframes drawer-reveal{ from{ clip-path:inset(0 0 100% 0) } to{ clip-path:inset(0) } }
+  .opening.revealing{ animation:drawer-reveal 240ms steps(4) both }
+
+  /* the label the page writes onto each drawer front */
+  .dlabel{position:absolute;pointer-events:none;text-align:center;
+          font-family:ui-monospace,Consolas,monospace;font-size:9px;
+          letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+  .dcount{position:absolute;pointer-events:none;
+          font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--ink)}
+
+  /* ---- the column beside the cabinet ---------------------------------- */
+  .cards{flex:1 1 470px;max-width:610px;padding-top:18px}
+
+  /* The heading sits in a card holder, the same ink / chrome / ink sandwich
+     that is pressed into every drawer front. Serif on bare brick is
+     unreadable, and the wall is not going to get quieter. */
+  .plate{display:inline-block;margin:0 0 26px 7px;padding:8px 20px 10px;
+         background:var(--paper);border:4px solid var(--ink);
+         box-shadow:0 0 0 4px var(--casing), 0 0 0 7px var(--ink),
+                    8px 8px 0 rgba(74,56,46,.22)}
+  .plate h2{font:400 22px/1.25 Georgia,serif;margin:0}
+  .plate .sub{color:var(--ink-soft);font-size:11px;margin:3px 0 0;
+              font-family:ui-monospace,Consolas,monospace;
+              letter-spacing:.14em;text-transform:uppercase}
+
+  /* A rule is drawn as the file it came out of: a manila tab carrying the
+     case number, sitting on a sheet of ruled paper. The same shape carries
+     each block of an opened file, which is why .leaf and .rule share it. */
+  .rule,.leaf{position:relative;margin:0 0 22px;padding:13px 16px;
+        background:var(--paper);border:4px solid var(--ink);
+        box-shadow:7px 7px 0 rgba(74,56,46,.22)}
+  .rule{cursor:pointer;
+        background-image:repeating-linear-gradient(
+          transparent 0 21px, var(--paper-2) 21px 22px);
+        background-position:0 34px}
+  .rule::before,.leaf::before{content:attr(data-no);position:absolute;
+        left:16px;top:-22px;padding:3px 13px;line-height:11px;
+        background:var(--amber);border:4px solid var(--ink);border-bottom:none;
+        font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+        letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+  .leaf.quiet::before{background:var(--paper-2)}
+  .rule:hover{background-color:#FFFBF0}
+  .rule .says{font:400 16px/1.35 Georgia,serif;margin:0 92px 8px 0}
+  .leaf .says{font:400 20px/1.4 Georgia,serif;margin:0 104px 11px 0}
+  .mech{display:inline-block;padding:4px 9px;
+        background:var(--paper-2);border:2px solid var(--paper-3);
+        font-family:ui-monospace,Consolas,monospace;font-size:11px;
+        color:var(--ink-soft)}
+  .stamp{position:absolute;top:13px;right:15px;
+         font-family:ui-monospace,Consolas,monospace;
+         font-size:9px;letter-spacing:.16em;padding:3px 7px;border:2px solid;
+         background:var(--paper);transform:rotate(-4deg)}
+  .s-binding{color:var(--coral);border-color:var(--coral)}
+  .s-persuasive{color:var(--amber);border-color:var(--amber)}
+  .s-overruled{color:var(--ink-soft);border-color:var(--ink-soft)}
+
+  /* the receipt: the part that separates a tested rule from a guess */
+  .tally{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px}
+  .tally div{flex:1 1 120px;padding:8px 10px;background:var(--paper-2);
+             border:2px solid var(--paper-3)}
+  .tally b{display:block;font:400 19px/1.2 Georgia,serif}
+  .tally span{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+              letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  .verdict{margin:0;font-size:13.5px;color:var(--ink-soft)}
+
+  dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+  dt{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+     letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+     padding-top:4px}
+  dd{margin:0;font-size:13.5px}
+  .chip{display:inline-block;margin:0 5px 5px 0;padding:3px 8px;
+        background:var(--paper-2);border:2px solid var(--paper-3);
+        font-family:ui-monospace,Consolas,monospace;font-size:11px}
+
+  .cite{display:flex;align-items:baseline;gap:10px;padding:6px 0;
+        border-top:2px solid var(--paper-2);font-size:13px}
+  .cite i{font-style:normal;font-family:ui-monospace,Consolas,monospace;
+          font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+          color:var(--ink-soft);min-width:52px}
+  .cite .no{color:var(--coral)}
+  .none{color:var(--ink-soft);font-size:13.5px;margin:0}
+
+  .feet{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .feet a{font-family:ui-monospace,Consolas,monospace;font-size:10.5px;
+          letter-spacing:.14em;text-transform:uppercase;color:var(--ink);
+          text-decoration:none;padding:7px 13px;background:var(--paper);
+          border:4px solid var(--ink);box-shadow:5px 5px 0 rgba(74,56,46,.22);
+          cursor:pointer}
+  .feet a:hover{color:var(--coral)}
+  .feet a.off{opacity:.4;pointer-events:none}
+
+  /* An empty drawer gets the same folder, with nothing filed in it. */
+  .empty{position:relative;margin-top:22px;padding:26px 24px;text-align:center;
+         background:var(--paper);border:4px dashed var(--ink-soft)}
+  .empty.pull::before{content:"start here"}
+  .empty::before{content:"empty";position:absolute;left:16px;top:-22px;
+        padding:3px 13px;line-height:11px;
+        background:var(--paper-2);border:4px dashed var(--ink-soft);
+        border-bottom:none;font-family:ui-monospace,Consolas,monospace;
+        font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+        color:var(--ink-soft)}
+  .empty .big{font:400 17px/1.4 Georgia,serif;margin-bottom:8px}
+  .empty p{color:var(--ink-soft);font-size:12.5px;margin:0 auto;max-width:46ch}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header>
+  <div class="wm">Injunct<b>.</b></div>
+  <a class="back" href="desk.html">&larr; back to the desk</a>
+</header>
+
+<div class="stage" id="stage">
+  <div id="wall"></div>
+  <div id="floor"></div>
+  <div class="hall">
+    <div class="room" id="room"></div>
+    <div class="cards" id="cards"></div>
+  </div>
+</div>
+
+<script>
+let PX = 3;
+const ROOM = { w: 370, h: 306, floorTop: 264 };
+// The cabinet's geometry lives in office.py; these are the numbers the page
+// needs from it. A closed front is 48 rows on a 50-row pitch, and an open
+// drawer is 20 rows of opening with the front thrown forward beneath it,
+// anchored at the same row the closed front sits on.
+const CAB_X = 200, CAB_Y = 60, DRAWER_X = 207, LID = 20;
+// How long the drawer takes to travel. The files inside wait this out before
+// they start coming up, so the two motions read as cause and effect rather
+// than as two things that happened to start together.
+const DRAWER_MS = 240;
+const DRAWERS = [
+  { key: "binding",    label: "binding",   y: 76  },
+  { key: "persuasive", label: "advisory",  y: 126 },
+  { key: "overruled",  label: "overruled", y: 176 },
+  { key: "all",        label: "all",       y: 226 },
+];
+
+// The rest of the records room. Without it the cabinet is an object on a
+// blank wall rather than a thing standing in an office. Everything on the
+// floor shares the cabinet's baseline at y = 292, so nothing floats.
+const PROPS = [
+  ["window",    34,  40],
+  ["clock",    148,  62],
+  ["bookcase",  26, 144],
+  ["bigplant", 142, 234],
+  ["bin",      340, 264],
+];
+const FILES = ["file_l", "file_m", "file_r"];
+
+const SOURCE = {
+  command_fail: "a command the agent ran came back non-zero",
+  human_reject: "you rejected the change",
+  churn:        "the agent rewrote the same file twice inside one run",
+  revert:       "the change was reverted",
+  test_flip:    "a test that had been passing started failing",
+};
+
+const OUTCOME = {
+  complied_pass:   ["complied", "and the work passed", "ok"],
+  complied_fail:   ["complied", "and the work failed anyway", "no"],
+  overridden_pass: ["overridden", "and the work passed - counter-evidence", "no"],
+  overridden_fail: ["overridden", "and the work failed", "ok"],
+};
+
+const COUNTER_THRESHOLD = 3;   // matches injunct/overrule.py
+
+function chooseScale(){
+  // The cards column needs room too, so the cabinet takes what is left over.
+  PX = Math.max(2, Math.min(3, Math.floor((window.innerWidth - 560) / ROOM.w)));
+}
+chooseScale();
+
+let OFFICE = null, DATA = null, open_ = null, file_ = null;
+
+function put(meta, piece, x, y, cls){
+  const b = meta.pieces[piece];
+  const el = document.createElement("div");
+  el.className = "sprite " + (cls || "");
+  el.style.cssText = `left:${x * PX}px; top:${y * PX}px;
+    width:${b.w * PX}px; height:${b.h * PX}px;
+    background-image:url("sprites/office.png");
+    background-size:${meta.sheet.w * PX}px ${meta.sheet.h * PX}px;
+    background-position:-${b.x * PX}px -${b.y * PX}px;`;
+  return el;
+}
+
+function rulesIn(key){
+  const h = (DATA && DATA.holdings) || [];
+  if (key === "all") return h;
+  return h.filter(r => r.status === key);
+}
+
+function mechanism(r){
+  const p = r.params || {};
+  switch (r.template){
+    case "co_change":        return `co_change( ${p.trigger} -> ${p.required} )`;
+    case "must_run":         return `must_run( ${p.glob} : ${p.cmd} )`;
+    case "required_command": return `required_command( ${p.glob} : ${p.cmd} )`;
+    case "must_not_appear":  return `must_not_appear( /${p.regex}/ )`;
+    case "must_not_remove":  return `must_not_remove( /${p.regex}/ )`;
+    case "forbidden_edit":   return `forbidden_edit( ${p.glob} )`;
+    case "blast_radius":     return "blast_radius( callers must be updated )";
+    case "no_quadratic":     return "no_quadratic( added lines )";
+    case "sleeper_gate":     return `sleeper_gate( ${p.gate} )`;
+    default:                 return r.template;
+  }
+}
+
+function when(t){
+  return t ? new Date(t * 1000).toISOString().slice(0, 10) : "unknown";
+}
+function pair(s){ return String(s || "0/0").split("/").map(Number); }
+
+// Why this rule binds, or why it only speaks. There are three distinct
+// answers in the ledger and they are the whole argument, so the page says
+// which one applies in a sentence rather than leaving two fractions to be
+// read as a score.
+function verdict(h){
+  const e = h.empanel || {};
+  const [fired] = pair(e.fire);
+  const tested = e.tested || 0;
+  if (h.status === "binding")
+    return `It fired on the case that produced it, and stayed silent across ` +
+           `${tested} past run${tested === 1 ? "" : "s"} that succeeded. That is ` +
+           `what buys it the authority to stop a change.`;
+  if (!tested)
+    return e.note
+      ? `${e.note[0].toUpperCase()}${e.note.slice(1)}, so it was never granted ` +
+        `binding authority. It can only speak.`
+      : "There was nothing to replay it against, so it can only speak.";
+  if (!fired)
+    return "It did not fire on the case that produced it. A rule that misses " +
+           "its own case cannot be trusted to catch the next one, so it was " +
+           "demoted to advice.";
+  return "It fired on a past run that succeeded. Binding it would have " +
+         "blocked work that was fine, so it was demoted to advice.";
+}
+
+// One line above the list, because six rows that all say the same thing are
+// harder to read than the sentence they add up to.
+function tallyLine(cites){
+  const n = {};
+  cites.forEach(c => { n[c.outcome] = (n[c.outcome] || 0) + 1; });
+  const parts = Object.entries(n).map(([k, v]) =>
+    `${v} ${(OUTCOME[k] || [k])[0]}${k.endsWith("_pass") ? " and passed" : " and failed"}`);
+  return `Cited ${cites.length} time${cites.length === 1 ? "" : "s"}: ` +
+         parts.join(", ") + ".";
+}
+
+// ---- where we are -------------------------------------------------------
+// One hash carries both: #binding is a drawer, #binding/6 is a file out of
+// it. Everything navigates by setting it, so the back button works and the
+// halt card on the desk has something it can cite.
+
+// Which drawer, if any, changed on this navigation. Only that one gets pulled
+// open on screen; everything else re-renders in place.
+let JUST_OPENED = null;
+
+function readHash(){
+  const was = open_;
+  const [k, id] = location.hash.replace("#", "").split("/");
+  open_ = DRAWERS.some(d => d.key === k) ? k : null;
+  file_ = null;
+  if (open_ && id){
+    const n = Number(id);
+    if (rulesIn(open_).some(r => r.id === n)) file_ = n;
+  }
+  JUST_OPENED = (open_ && open_ !== was) ? open_ : null;
+}
+function goDrawer(key){ location.hash = open_ === key && !file_ ? "" : "#" + key; }
+function goFile(id){ location.hash = `#${open_}/${id}`; }
+
+// ---- the room -----------------------------------------------------------
+
+// The label and the count belong to the drawer, not to the room: a drawer
+// that comes forward has to take its card with it. Offsets are measured from
+// the drawer's own top-left corner, which is why an open one differs.
+function label(d, isOpen, el){
+  const lab = document.createElement("div");
+  lab.className = "dlabel";
+  lab.style.cssText = `left:${(isOpen ? 45 : 38) * PX}px;
+    top:${(isOpen ? LID + 8 : 8) * PX}px; width:${41 * PX}px;`;
+  lab.textContent = d.label;
+  el.appendChild(lab);
+
+  if (isOpen) return;
+  const cnt = document.createElement("div");
+  cnt.className = "dcount";
+  cnt.style.cssText = `left:${96 * PX}px; top:${7 * PX}px;`;
+  cnt.textContent = rulesIn(d.key).length;
+  el.appendChild(cnt);
+}
+
+// One file per rule in the drawer, and clicking one opens it. This is the
+// only reason the folders are worth drawing: four tabs that stand for
+// nothing are decoration, and decoration that cannot be navigated should be
+// deleted. The file being read stands proud of the others.
+function files(d, room){
+  const rules = rulesIn(d.key);
+  if (!rules.length) return;
+  const fresh = JUST_OPENED === d.key;
+  const clip = document.createElement("div");
+  clip.className = "opening" + (fresh ? " revealing" : "");
+  clip.style.cssText = `left:${(CAB_X + 7) * PX}px; top:${(d.y - 3) * PX}px;
+    width:${118 * PX}px; height:${(LID + 1) * PX}px;`;
+
+  // Packed, so they overlap by a couple of pixels - a drawer of evenly spaced
+  // uprights reads as a fence. The ink outline keeps them apart.
+  const n = rules.length;
+  const pitch = n < 2 ? 0 : Math.max(6, Math.min(24, Math.floor((118 - 26) / (n - 1))));
+  const x0 = Math.round((118 - (26 + (n - 1) * pitch)) / 2);
+  rules.forEach((r, i) => {
+    const lifted = r.id === file_;
+    const f = put(OFFICE, FILES[i % FILES.length],
+                  x0 + i * pitch, lifted ? 0 : 3 + (i % 2));
+    f.title = `No ${r.id}`;
+    f.tabIndex = 0;
+    f.setAttribute("role", "link");
+    f.onclick = () => goFile(r.id);
+    f.onkeydown = e => {
+      if (e.key === "Enter" || e.key === " "){ e.preventDefault(); goFile(r.id); }
+    };
+    // The files come up out of the drawer left to right, one per 30ms, after
+    // it has finished travelling - so they read as lifted out of it rather
+    // than as having been sitting there all along. Capped at 12 so a full
+    // drawer does not turn into a slow wave. Only on a fresh pull: clicking a
+    // file inside an open drawer must not re-deal the whole row.
+    if (fresh){
+      f.classList.add("vd-rise");
+      f.style.setProperty("--d", `${DRAWER_MS + Math.min(i, 12) * 30}ms`);
+    }
+    clip.appendChild(f);
+  });
+  room.appendChild(clip);
+}
+
+function render(){
+  const room = document.getElementById("room");
+  room.innerHTML = "";
+  room.style.width = ROOM.w * PX + "px";
+  room.style.height = ROOM.h * PX + "px";
+
+  PROPS.forEach(([piece, x, y]) => room.appendChild(put(OFFICE, piece, x, y)));
+  room.appendChild(put(OFFICE, "cab_body", CAB_X, CAB_Y));
+
+  // Closed drawers first, then the open one over them, so a drawer thrown
+  // forward covers the faces above and below rather than sinking behind them.
+  DRAWERS.filter(d => d.key !== open_).forEach(d => {
+    const el = put(OFFICE, "cab_drawer", DRAWER_X, d.y, "drawer");
+    el.onclick = () => goDrawer(d.key);
+    label(d, false, el);
+    room.appendChild(el);
+  });
+
+  const d = DRAWERS.find(x => x.key === open_);
+  if (d){
+    const el = put(OFFICE, "cab_open", CAB_X, d.y, "drawer");
+    el.onclick = () => goDrawer(d.key);
+    el.tabIndex = 0;
+    el.setAttribute("role", "button");
+    el.onkeydown = e => {
+      if (e.key === "Enter" || e.key === " "){ e.preventDefault(); goDrawer(d.key); }
+    };
+    label(d, true, el);
+    // Only animate a drawer the reader just pulled. Re-rendering for an
+    // unrelated reason - opening a file inside an already-open drawer - must
+    // not slam it shut and haul it out again.
+    if (JUST_OPENED === d.key) el.classList.add("drawer-opening");
+    room.appendChild(el);
+    files(d, room);       // after the drawer: they stand inside its interior
+  }
+
+  renderCards();
+}
+
+// ---- the column ---------------------------------------------------------
+
+function renderCards(){
+  const host = document.getElementById("cards");
+  if (!open_){
+    host.innerHTML = `<div class="plate"><h2>The docket</h2>
+      <p class="sub">${(DATA.counts || {}).cases || 0} cases on file</p></div>
+      <div class="empty pull"><div class="big">Pull a drawer open.</div>
+      <p>Each one holds the rules at one level of authority. Binding rules stop a
+      change; advisory ones only speak.</p></div>`;
+    return;
+  }
+
+  const d = DRAWERS.find(x => x.key === open_);
+  const rules = rulesIn(open_);
+  if (file_) return renderFile(host, d, rules);
+
+  host.innerHTML = `<div class="plate"><h2>${d.label}</h2>
+    <p class="sub">${rules.length} rule${rules.length === 1 ? "" : "s"}</p></div>` +
+    (rules.length ? rules.map(r => `
+      <div class="rule" data-no="no ${r.id}" onclick="goFile(${r.id})">
+        <span class="stamp s-${r.status}">${
+          r.status === "persuasive" ? "advisory" : r.status}</span>
+        <div class="says">${r.says}</div>
+        <span class="mech">${mechanism(r)}</span>
+      </div>`).join("")
+     : `<div class="empty"><div class="big">This drawer is empty.</div>
+        <p>Nothing has lost its authority yet. When a rule is overridden
+        repeatedly and the work succeeds anyway, it is retired and filed here.</p>
+        ${open_ === "overruled"
+          ? `<div class="feet" style="justify-content:center;margin-top:16px">
+             <a href="overruled.html">how a rule gets retired</a></div>` : ""}
+        </div>`);
+}
+
+// The file, opened where it was filed. Same room, same drawer, still open
+// beside it - which is the whole reason this is not a separate page.
+function renderFile(host, d, rules){
+  const i = rules.findIndex(r => r.id === file_);
+  const h = rules[i];
+  const cites = h.citations || [];
+  const against = cites.filter(c => c.outcome === "overridden_pass").length;
+  const complied = cites.filter(c => c.outcome.startsWith("complied")).length;
+  const [falses, tested] = pair((h.empanel || {}).false);
+  const prev = rules[i - 1], next = rules[i + 1];
+
+  host.innerHTML = `
+    <div class="plate"><h2>No ${h.id}</h2>
+      <p class="sub">${d.label} drawer &middot; ${h.scope} scope</p></div>
+
+    <div class="leaf" data-no="the holding">
+      <span class="stamp s-${h.status}">${
+        h.status === "persuasive" ? "advisory" : h.status}</span>
+      <div class="says">${h.says}</div>
+      <span class="mech">${mechanism(h)}</span>
+    </div>
+
+    <div class="leaf" data-no="the receipt">
+      <div class="tally">
+        <div><b>${(h.empanel || {}).fire || "-"}</b><span>fired on its own case</span></div>
+        <div><b>${falses}/${tested}</b><span>false on past successes</span></div>
+        <div><b>${cites.length}</b><span>times cited since</span></div>
+      </div>
+      <p class="verdict">${verdict(h)}</p>
+    </div>
+
+    <div class="leaf" data-no="the facts">
+      <dl>
+        <dt>filed</dt><dd>${when((h.case || {}).filed)}, from ${
+          SOURCE[(h.case || {}).source] || (h.case || {}).source}</dd>
+        <dt>found</dt><dd>${(h.case || {}).summary || "-"}</dd>
+        <dt>touched</dt><dd>${((h.case || {}).touched || []).map(
+          f => `<span class="chip">${f}</span>`).join("") || "-"}</dd>
+        <dt>established</dt><dd>${when(h.established)}</dd>
+      </dl>
+    </div>
+
+    <div class="leaf" data-no="the citations">
+      ${cites.length
+        ? `<p class="verdict" style="margin-bottom:10px">${tallyLine(cites)}</p>` +
+          cites.map(c => {
+            const [verb, tail, cls] = OUTCOME[c.outcome] || [c.outcome, "", "ok"];
+            return `<div class="cite"><i>run ${c.run_id}</i>
+              <span class="${cls}">${verb}</span>
+              <span style="color:var(--ink-soft)">${tail}</span></div>`;
+          }).join("")
+        : `<p class="none">It has never fired. That is not a failure - it means
+           nothing has come close to repeating the mistake that made it.</p>`}
+    </div>
+
+    <div class="leaf quiet" data-no="overruled">
+      <p class="none">${against
+        ? `${against} run${against === 1 ? " has" : "s have"} overridden this and
+           succeeded anyway. At ${COUNTER_THRESHOLD}, with more counter-evidence
+           than evidence, it is retired and published on the overruled page.`
+        : `Never. A rule is retired when ${COUNTER_THRESHOLD} runs override it
+           and succeed anyway, and more runs have gone against it than for it.
+           Nothing has overridden this one yet: ${complied} run${
+           complied === 1 ? "" : "s"} complied.`}</p>
+    </div>
+
+    <div class="feet">
+      <a onclick="location.hash='#${open_}'">&larr; back to the drawer</a>
+      <a class="${prev ? "" : "off"}" onclick="goFile(${prev ? prev.id : 0})">previous</a>
+      <a class="${next ? "" : "off"}" onclick="goFile(${next ? next.id : 0})">next</a>
+    </div>`;
+}
+
+addEventListener("hashchange", () => { readHash(); render(); });
+
+Promise.all([
+  fetch("sprites/office.json").then(r => r.json()),
+  fetch("data.json").then(r => r.json()).catch(() => ({counts:{}, holdings:[]})),
+]).then(([office, data]) => {
+  OFFICE = office; DATA = data;
+  const stage = document.getElementById("stage");
+  // The stage is as tall as the window, or as tall as the card column when
+  // that is longer. Either way the floor must not eat the picture: the line
+  // sits where the room puts it, or at 72% down, whichever is lower, and the
+  // room drops to meet it rather than the floor climbing to meet the room.
+  const below = window.innerHeight - stage.getBoundingClientRect().top;
+  const stageH = Math.max(ROOM.h * PX, below);
+  stage.style.minHeight = stageH + "px";
+
+  const rest = ROOM.floorTop * PX;
+  const drop = Math.min(Math.max(0, Math.round(stageH * 0.72) - rest), 160);
+  const floorY = rest + drop;
+  document.getElementById("room").style.marginTop = drop + "px";
+
+  const bw = office.pieces.brick, fl = office.pieces.floor;
+  document.getElementById("wall").style.cssText +=
+    `height:${floorY}px; background:url("sprites/brick.png") repeat;
+     background-size:${bw.w * PX}px ${bw.h * PX}px;`;
+  document.getElementById("floor").style.cssText +=
+    `top:${floorY}px; background:url("sprites/floor.png") repeat;
+     background-size:${fl.w * PX}px ${fl.h * PX}px;`;
+  readHash();
+  render();
+});
+</script>

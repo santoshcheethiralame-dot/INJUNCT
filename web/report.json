@@ -1,0 +1,1978 @@
+{
+  "generated": "2026-09-11 08:32",
+  "agent": "synthetic",
+  "p_recall": 0.5,
+  "arms": [
+    "A",
+    "C"
+  ],
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "tasks": 30,
+  "runs": 300,
+  "seconds": 114.3,
+  "metrics": {
+    "A": {
+      "runs": 150,
+      "pass_rate": 0.5333,
+      "trap_pass_rate": 0.3913,
+      "repeat_failure_rate": 0.5814,
+      "repeat_seen": 86,
+      "false_positive_rate": 0.0,
+      "blocks": 0,
+      "recovery_rate": null
+    },
+    "C": {
+      "runs": 150,
+      "pass_rate": 0.7,
+      "trap_pass_rate": 0.6087,
+      "repeat_failure_rate": 0.3095,
+      "repeat_seen": 84,
+      "false_positive_rate": 0.0,
+      "blocks": 68,
+      "recovery_rate": 0.931
+    }
+  },
+  "by_trap": {
+    "handedit_generated": {
+      "A": 0.3333,
+      "C": 0.5333
+    },
+    "plugin_without_declaration": {
+      "A": 0.25,
+      "C": 0.375
+    },
+    "schema_without_migration": {
+      "A": 0.575,
+      "C": 0.85
+    },
+    "types_without_regen": {
+      "A": 0.35,
+      "C": 0.65
+    }
+  },
+  "curve": {
+    "A": [
+      {
+        "from": 0,
+        "to": 5,
+        "n": 23,
+        "pass_rate": 0.3043
+      },
+      {
+        "from": 6,
+        "to": 11,
+        "n": 24,
+        "pass_rate": 0.4583
+      },
+      {
+        "from": 12,
+        "to": 17,
+        "n": 20,
+        "pass_rate": 0.45
+      },
+      {
+        "from": 18,
+        "to": 23,
+        "n": 25,
+        "pass_rate": 0.44
+      },
+      {
+        "from": 24,
+        "to": 29,
+        "n": 23,
+        "pass_rate": 0.3043
+      }
+    ],
+    "C": [
+      {
+        "from": 0,
+        "to": 5,
+        "n": 23,
+        "pass_rate": 0.3043
+      },
+      {
+        "from": 6,
+        "to": 11,
+        "n": 24,
+        "pass_rate": 0.5
+      },
+      {
+        "from": 12,
+        "to": 17,
+        "n": 20,
+        "pass_rate": 0.65
+      },
+      {
+        "from": 18,
+        "to": 23,
+        "n": 25,
+        "pass_rate": 0.8
+      },
+      {
+        "from": 24,
+        "to": 29,
+        "n": 23,
+        "pass_rate": 0.7826
+      }
+    ]
+  },
+  "regressions": [
+    {
+      "seed": 1,
+      "task": "registry-recall_letter",
+      "trap": "plugin_without_declaration"
+    },
+    {
+      "seed": 2,
+      "task": "registry-stock_alert",
+      "trap": "plugin_without_declaration"
+    },
+    {
+      "seed": 2,
+      "task": "registry-waitlist",
+      "trap": "plugin_without_declaration"
+    },
+    {
+      "seed": 2,
+      "task": "registry-audit_log",
+      "trap": "plugin_without_declaration"
+    },
+    {
+      "seed": 3,
+      "task": "registry-stock_alert",
+      "trap": "plugin_without_declaration"
+    },
+    {
+      "seed": 3,
+      "task": "typegen-patient-email",
+      "trap": "handedit_generated"
+    },
+    {
+      "seed": 4,
+      "task": "clinic-field-last_seen",
+      "trap": "schema_without_migration"
+    },
+    {
+      "seed": 5,
+      "task": "typegen-patient-balance",
+      "trap": "types_without_regen"
+    },
+    {
+      "seed": 5,
+      "task": "registry-gst_invoice",
+      "trap": "plugin_without_declaration"
+    }
+  ],
+  "tape": {
+    "A": [
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      }
+    ],
+    "C": [
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 0,
+        "b": 1,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      },
+      {
+        "p": 0,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 0,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      },
+      {
+        "p": 0,
+        "b": 1,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-allergy"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-shift_roster"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-appointment-room"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "schema_without_migration",
+        "task": "clinic-field-dob"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-2"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-1"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-2"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-stock_alert"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "handedit_generated",
+        "task": "typegen-patient-verified"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-notes"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-1"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-referred_by"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-patient-balance"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "typegen-readme"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-no_show_flag"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-insurer"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-last_seen"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-email"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-blood_group"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-minutes"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "schema_without_migration",
+        "task": "clinic-field-phone_verified"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "types_without_regen",
+        "task": "typegen-appointment-confirmed"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-bulk_import"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "registry-docs-0"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-recall_letter"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-gst_invoice"
+      },
+      {
+        "p": 1,
+        "b": 1,
+        "t": "handedit_generated",
+        "task": "typegen-patient-email"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-waitlist"
+      },
+      {
+        "p": 1,
+        "b": 0,
+        "t": "",
+        "task": "clinic-copy-0"
+      },
+      {
+        "p": 0,
+        "b": 0,
+        "t": "plugin_without_declaration",
+        "task": "registry-audit_log"
+      }
+    ]
+  }
+}

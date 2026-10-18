@@ -1,0 +1,81 @@
+/* The records office — shared motion.
+ *
+ * Every page in this building defines its own colours inline, so office.css
+ * reaches only the front door. Motion is the one thing that genuinely has to
+ * agree everywhere: a drawer that opens in four steps here and glides there is
+ * two different buildings. So it lives in its own file and every page links it.
+ *
+ * Stepped only. Smooth easing makes retro read as a modern UI in costume
+ * (docs/DESIGN.md, law 3). Fluidity is bought with FRAMES, never with
+ * interpolation - the same way the clerk got smoother by going from 26 drawn
+ * frames to 65 rather than by having a tween invent the in-betweens. Every
+ * duration here is a whole number of frames.
+ *
+ * Law 4: one motion budget per screen. Exactly one thing on a page carries
+ * weight - the stamp on the desk, the drawer in the cabinet - and everything
+ * else is deliberately light, short, and over before it is noticed.
+ *
+ * Nothing in this file sets a colour, a font or a box. It is additive only, so
+ * linking it into a page cannot move that page's furniture.
+ */
+
+:root{
+  --f:70ms;                    /* one frame, matching the sheet's fastest state */
+  --t-tick:70ms;               /* 1 frame  - a state flip                       */
+  --t-quick:140ms;             /* 2 frames - a hover, a press                   */
+  --t-beat:280ms;              /* 4 frames - something arriving                 */
+  --t-heavy:420ms;             /* 6 frames - the one thing that has weight      */
+}
+
+/* A stamp coming down. The only motion allowed to feel like a blow. */
+@keyframes vd-stamp{
+  0%  { transform:translateY(-14px) rotate(-7deg); opacity:0 }
+  55% { transform:translateY(0) rotate(-2deg); opacity:1 }
+  75% { transform:translateY(-3px) rotate(-3deg); opacity:1 }
+  100%{ transform:none; opacity:1 }
+}
+/* The recoil that runs through whatever the stamp landed on. */
+@keyframes vd-jolt{
+  0%{ transform:none } 33%{ transform:translateY(2px) }
+  66%{ transform:translateY(-1px) } 100%{ transform:none }
+}
+/* A file rising out of a drawer, or a row arriving in a panel.
+ *
+ * Transform only - deliberately. An entrance that fades content in from
+ * opacity:0 leaves that content INVISIBLE whenever the animation does not run,
+ * and it does not run more often than you would think: a backgrounded tab, a
+ * thumbnail capture, a throttled renderer. Caught here by a pane that had
+ * stopped painting, with every row of the front door sitting at zero.
+ * The resting state must be the readable one; motion is only ever added to it. */
+@keyframes vd-rise{
+  from{ transform:translateY(9px) }
+  to  { transform:none }
+}
+/* A tube finding power. Two states, because a CRT has two. */
+@keyframes vd-flicker{ 0%{ opacity:.25 } 50%{ opacity:1 } 100%{ opacity:1 } }
+/* A live indicator. On, or off - never a glow fading in. */
+@keyframes vd-blink{ 0%,49%{ opacity:1 } 50%,100%{ opacity:.18 } }
+
+.vd-stamp  { animation:vd-stamp   var(--t-heavy) steps(3) both }
+.vd-jolt   { animation:vd-jolt    var(--t-quick) steps(3) both }
+.vd-rise   { animation:vd-rise    var(--t-beat)  steps(4) both;
+             animation-delay:var(--d,0ms) }
+.vd-flicker{ animation:vd-flicker var(--t-beat)  steps(2) both }
+.vd-blink  { animation:vd-blink   1s             steps(1) infinite }
+
+/* Keyboard users get the affordance the mouse already has. This office is
+ * navigation, so a door you cannot tab to is a door that is not there.
+ * :where() keeps specificity at zero - a page's own focus style still wins. */
+:where(a,button,[tabindex],.sprite.clickable):focus-visible{
+  outline:3px solid #C8A24A; outline-offset:2px;
+}
+
+/* The invariant, for everyone: only .vd-stamp animates opacity, and only on an
+ * element JS has just revealed. Nothing that is part of the page at rest can be
+ * left invisible by an animation that never ran. */
+
+@media (prefers-reduced-motion:reduce){
+  *{ animation:none !important; transition:none !important }
+  /* Nothing may be left parked mid-animation and therefore invisible. */
+  .vd-rise,.vd-stamp,.vd-flicker{ opacity:1 !important; transform:none !important }
+}

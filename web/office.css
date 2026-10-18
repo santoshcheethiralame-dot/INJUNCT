@@ -1,0 +1,97 @@
+/* The records office — the front door's shell.
+ *
+ * These are NOT the sprite palette, and the comment here used to claim they
+ * were. There are two colour worlds in this building and they are different on
+ * purpose: index.html is the dark entrance hall, while the rooms behind it -
+ * the desk, the cabinet - are the warm daylit office the sprites are drawn in.
+ *
+ * The sprite palette lives in injunct/art/clerk.py, where shades and
+ * highlights are computed off each base rather than picked, and the room pages
+ * carry those values inline. If a colour changes there, the pages that mirror
+ * it are desk.html, cabinet.html, chart.html, tape.html, overruled.html and
+ * demo.html - not this file.
+ */
+
+:root{
+  --ink:#171219;  --panel:#1E1822;  --line:#2E2430;
+  --paper:#F2EAD8; --paper-dim:#D8CDB6;
+  --putty:#A9B0A4; --putty-hi:#C6CBC2; --glass:#0C1410;
+  --phos:#6FCF97;  --amber:#C8A24A;  --stamp:#B4402C;
+  --desk:#6B4A32;  --desk-dark:#543A27; --olive:#7C8A72; --dim:#5E5348;
+
+  --px:3;                     /* integer sprite scale, never fractional */
+  --step:cubic-bezier(1,0,1,0);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0; background:var(--ink); color:var(--paper);
+  font:14px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Bitmap register: labels, numbers, machine forms. Never body copy. */
+.pixel-type{
+  font-family:ui-monospace,Consolas,monospace;
+  font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+}
+
+/* ---- primitives -------------------------------------------------------- */
+
+.plate{
+  background:var(--panel);
+  border:3px solid var(--line);
+  border-radius:4px;
+  position:relative;
+}
+.plate::after{                 /* inner bevel: light top-left, dark bottom-right */
+  content:""; position:absolute; inset:0; pointer-events:none;
+  border-top:1px solid rgba(246,238,216,.06);
+  border-left:1px solid rgba(246,238,216,.06);
+  border-bottom:1px solid rgba(0,0,0,.35);
+  border-right:1px solid rgba(0,0,0,.35);
+  border-radius:2px;
+}
+
+.card{
+  background:var(--paper); color:var(--ink);
+  border:3px solid var(--ink); border-radius:0;
+  padding:12px 14px;
+  background-image:repeating-linear-gradient(
+    var(--paper) 0 20px, var(--paper-dim) 20px 21px);
+}
+
+.stamped{
+  display:inline-block; transform:rotate(-6deg);
+  border:2px solid var(--stamp); color:var(--stamp);
+  padding:3px 8px; border-radius:2px;
+  font-family:ui-monospace,Consolas,monospace;
+  font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+}
+.stamped.advisory{ border-color:var(--amber); color:var(--amber); transform:rotate(-3deg) }
+.stamped.cleared { border-color:var(--phos);  color:var(--phos) }
+
+/* ---- sprites ----------------------------------------------------------- */
+/* Positioned by JS from office.json, so the page can never disagree with the
+ * generator about where a piece lives on the sheet. */
+
+.sprite{
+  position:absolute;
+  image-rendering:pixelated;
+  background-repeat:no-repeat;
+}
+.sprite.clickable{ cursor:pointer }
+.sprite.clickable:hover{ filter:brightness(1.14) }
+
+.stage{
+  position:relative;
+  margin:0 auto;
+  image-rendering:pixelated;
+}
+
+/* ---- motion ------------------------------------------------------------ */
+/* Lives in web/motion.css, which every page links - including this one's.
+ * Keeping it there rather than here is deliberate: office.css also carries
+ * colour and furniture, and most pages define their own, so only the motion
+ * is genuinely shared. See docs/DESIGN.md, "Where motion lives".            */

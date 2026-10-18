@@ -1,0 +1,741 @@
+{
+  "counts": {
+    "cases": 14,
+    "binding": 6,
+    "persuasive": 8,
+    "overruled": 0
+  },
+  "holdings": [
+    {
+      "id": 1,
+      "case_id": 1,
+      "template": "co_change",
+      "params": {
+        "trigger": "plugins/*.py",
+        "required": "docs/**"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\registry",
+      "status": "binding",
+      "says": "Changing plugins/*.py means changing docs/ too.",
+      "empanel": {
+        "fire": "1/1",
+        "false": "0/3",
+        "false_ids": [],
+        "tested": 3,
+        "judged": 3
+      },
+      "established": 1789209316.994257,
+      "citations": [
+        {
+          "id": 1,
+          "run_id": 22,
+          "holding_id": 1,
+          "outcome": "complied_pass",
+          "at": 1789209325.212918
+        },
+        {
+          "id": 3,
+          "run_id": 24,
+          "holding_id": 1,
+          "outcome": "complied_pass",
+          "at": 1789209326.2149932
+        },
+        {
+          "id": 5,
+          "run_id": 25,
+          "holding_id": 1,
+          "outcome": "complied_pass",
+          "at": 1789209326.6120484
+        },
+        {
+          "id": 7,
+          "run_id": 28,
+          "holding_id": 1,
+          "outcome": "complied_pass",
+          "at": 1789209328.0334237
+        },
+        {
+          "id": 11,
+          "run_id": 37,
+          "holding_id": 1,
+          "outcome": "complied_pass",
+          "at": 1789209331.4109411
+        }
+      ],
+      "case": {
+        "id": 1,
+        "run_id": 1,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\registry",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "plugins/audit_log.py",
+          "registry.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209316.986253
+      }
+    },
+    {
+      "id": 2,
+      "case_id": 2,
+      "template": "must_run",
+      "params": {
+        "glob": "client/generated.py",
+        "cmd": "tools/gen.py"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\typegen",
+      "status": "binding",
+      "says": "client/generated.py is generated. Run tools/gen.py instead of editing it.",
+      "empanel": {
+        "fire": "1/1",
+        "false": "0/1",
+        "false_ids": [],
+        "tested": 1,
+        "judged": 1
+      },
+      "established": 1789209317.4303458,
+      "citations": [],
+      "case": {
+        "id": 2,
+        "run_id": 2,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\typegen",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "api/types.json",
+          "client/generated.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209317.4228084
+      }
+    },
+    {
+      "id": 3,
+      "case_id": 3,
+      "template": "prose",
+      "params": {
+        "text": "the working tree failed its check"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "status": "persuasive",
+      "says": "the working tree failed its check",
+      "empanel": {},
+      "established": 1789209317.7483761,
+      "citations": [],
+      "case": {
+        "id": 3,
+        "run_id": 3,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "models/patient.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209317.741376
+      }
+    },
+    {
+      "id": 4,
+      "case_id": 4,
+      "template": "prose",
+      "params": {
+        "text": "the working tree failed its check"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "status": "persuasive",
+      "says": "the working tree failed its check",
+      "empanel": {},
+      "established": 1789209318.412448,
+      "citations": [],
+      "case": {
+        "id": 4,
+        "run_id": 5,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "models/patient.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209318.4084456
+      }
+    },
+    {
+      "id": 5,
+      "case_id": 5,
+      "template": "prose",
+      "params": {
+        "text": "the working tree failed its check"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "status": "persuasive",
+      "says": "the working tree failed its check",
+      "empanel": {},
+      "established": 1789209321.6038263,
+      "citations": [],
+      "case": {
+        "id": 5,
+        "run_id": 12,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "models/patient.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209321.5944798
+      }
+    },
+    {
+      "id": 6,
+      "case_id": 6,
+      "template": "prose",
+      "params": {
+        "text": "the working tree failed its check"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "status": "persuasive",
+      "says": "the working tree failed its check",
+      "empanel": {},
+      "established": 1789209322.027701,
+      "citations": [],
+      "case": {
+        "id": 6,
+        "run_id": 13,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "models/patient.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209322.0166812
+      }
+    },
+    {
+      "id": 7,
+      "case_id": 7,
+      "template": "co_change",
+      "params": {
+        "trigger": "plugins/*.py",
+        "required": "registry.py"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\registry",
+      "status": "binding",
+      "says": "Changing plugins/*.py means changing registry.py too.",
+      "empanel": {
+        "fire": "1/1",
+        "false": "0/3",
+        "false_ids": [],
+        "tested": 3,
+        "judged": 3
+      },
+      "established": 1789209322.361664,
+      "citations": [
+        {
+          "id": 2,
+          "run_id": 22,
+          "holding_id": 7,
+          "outcome": "complied_pass",
+          "at": 1789209325.2158692
+        },
+        {
+          "id": 4,
+          "run_id": 24,
+          "holding_id": 7,
+          "outcome": "complied_pass",
+          "at": 1789209326.2210102
+        },
+        {
+          "id": 6,
+          "run_id": 25,
+          "holding_id": 7,
+          "outcome": "complied_pass",
+          "at": 1789209326.619202
+        },
+        {
+          "id": 8,
+          "run_id": 28,
+          "holding_id": 7,
+          "outcome": "complied_pass",
+          "at": 1789209328.0395496
+        },
+        {
+          "id": 12,
+          "run_id": 37,
+          "holding_id": 7,
+          "outcome": "complied_pass",
+          "at": 1789209331.417435
+        }
+      ],
+      "case": {
+        "id": 7,
+        "run_id": 14,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\registry",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "docs/plugins.md",
+          "plugins/stock_alert.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209322.3566637
+      }
+    },
+    {
+      "id": 8,
+      "case_id": 8,
+      "template": "blast_radius",
+      "params": {},
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\report",
+      "status": "binding",
+      "says": "A function that changed shape is not finished until its callers move.",
+      "empanel": {
+        "fire": "1/1",
+        "false": "0/5",
+        "false_ids": [],
+        "tested": 5,
+        "judged": 5
+      },
+      "established": 1789209327.1443582,
+      "citations": [
+        {
+          "id": 10,
+          "run_id": 36,
+          "holding_id": 8,
+          "outcome": "complied_pass",
+          "at": 1789209331.0952744
+        }
+      ],
+      "case": {
+        "id": 8,
+        "run_id": 26,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\report",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "core/render.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209327.1089804
+      }
+    },
+    {
+      "id": 9,
+      "case_id": 9,
+      "template": "prose",
+      "params": {
+        "text": "the working tree failed its check"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "status": "persuasive",
+      "says": "the working tree failed its check",
+      "empanel": {},
+      "established": 1789209328.408726,
+      "citations": [],
+      "case": {
+        "id": 9,
+        "run_id": 29,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "models/patient.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209328.39121
+      }
+    },
+    {
+      "id": 10,
+      "case_id": 10,
+      "template": "prose",
+      "params": {
+        "text": "the working tree failed its check"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "status": "persuasive",
+      "says": "the working tree failed its check",
+      "empanel": {},
+      "established": 1789209328.9957619,
+      "citations": [],
+      "case": {
+        "id": 10,
+        "run_id": 30,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "models/patient.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209328.9813237
+      }
+    },
+    {
+      "id": 11,
+      "case_id": 11,
+      "template": "co_change",
+      "params": {
+        "trigger": "api/*.json",
+        "required": "client/**"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\typegen",
+      "status": "binding",
+      "says": "Changing api/*.json means changing client/ too.",
+      "empanel": {
+        "fire": "1/1",
+        "false": "0/4",
+        "false_ids": [],
+        "tested": 4,
+        "judged": 4
+      },
+      "established": 1789209329.2703924,
+      "citations": [
+        {
+          "id": 9,
+          "run_id": 32,
+          "holding_id": 11,
+          "outcome": "complied_pass",
+          "at": 1789209329.7402375
+        },
+        {
+          "id": 15,
+          "run_id": 41,
+          "holding_id": 11,
+          "outcome": "complied_pass",
+          "at": 1789209333.3114338
+        }
+      ],
+      "case": {
+        "id": 11,
+        "run_id": 31,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\typegen",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "api/types.json"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209329.2618668
+      }
+    },
+    {
+      "id": 12,
+      "case_id": 12,
+      "template": "no_quadratic",
+      "params": {
+        "glob": "reports/*.py"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\report",
+      "status": "binding",
+      "says": "Work added under reports/*.py has to stay linear in its input.",
+      "empanel": {
+        "fire": "1/1",
+        "false": "0/6",
+        "false_ids": [],
+        "tested": 6,
+        "judged": 6
+      },
+      "established": 1789209330.0212796,
+      "citations": [
+        {
+          "id": 13,
+          "run_id": 39,
+          "holding_id": 12,
+          "outcome": "complied_pass",
+          "at": 1789209332.435992
+        },
+        {
+          "id": 14,
+          "run_id": 40,
+          "holding_id": 12,
+          "outcome": "complied_pass",
+          "at": 1789209332.7448144
+        }
+      ],
+      "case": {
+        "id": 12,
+        "run_id": 33,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\report",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "reports/owners.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209330.0068223
+      }
+    },
+    {
+      "id": 13,
+      "case_id": 13,
+      "template": "prose",
+      "params": {
+        "text": "the working tree failed its check"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "status": "persuasive",
+      "says": "the working tree failed its check",
+      "empanel": {},
+      "established": 1789209330.4060256,
+      "citations": [],
+      "case": {
+        "id": 13,
+        "run_id": 34,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "models/patient.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209330.3989813
+      }
+    },
+    {
+      "id": 14,
+      "case_id": 14,
+      "template": "prose",
+      "params": {
+        "text": "the working tree failed its check"
+      },
+      "scope": "repo",
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "status": "persuasive",
+      "says": "the working tree failed its check",
+      "empanel": {},
+      "established": 1789209330.7430263,
+      "citations": [],
+      "case": {
+        "id": 14,
+        "run_id": 35,
+        "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+        "source": "command_fail",
+        "confidence": "high",
+        "summary": "the working tree failed its check",
+        "touched": [
+          "models/patient.py"
+        ],
+        "detail": "{\"output\": \"\"}",
+        "filed": 1789209330.729002
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": 14,
+      "run_id": 35,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "models/patient.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209330.729002
+    },
+    {
+      "id": 13,
+      "run_id": 34,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "models/patient.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209330.3989813
+    },
+    {
+      "id": 12,
+      "run_id": 33,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\report",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "reports/owners.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209330.0068223
+    },
+    {
+      "id": 11,
+      "run_id": 31,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\typegen",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "api/types.json"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209329.2618668
+    },
+    {
+      "id": 10,
+      "run_id": 30,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "models/patient.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209328.9813237
+    },
+    {
+      "id": 9,
+      "run_id": 29,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "models/patient.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209328.39121
+    },
+    {
+      "id": 8,
+      "run_id": 26,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\report",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "core/render.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209327.1089804
+    },
+    {
+      "id": 7,
+      "run_id": 14,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\registry",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "docs/plugins.md",
+        "plugins/stock_alert.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209322.3566637
+    },
+    {
+      "id": 6,
+      "run_id": 13,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "models/patient.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209322.0166812
+    },
+    {
+      "id": 5,
+      "run_id": 12,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "models/patient.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209321.5944798
+    },
+    {
+      "id": 4,
+      "run_id": 5,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "models/patient.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209318.4084456
+    },
+    {
+      "id": 3,
+      "run_id": 3,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\clinic",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "models/patient.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209317.741376
+    },
+    {
+      "id": 2,
+      "run_id": 2,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\typegen",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "api/types.json",
+        "client/generated.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209317.4228084
+    },
+    {
+      "id": 1,
+      "run_id": 1,
+      "repo": "C:\\vdclone\\repo\\.bench\\C\\3\\registry",
+      "source": "command_fail",
+      "confidence": "high",
+      "summary": "the working tree failed its check",
+      "touched": [
+        "plugins/audit_log.py",
+        "registry.py"
+      ],
+      "detail": "{\"output\": \"\"}",
+      "filed": 1789209316.986253
+    }
+  ],
+  "source": ".bench/C/3/ledger.db"
+}

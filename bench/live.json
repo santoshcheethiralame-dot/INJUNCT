@@ -1,0 +1,135 @@
+{
+  "generated": "2026-09-11 12:29",
+  "model": "opencode/nemotron-3.5-lightning-free",
+  "agent": "opencode",
+  "arms": [
+    "off",
+    "advise",
+    "enforce"
+  ],
+  "by_arm": {
+    "off": {
+      "trials": 0,
+      "agent_failed": 0,
+      "caught": 0,
+      "missed": 0,
+      "false_alarms": 0,
+      "correctly_silent": 0,
+      "precision": null,
+      "recall": null
+    },
+    "advise": {
+      "trials": 0,
+      "agent_failed": 0,
+      "caught": 0,
+      "missed": 0,
+      "false_alarms": 0,
+      "correctly_silent": 0,
+      "precision": null,
+      "recall": null
+    },
+    "enforce": {
+      "trials": 0,
+      "agent_failed": 0,
+      "caught": 0,
+      "missed": 0,
+      "false_alarms": 0,
+      "correctly_silent": 0,
+      "precision": null,
+      "recall": null
+    }
+  },
+  "trials": 6,
+  "scored": 0,
+  "dead": 6,
+  "valid": false,
+  "invalid_because": [
+    "6/6 trials had no agent activity at all (provider error or timeout) and were excluded",
+    "the enforce arm never halted or fired a precedent - the treatment was not engaged",
+    "the recorder saw no file changes in any trial - the workspace reset is wrong"
+  ],
+  "score": {
+    "trials": 0,
+    "agent_failed": 0,
+    "caught": 0,
+    "missed": 0,
+    "false_alarms": 0,
+    "correctly_silent": 0,
+    "precision": null,
+    "recall": null
+  },
+  "rows": [
+    {
+      "task": "Add a phone_verified field to the Patient model.",
+      "mode": "off",
+      "seconds": 0.0,
+      "exit": 3221225794,
+      "halted": false,
+      "touched": [],
+      "oracle_passed": false,
+      "oracle": "",
+      "fired": [],
+      "attempts": 3
+    },
+    {
+      "task": "Add an email field to the Patient model.",
+      "mode": "off",
+      "seconds": 0.0,
+      "exit": 3221225794,
+      "halted": false,
+      "touched": [],
+      "oracle_passed": false,
+      "oracle": "",
+      "fired": [],
+      "attempts": 3
+    },
+    {
+      "task": "Add a phone_verified field to the Patient model.",
+      "mode": "advise",
+      "seconds": 0.0,
+      "exit": 3221225794,
+      "halted": false,
+      "touched": [],
+      "oracle_passed": false,
+      "oracle": "",
+      "fired": [],
+      "attempts": 3
+    },
+    {
+      "task": "Add an email field to the Patient model.",
+      "mode": "advise",
+      "seconds": 0.0,
+      "exit": 3221225794,
+      "halted": false,
+      "touched": [],
+      "oracle_passed": false,
+      "oracle": "",
+      "fired": [],
+      "attempts": 3
+    },
+    {
+      "task": "Add a phone_verified field to the Patient model.",
+      "mode": "enforce",
+      "seconds": 0.0,
+      "exit": 3221225794,
+      "halted": false,
+      "touched": [],
+      "oracle_passed": false,
+      "oracle": "",
+      "fired": [],
+      "attempts": 3
+    },
+    {
+      "task": "Add an email field to the Patient model.",
+      "mode": "enforce",
+      "seconds": 0.0,
+      "exit": 3221225794,
+      "halted": false,
+      "touched": [],
+      "oracle_passed": false,
+      "oracle": "",
+      "fired": [],
+      "attempts": 3
+    }
+  ]
+}
