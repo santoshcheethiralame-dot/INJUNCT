@@ -164,7 +164,7 @@ def _repo(payload: dict) -> str:
     return next((c for c in candidates if c), os.getcwd())
 
 
-def _deny(reason: str) -> tuple[int, str, str]:
+def _deny(reason: str, user: str = "") -> tuple[int, str, str]:
     """Deny in both the shapes Claude Code accepts.
 
     The structured form on stdout is what current versions read; exit 2 with the
@@ -172,11 +172,30 @@ def _deny(reason: str) -> tuple[int, str, str]:
     costs nothing and means the gate does not quietly stop working when someone
     is on a different version.
     """
-    out = json.dumps({"hookSpecificOutput": {
+    body = {"hookSpecificOutput": {
         "hookEventName": "PreToolUse",
         "permissionDecision": "deny",
-        "permissionDecisionReason": reason}})
-    return 2, out, reason
+        "permissionDecisionReason": reason}}
+    if user:
+        # The card above is for the model. The person watching gets one line
+        # they can read at a glance, without opening the tool's error.
+        body["systemMessage"] = user
+    return 2, json.dumps(body), reason
+
+
+def user_line(verdicts: list[dict], pending: list[str]) -> str:
+    """One ASCII line for the person: what was refused, why, where it came from, what next."""
+    v = verdicts[0]
+    e = v.get("empanel") or {}
+    where = (f" (from {e['documented']})" if e.get("documented")
+             else " (built-in rule)" if e.get("pack") else "")
+    files = ", ".join(sorted({Path(f).name for f in pending})[:3]) or "this change"
+    line = f"Injunct blocked a write to {files}: {v.get('says')}{where}"
+    if v.get("next"):
+        line += f" Next: {v['next']}."
+    if len(verdicts) > 1:
+        line += f" (+{len(verdicts) - 1} more rule{'s' if len(verdicts) > 2 else ''})"
+    return line.encode("ascii", "replace").decode("ascii")
 
 
 def pretooluse(payload: dict, mode: str) -> tuple[int, str, str]:
@@ -196,7 +215,7 @@ def pretooluse(payload: dict, mode: str) -> tuple[int, str, str]:
         # what every other memory layer in this space does.
         return 0, "", ""
     from . import render
-    return _deny(render.agent_card(got["verdicts"]))
+    return _deny(render.agent_card(got["verdicts"]), user_line(got["verdicts"], pending))
 
 
 # Claude Code appends additionalContext to the user message, and the message

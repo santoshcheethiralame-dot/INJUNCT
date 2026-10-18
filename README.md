@@ -46,7 +46,17 @@ sentences would actually stop anything.
 injunct coverage .                         # or: injunct coverage owner/name
 injunct coverage . --badge coverage.svg    # a README badge, drawn locally
 injunct coverage . --adopt                 # put the proven rules on the ledger
+injunct coverage . --suggest --html r.html # rewrites that would bind, as a visual report
 ```
+
+`--html` writes one self-contained page (no scripts, no network) that opens in
+an agent app's side panel: [an example](docs/coverage-demo.html). `--suggest`
+asks the model for a narrower rewrite of each judgement or vague instruction,
+proves each one against the history like any rule, and shows only those that
+would bind today. On astral-sh/uv that is 6 rewrites, 3% → 13%. The proof says
+a rewrite never contradicts work that already shipped; it cannot say the
+rewrite still means what the team meant, so the report asks a person to read
+each one.
 
 Every instruction lands in one of three places:
 
@@ -133,8 +143,12 @@ replay (`--trust-history` puts them back). On the demo: trusting every commit,
 In CI, [`action.yml`](action.yml) rebuilds the ledger from the base branch,
 gates the pull request, and comments the coverage report; copy
 [`examples/workflows/injunct.yml`](examples/workflows/injunct.yml). For agents
-that load skills, [`skills/injunct/SKILL.md`](skills/injunct/SKILL.md) follows
-the Agent Skills open standard.
+that load skills, [`skills/`](skills/) holds four, all to the Agent Skills open
+standard: `injunct` (check before editing, measure coverage), and three that
+work as one-word slash commands: `/injunct-check`, `/injunct-coverage` (opens
+the visual report) and `/injunct-hindsight`. When the Claude Code hook refuses a
+write, the person sees one line (what was blocked, why, which AGENTS.md line it
+came from, the next step) while the model gets the full card.
 
 Injunct gates its own pull requests: [PR #1](https://github.com/santoshcheethiralame-dot/INJUNCT/pull/1)
 leaves a stray `breakpoint()` in the code, and the Action fails the check and

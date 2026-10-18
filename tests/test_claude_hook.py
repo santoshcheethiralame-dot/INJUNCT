@@ -260,3 +260,14 @@ def test_a_pack_rule_says_what_it_is_in_both_harnesses():
     assert "  Tested: a built-in rule, binding wherever it applies." in card
     assert "Tested: a built-in rule, binding wherever it applies." in ts
     card.encode("ascii")
+
+
+def test_the_person_gets_one_readable_line_when_a_write_is_blocked():
+    from injunct import claude_hook
+    line = claude_hook.user_line([{
+        "says": "Changing a model requires adding a migration in the same commit.",
+        "next": "create migrations/009_patient.sql", "empanel": {"documented": "AGENTS.md:7"}}],
+        ["C:/repo/models/patient.py"])
+    assert line == ("Injunct blocked a write to patient.py: Changing a model requires adding a migration "
+                    "in the same commit. (from AGENTS.md:7) Next: create migrations/009_patient.sql.")
+    line.encode("ascii")

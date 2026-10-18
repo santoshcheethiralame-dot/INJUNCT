@@ -37,7 +37,7 @@ ul.broke{margin:6px 0 0;padding-left:18px;color:var(--warn);font-size:.88rem}
 footer{margin-top:48px;color:var(--dim);font-size:.85rem;border-top:1px solid var(--line);padding-top:16px}
 </style></head><body><main>
 <header><h1>Is this repository's agent guidance enforced?</h1>
-<p>C:\Users\carbo\projects\hackathons\demo-repos\clinic</p><p>AGENTS.md</p></header>
+<p>clinic</p><p>AGENTS.md</p></header>
 <div class="big"><div class="pct">33%<small>enforced</small></div></div>
 <div class="bar" role="img" aria-label="3 enforced, 2 checkable, 4 unchecked">
 <span class="b-ok" style="width:33.3%"></span><span class="b-warn" style="width:22.2%"></span></div>
@@ -49,12 +49,12 @@ footer{margin-top:48px;color:var(--dim);font-size:.85rem;border-top:1px solid va
 <div class="card fixed"><div class="text"><code>8e112ba: Add Visit model</code></div><div class="why">fixed by <code>9f500f5 Fix Visit: add the missing migration and store a real date</code></div></div>
 <div class="card fixed"><div class="text"><code>7267f8b: Silence the Appointment type error</code></div><div class="why">fixed by <code>415d28f Fix Appointment.room properly instead of ignoring the type</code></div></div>
 <h2>Enforced (3)</h2>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-ok">ENFORCED</span>When you change a model in <code></code>, add a migration under <code></code> in the same commit.</div><div class="where">AGENTS.md:7</div></div><code class="rule">co_change( models/* -&gt; migrations/* )</code><div class="why">held on all 14 past commits that could test it</div></div>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-ok">ENFORCED</span>Do not leave <code></code> debugging calls in <code></code>.</div><div class="where">AGENTS.md:9</div></div><code class="rule">must_not_appear( /print\(/ in app/* )</code><div class="why">held on all 14 past commits that could test it</div></div>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-ok">ENFORCED</span>Never add <code></code> to anything under <code></code>.</div><div class="where">AGENTS.md:10</div></div><code class="rule">must_not_appear( /# type: ignore/ in models/* )</code><div class="why">held on all 14 past commits that could test it</div></div>
+<div class="card"><div class="top"><div class="text"><span class="stamp s-ok">ENFORCED</span>When you change a model in <code>models/</code>, add a migration under <code>migrations/</code> in the same commit.</div><div class="where">AGENTS.md:7</div></div><code class="rule">co_change( models/* -&gt; migrations/* )</code><div class="why">held on all 14 past commits that could test it</div></div>
+<div class="card"><div class="top"><div class="text"><span class="stamp s-ok">ENFORCED</span>Do not leave <code>print(</code> debugging calls in <code>app/</code>.</div><div class="where">AGENTS.md:9</div></div><code class="rule">must_not_appear( /print\(/ in app/* )</code><div class="why">held on all 14 past commits that could test it</div></div>
+<div class="card"><div class="top"><div class="text"><span class="stamp s-ok">ENFORCED</span>Never add <code># type: ignore</code> to anything under <code>models/</code>.</div><div class="where">AGENTS.md:10</div></div><code class="rule">must_not_appear( /# type: ignore/ in models/* )</code><div class="why">held on all 14 past commits that could test it</div></div>
 <h2>Checkable, not yet proven (2)</h2>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-warn">CHECKABLE</span>Never hand-edit <code></code>; it is regenerated from <code></code>.</div><div class="where">AGENTS.md:8</div></div><code class="rule">forbidden_edit( client/generated.py )</code><div class="why">2 past commit(s) already break it</div><ul class="broke"><li>commit 12a65fe: Regenerate client from the spec</li><li>commit 787d909: Start the clinic app</li></ul></div>
-<div class="card"><div class="top"><div class="text"><span class="stamp s-warn">CHECKABLE</span>Update <code></code> whenever you change code in <code></code>.</div><div class="where">AGENTS.md:11</div></div><code class="rule">co_change( app/** -&gt; CHANGELOG.md )</code><div class="why">1 past commit(s) already break it</div><ul class="broke"><li>commit 92438c5: Cancel a booking</li></ul></div>
+<div class="card"><div class="top"><div class="text"><span class="stamp s-warn">CHECKABLE</span>Never hand-edit <code>client/generated.py</code>; it is regenerated from <code>api/spec.json</code>.</div><div class="where">AGENTS.md:8</div></div><code class="rule">forbidden_edit( client/generated.py )</code><div class="why">2 past commit(s) already break it</div><ul class="broke"><li>commit 12a65fe: Regenerate client from the spec</li><li>commit 787d909: Start the clinic app</li></ul></div>
+<div class="card"><div class="top"><div class="text"><span class="stamp s-warn">CHECKABLE</span>Update <code>CHANGELOG.md</code> whenever you change code in <code>app/</code>.</div><div class="where">AGENTS.md:11</div></div><code class="rule">co_change( app/** -&gt; CHANGELOG.md )</code><div class="why">1 past commit(s) already break it</div><ul class="broke"><li>commit 92438c5: Cancel a booking</li></ul></div>
 <h2>Unchecked (4)</h2>
 <div class="card"><div class="top"><div class="text"><span class="stamp s-off">UNCHECKED</span>Write clear, descriptive commit messages.</div><div class="where">AGENTS.md:12</div></div><div class="why">judgement: Descriptiveness is a subjective quality.</div></div>
 <div class="card"><div class="top"><div class="text"><span class="stamp s-off">UNCHECKED</span>Open an issue and wait for a maintainer before starting a large refactor.</div><div class="where">AGENTS.md:13</div></div><div class="why">process: It describes a human workflow involving issue creation and approval.</div></div>
@@ -63,5 +63,5 @@ footer{margin-top:48px;color:var(--dim);font-size:.85rem;border-top:1px solid va
 <footer><p>Candidate sentences come from the documents themselves.
 The model (gemma-4-26b-a4b-it) only sorts each one into a template or a reason it cannot be checked;
 whether a rule binds is decided by replaying it against this repository's own commits.
-Nothing the model wrote was executed.</p><p>injunct · 18 Oct 2026 15:31</p></footer>
+Nothing the model wrote was executed.</p><p>injunct · 18 Oct 2026 15:33</p></footer>
 </main></body></html>

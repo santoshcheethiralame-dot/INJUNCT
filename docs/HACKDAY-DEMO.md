@@ -168,6 +168,13 @@ every pull request. Reset for the next run:
 git checkout -- models/patient.py; Remove-Item migrations\009_patient.sql; cd ..
 ```
 
+## 4b. In the Claude Code app (optional, 60 s)
+
+Open a session on `demo-repos\clinic` and type `/injunct-coverage`: the visual
+report opens in the side panel. Then ask Claude to add a field to the Patient
+model without a migration; the edit is refused, and you see one line saying
+why, citing AGENTS.md:7.
+
 ## 5. A real repository: astral-sh/uv (45 s)
 
 ```powershell
@@ -185,8 +192,19 @@ python -m injunct coverage uv
   uv's own recent commits, which coverage lists by name.
 - 58 unchecked: 22 process, 15 judgement, 12 runtime, 9 vague.
 
+Then the prescription:
+
+```powershell
+python -m injunct coverage uv --suggest
+```
+
+```
+  6 rewrite(s) that would be enforced today, each proven on this history (3% -> 13%):
+```
+
 Line to say: *most of what teams write for agents is process and judgement.
-That is the finding, and it is why a low number is honest rather than a bug.*
+A low number is the honest diagnosis; the rewrites are the prescription, each
+proven on 69 commits, each for a person to read before adopting.*
 
 ---
 

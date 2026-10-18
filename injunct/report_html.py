@@ -58,6 +58,12 @@ def _e(s) -> str:
     return html.escape(str(s), quote=True)
 
 
+def _name(repo: str) -> str:
+    """owner/name for a GitHub repository, the folder name for a local one -
+    a report is often shared, and a full local path says more than it should."""
+    return repo.replace(chr(92), "/").rstrip("/").rsplit("/", 1)[-1] if ":" in repo or repo.startswith("/") else repo
+
+
 def _md(s) -> str:
     """Instruction text as written: escaped, with its `backticks` shown as code."""
     return re.sub(r"`([^`]+)`", r"<code>\1</code>", _e(s))
@@ -88,7 +94,7 @@ def render(s: dict) -> str:
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Injunct coverage</title><style>{CSS}</style></head><body><main>
 <header><h1>Is this repository's agent guidance enforced?</h1>
-<p>{_e(s["repo"])}</p><p>{_e(", ".join(s["docs"]) or "no agent documents found")}</p></header>
+<p>{_e(_name(s["repo"]))}</p><p>{_e(", ".join(s["docs"]) or "no agent documents found")}</p></header>
 <div class="big"><div class="pct">{s["percent"]}%<small>enforced</small></div>{then}</div>
 <div class="bar" role="img" aria-label="{s['enforced']} enforced, {s['checkable']} checkable, {s['unchecked']} unchecked">
 <span class="b-ok" style="width:{ok:.1f}%"></span><span class="b-warn" style="width:{warn:.1f}%"></span></div>
