@@ -298,19 +298,23 @@ def cmd_hindsight(a) -> int:
           f"{s['introducers']} commits they trace back to.")
     print(f"  {s['rules']} rules replayed against each, as it landed.")
     print()
-    print(f"  caught      {r(s['caught'], s['introducers'])} of the commits that introduced a fixed problem")
-    print(f"  baseline    fired on {r(s['clean_fired'], s['clean'])} of the other commits")
+    print(f"  caught      {r(s['caught'], s['introducers'])} of the commits that introduced a fixed problem,")
+    print("              counted only where the fix did what the rule asks for")
     print(f"  binding     {s['caught_binding']} of those catches came from a rule that blocks today")
+    print(f"  unrelated   {s['unrelated']} more fired on a bad commit, but the fix was about something else")
+    print(f"  baseline    the rules fired on {r(s['clean_fired'], s['clean'])} of the commits nobody had to fix")
     print()
     for c in s["catches"]:
         print(f"  {c['introduced']}")
         print(f"    fixed by  {c['fixed_by']}")
-        for h in c["rules"][:3]:
+        for h in [h for h in c["rules"] if h["causal"]][:3]:
             mark = "BINDING " if h["status"] == "binding" else "advisory"
             print(f"    {mark}  {h['says']}")
             print(f"              {h['why']}")
         print()
     print("  traced with SZZ (blame the lines each fix changed); check each pair by hand.")
+    if s["unrelated"]:
+        print("  --json lists the unrelated ones too.")
     if s["shallow"]:
         print("  shallow clone: commits older than the clone could not be traced.")
     print()

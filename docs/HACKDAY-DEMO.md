@@ -111,15 +111,17 @@ python -m injunct hindsight clinic --no-docs
 ```
   3 fix commits in the last 16; 3 commits they trace back to.
   ...
-  caught      3/3 (100%) of the commits that introduced a fixed problem
-  baseline    fired on 3/10 (30%) of the other commits
+  caught      3/3 (100%) of the commits that introduced a fixed problem,
+              counted only where the fix did what the rule asks for
   binding     3 of those catches came from a rule that blocks today
+  unrelated   0 more fired on a bad commit, but the fix was about something else
+  baseline    the rules fired on 4/11 (36%) of the commits nobody had to fix
 ```
 
 Line to say: *we trace each fix back with SZZ, blaming the lines the fix had
-to change, and replay the rules against the commit that broke them. The
-baseline is there because a rule that fires on everything catches every bug
-for free.*
+to change, and replay the rules against the commit that broke them. A catch
+only counts if the fix did what the rule asks: here, it removed the print,
+added the migration, dropped the type-ignore.*
 
 ## 4. The block (45 s)
 
@@ -200,9 +202,9 @@ That is the finding, and it is why a low number is honest rather than a bug.*
   enough at filling a schema. Any OpenAI-compatible endpoint works, including
   a local Ollama, so the whole thing can run with no network.
 - **"Does hindsight work on real repos?"** On uv's last 300 commits, 7
-  bug-introducing commits trace cleanly. The rules fire on 4 of them against a
-  29% baseline, but those matches are not causal. It is a method, shown
-  honestly, not yet a result.
+  bug-introducing commits trace cleanly, and none is caught causally: one rule
+  fired, but on a bug the fix was not about. A catch only counts when the fix
+  did what the rule asks, so the tool says 0/7 rather than flattering itself.
 - **"What was built today?"** See `docs/SUBMISSION.md`, under Origin.
 
 ## If something breaks

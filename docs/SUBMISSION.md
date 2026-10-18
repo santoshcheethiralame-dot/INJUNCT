@@ -65,8 +65,9 @@ The run sheet is `docs/HACKDAY-DEMO.md`: five minutes, offline.
   planted bugs make every rule look wrong (0%). Leaving out the three commits
   somebody came back and fixed, three rules bind (33%).
 - **Hindsight:** it traces each fix to the commit that caused the problem
-  (SZZ) and replays the rules. All 3 planted bugs are caught by binding rules,
-  against a 30% baseline on other commits.
+  (SZZ) and replays the rules. A catch only counts when the fix did what the
+  rule asks for. All 3 planted bugs are caught that way, by binding rules. On
+  uv's real history the honest answer is 0 of 7, and the tool prints it.
 - **The block:** edit a model without a migration and `injunct gate` halts
   with "from AGENTS.md:7, held on 13 past commits" and "DO THIS NEXT: create
   migrations/009_patient.sql". The same card stops the write inside Claude

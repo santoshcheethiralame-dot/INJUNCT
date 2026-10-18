@@ -14,10 +14,11 @@ fix that only adds lines points at nothing, and a refactor in between points
 at the wrong commit - so every catch is printed with both commits, for a
 person to check, and the method is stated rather than hidden.
 
-A rule that fires on everything "catches" every bug for free. So the same
-rules are replayed against every other commit in the window, and the report
-puts the two rates side by side: caught N of the bug-introducing commits,
-fired on M of the clean ones. Only the gap between them is evidence.
+A rule that fires on everything "catches" every bug for free. So a catch
+only counts when the fix did what the rule asks for (see `causal`); a rule
+that merely fired on the bad commit is reported apart, as unrelated. And the
+same rules are replayed against every other commit in the window, so the
+report always shows how often they fire on work nobody had to fix.
 
 Only checks that decide from the diff alone are replayed. `must_appear`,
 `regression_test`, `no_quadratic` and `blast_radius` read the working tree as
@@ -135,6 +136,30 @@ def introducers(repo: Path, sha: str, body: str, boundary: set[str]) -> set[str]
     return found
 
 
+def causal(template: str, p: dict, fix: Change) -> bool:
+    """Did the fix do what the rule asks for?
+
+    A rule that fired on the commit that broke something only gets credit if
+    the commit that repaired it did the thing the rule demands: took the
+    banned line out, added the missing companion, edited the guarded file,
+    or put the removed line back. Otherwise the rule fired on a commit whose
+    problem was something else, and counting it would be a coincidence
+    dressed up as a catch.
+    """
+    hits = lambda pat: templates._hits(fix.touched, pat)
+    if template == "must_not_appear":
+        rx = re.compile(p["regex"])
+        return any(rx.search(line) for f in hits(p["glob"]) for line in (fix.removed or {}).get(f, []))
+    if template == "must_not_remove":
+        rx = re.compile(p["regex"])
+        return any(rx.search(line) for f in hits(p["glob"]) for line in fix.added.get(f, []))
+    if template == "co_change":
+        return bool(hits(p["required"]))
+    if template == "forbidden_edit":
+        return bool(hits(p["glob"]))
+    return False
+
+
 def later_fixed(repo: Path, window: int = WINDOW) -> dict[str, str]:
     """{commit that introduced a problem: the commit that fixed it}, within the window."""
     boundary = _shallow(repo)
@@ -178,17 +203,23 @@ def run(target, window: int = WINDOW) -> dict:
         for h in rules:
             why = templates.fires(h["template"], h["params"], ch)
             if why:
-                out.append({"id": h["id"], "status": h["status"], "says": h["says"], "why": why})
+                out.append({"id": h["id"], "status": h["status"], "says": h["says"], "why": why,
+                            "template": h["template"], "params": h["params"]})
         return out
 
-    catches, bug_judged = [], 0
+    catches, unrelated, bug_judged = [], [], 0
     for b, fixed in cause.items():
         hits = fired(b)
         if hits is None:
             continue
         bug_judged += 1
-        if hits:
-            catches.append(Catch(_subject(repo, b), _subject(repo, fixed[0]), hits))
+        if not hits:
+            continue
+        fix = change_of(repo, fixed[0])
+        for h in hits:
+            h["causal"] = bool(fix) and causal(h["template"], h["params"], fix)
+        c = Catch(_subject(repo, b), _subject(repo, fixed[0]), hits)
+        (catches if any(h["causal"] for h in hits) else unrelated).append(c)
 
     fix_set = {sha for sha, _, _ in fixes}
     clean_judged = clean_fired = 0
@@ -201,7 +232,7 @@ def run(target, window: int = WINDOW) -> dict:
         clean_judged += 1
         clean_fired += bool(hits)
 
-    binding = [c for c in catches if any(r["status"] == "binding" for r in c.rules)]
+    binding = [c for c in catches if any(r["status"] == "binding" and r["causal"] for r in c.rules)]
     return {
         "repo": remote or str(repo),
         "window": len(log),
@@ -212,7 +243,9 @@ def run(target, window: int = WINDOW) -> dict:
         "caught_binding": len(binding),
         "clean": clean_judged,
         "clean_fired": clean_fired,
+        "unrelated": len(unrelated),
         "catches": [asdict(c) for c in catches],
+        "unrelated_catches": [asdict(c) for c in unrelated],
         "shallow": bool(boundary),
     }
 

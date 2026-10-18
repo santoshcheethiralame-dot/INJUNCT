@@ -83,3 +83,22 @@ def test_the_demo_catches_every_planted_bug_with_a_binding_rule(monkeypatch):
     s = hindsight.run(repo)
     assert (s["caught"], s["introducers"], s["caught_binding"]) == (3, 3, 3)
     assert s["clean_fired"] < s["clean"]               # the rules are not firing on everything
+
+
+def test_a_rule_that_fired_on_a_bug_it_did_not_cause_is_not_a_catch(tmp_path):
+    r = tmp_path / "app"
+    r.mkdir()
+    _git(r, "init", "-q"); _git(r, "config", "user.email", "t@t"); _git(r, "config", "user.name", "t")
+    _commit(r, {"app/a.py": "def a():\n    return 1\n"}, "start")
+    # The bad commit adds a print (the rule fires) AND an off-by-one (the real bug).
+    _commit(r, {"app/a.py": "def a():\n    print('hi')\n    return 2\n"}, "change a")
+    # The fix repairs the off-by-one and leaves the print alone.
+    _commit(r, {"app/a.py": "def a():\n    print('hi')\n    return 1\n"}, "Fix the return value of a")
+    led = Ledger(ledger_path(r))
+    run = led.open_run(str(r.resolve()), "t", arm="t")
+    case = led.file_case(run, str(r.resolve()), "t", "high", "no print", [], "{}")
+    led.establish(case, str(r.resolve()), "must_not_appear", {"regex": r"print\(", "glob": "app/**"},
+                  "No print in app/.", status="binding")
+    led.close()
+    s = hindsight.run(r)
+    assert s["introducers"] == 1 and s["caught"] == 0 and s["unrelated"] == 1

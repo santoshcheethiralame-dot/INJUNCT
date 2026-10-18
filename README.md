@@ -113,15 +113,17 @@ side by side. Only the gap is evidence. SZZ is noisy — a fix that only adds
 lines points at nothing — so every catch prints both commits for a person to
 check.
 
-| | fix commits | traced to a cause | caught | baseline (other commits) |
-|---|---|---|---|---|
-| clinic demo (planted) | 3 | 3 | **3/3**, all by binding rules | 3/10 (30%) |
-| astral-sh/uv, last 300 commits | 21 | 7 | 4/7 (57%) | 77/263 (29%) |
+| | fix commits | traced to a cause | caught (the fix did what the rule asks) | fired, but unrelated | baseline (commits nobody fixed) |
+|---|---|---|---|---|---|
+| clinic demo (planted) | 3 | 3 | **3/3**, all by binding rules | 0 | 4/11 (36%) |
+| astral-sh/uv, last 300 commits | 21 | 7 | **0/7** | 1 | 40/263 (15%) |
 
-The demo's catches are causal: each fix rewrote exactly the line the rule
-flags. uv's are not yet — they are regexes firing on commits whose fix was
-about something else — so for a real repository this is a method, shown
-honestly, not a result.
+A catch only counts when the fix did what the rule asks for: took the banned
+line out, added the missing companion, edited the guarded file, or put the
+removed line back. A rule that merely fired on the bad commit is reported
+apart. On uv, before that test existed, the rules "caught" 4 of 7, and every
+one was a coincidence. On a real repository this is a method, shown
+honestly, not yet a result.
 
 Hindsight also makes coverage more honest. A commit that a later commit had to
 fix is not evidence of good work, so coverage leaves those commits out of the
