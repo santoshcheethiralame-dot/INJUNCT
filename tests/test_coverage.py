@@ -218,6 +218,8 @@ def test_a_commit_someone_fixed_is_not_evidence_of_good_work(monkeypatch):
     assert honest["enforced"] == 3 and len(honest["discounted"]) == 3
     again = coverage.run(repo)
     assert again["enforced"] == 3 and len(again["discounted"]) == 3
+    trusting_after = coverage.run(repo, trust_history=True)   # must not inherit the marks
+    assert trusting_after["enforced"] == 0
 
 
 def test_a_sentence_that_fails_once_is_retried_and_not_reported(repo, fake_model, monkeypatch):
@@ -251,3 +253,14 @@ def test_a_rate_limit_does_not_switch_the_model_off(repo, fake_model, monkeypatc
     monkeypatch.setattr(coverage.provider, "chat", busy)
     s = coverage.run(repo)
     assert len(limited) == 5 and not s["model_failed"] and s["enforced"] == 1
+
+
+def test_two_runs_at_once_do_not_erase_each_others_answers(tmp_path, monkeypatch):
+    monkeypatch.setattr(coverage, "CACHE", tmp_path / "cache.json")
+    monkeypatch.setattr(coverage.provider, "chat", lambda p, system="", **k: '{"answer": "%s"}' % p)
+    a, b = coverage._Model(True), coverage._Model(True)   # both load the same (empty) cache
+    a.ask("one", "s")
+    b.ask("two", "s")                                       # b never saw a's answer in memory
+    fresh = coverage._Model(True)
+    monkeypatch.setattr(coverage.provider, "chat", lambda *x, **k: (_ for _ in ()).throw(AssertionError("miss")))
+    assert fresh.ask("one", "s") == {"answer": "one"} and fresh.ask("two", "s") == {"answer": "two"}

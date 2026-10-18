@@ -100,10 +100,15 @@ class _Model:
         self._lock = threading.Lock()
         self._cache = {}
         if enabled:
-            try:
-                self._cache = json.loads(CACHE.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError):
-                self._cache = {}
+            from .coverdemo import CACHE as SHIPPED
+            # The demo's recorded answers ride along read-only, so the demo
+            # repository scores the same from any folder, not only via --demo.
+            # They are keyed by model and prompt and match nothing else.
+            for path in (SHIPPED, CACHE):
+                try:
+                    self._cache.update(json.loads(path.read_text(encoding="utf-8")))
+                except (OSError, json.JSONDecodeError):
+                    pass
 
     def revive(self) -> None:
         with self._lock:
@@ -136,9 +141,20 @@ class _Model:
             with self._lock:
                 self._streak = 0
                 self._cache[key] = raw
+                # Merge with what is on disk before writing: two runs at once
+                # (two repositories, one key) each held the whole cache in
+                # memory, and the last writer silently erased the other's
+                # answers - which then cost a live call on every rerun.
                 try:
                     CACHE.parent.mkdir(parents=True, exist_ok=True)
-                    CACHE.write_text(json.dumps(self._cache), encoding="utf-8")
+                    try:
+                        disk = json.loads(CACHE.read_text(encoding="utf-8"))
+                    except (OSError, json.JSONDecodeError):
+                        disk = {}
+                    self._cache = {**disk, **self._cache}
+                    tmp = CACHE.with_suffix(f".{threading.get_ident()}.tmp")
+                    tmp.write_text(json.dumps(self._cache), encoding="utf-8")
+                    os.replace(tmp, CACHE)
                 except OSError:
                     pass
         self.used = True
@@ -365,7 +381,14 @@ def run(target: str | Path, use_model: bool = True, adopt: bool = False,
     docs = find_docs(repo)
     led = Ledger(ledger_path(repo))
     mine.record_history(repo, led, limit=HISTORY)
-    discounted = [] if trust_history else discount(led, repo)
+    if trust_history:
+        # Every commit counts as good work again - including any a previous
+        # run set aside, or the "trusting" number would quietly inherit them.
+        led.con.execute("UPDATE runs SET result='pass' WHERE repo=? AND result='fixed-later'", (str(repo),))
+        led.con.commit()
+        discounted = []
+    else:
+        discounted = discount(led, repo)
 
     found = [(doc.relative_to(repo).as_posix(), line, text) for doc in docs
              for line, text in extract(doc.read_text(encoding="utf-8", errors="replace"))]

@@ -31,7 +31,7 @@ law](#how-a-lesson-becomes-law) · 7. [What it checks](#what-it-checks) ·
 proven](#what-is-not-proven) · 10. [Against Autopsy](#against-autopsy) ·
 11. [Commands](#every-command) · 12. [Architecture](#architecture)
 
-Presenting it? [`docs/DEMO.md`](docs/DEMO.md) is the run sheet.
+Presenting it? [`docs/HACKDAY-DEMO.md`](docs/HACKDAY-DEMO.md) is the five-minute, offline run sheet; [`docs/DEMO.md`](docs/DEMO.md) covers the split screen.
 
 ---
 
@@ -80,7 +80,13 @@ Answers are cached, so a rerun is instant and the number does not drift.
 | repository | instructions | enforced | checkable | unchecked |
 |---|---|---|---|---|
 | astral-sh/uv | 63 | **2** — no `#[allow(clippy::…)]`, no `pull_request_target` in workflows; both held on 90 commits | 3 — two already broken by 5 recent commits each | 58 (22 process, 15 judgement, 12 runtime, 9 vague) |
-<!-- coverage-results -->
+| clinic demo (`--demo`, planted) | 9 | **3** — migration with every model, no `print(` in app/, no `# type: ignore` in models/ | 2 — the generated-client rule is broken by the repo's own regeneration commit | 4 (judgement, process, runtime) |
+
+uv's numbers include its PR template, which it ships as an agent-facing
+document. openai/openai-agents-python was also run: 162 instructions, 1
+enforced (never edit the translated docs, held on 92 commits), but 39 sentences
+got no answer from the free tier that day, so its number is a floor and is not
+in the table.
 
 **What this is not.** Most instructions in most agent documents are process
 and judgement — "write a regression test", "keep the change small" — and no
@@ -107,7 +113,20 @@ side by side. Only the gap is evidence. SZZ is noisy — a fix that only adds
 lines points at nothing — so every catch prints both commits for a person to
 check.
 
-<!-- hindsight-results -->
+| | fix commits | traced to a cause | caught | baseline (other commits) |
+|---|---|---|---|---|
+| clinic demo (planted) | 3 | 3 | **3/3**, all by binding rules | 3/10 (30%) |
+| astral-sh/uv, last 300 commits | 21 | 7 | 4/7 (57%) | 77/263 (29%) |
+
+The demo's catches are causal: each fix rewrote exactly the line the rule
+flags. uv's are not yet — they are regexes firing on commits whose fix was
+about something else — so for a real repository this is a method, shown
+honestly, not a result.
+
+Hindsight also makes coverage more honest. A commit that a later commit had to
+fix is not evidence of good work, so coverage leaves those commits out of the
+replay (`--trust-history` puts them back). On the demo: trusting every commit,
+0% of AGENTS.md is enforced; leaving out the three that were fixed, 33%.
 
 In CI, [`action.yml`](action.yml) rebuilds the ledger from the base branch,
 gates the pull request, and comments the coverage report; copy

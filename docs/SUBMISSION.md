@@ -55,14 +55,26 @@ tool can run on open weights with no network.
 
 ## Show it
 
-- `injunct coverage --demo`: offline, on Gemma 4's recorded answers. The demo
-  repository scores 22%. Two rules are proven on 11 commits. A "never edit the
-  generated client" rule is caught being broken by the repository's own
-  regeneration commit, which is exactly the rule that would have blocked the
-  team's generator.
-- A real repository: openai/openai-agents-python. Of 129 instructions, 1 is
-  enforced (never edit the translated docs, held on 92 commits), and most of
-  the rest are process and judgement. That gap is the finding.
+The run sheet is `docs/HACKDAY-DEMO.md`: five minutes, offline.
+
+- **Coverage on the planted clinic repo:** 33% of its AGENTS.md is enforced.
+  Three rules are proven on 13 commits. A "never edit the generated client"
+  rule is caught being broken by the repo's own regeneration commit, which is
+  exactly the rule that would have blocked the team's generator.
+- **Commits that needed a fix are left out.** Trusting every commit, the
+  planted bugs make every rule look wrong (0%). Leaving out the three commits
+  somebody came back and fixed, three rules bind (33%).
+- **Hindsight:** it traces each fix to the commit that caused the problem
+  (SZZ) and replays the rules. All 3 planted bugs are caught by binding rules,
+  against a 30% baseline on other commits.
+- **The block:** edit a model without a migration and `injunct gate` halts
+  with "from AGENTS.md:7, held on 13 past commits" and "DO THIS NEXT: create
+  migrations/009_patient.sql". The same card stops the write inside Claude
+  Code and opencode, and in CI.
+- **A real repository, astral-sh/uv:** 63 instructions, 2 enforced (no
+  `#[allow(clippy::…)]`, no `pull_request_target`; both held on 90 commits),
+  3 checkable, 58 unchecked. Most agent instructions are process and
+  judgement, and that gap is the finding.
 
 ## Built with
 
@@ -76,6 +88,7 @@ rule templates, the history replay and the Claude Code hook. At this Hack Day
 we built:
 
 - `injunct coverage`;
+- `injunct hindsight`, and leaving later-fixed commits out of the proof;
 - the Gemma 4 provider work (system-prompt folding, stripping `<thought>`
   blocks, retrying 5xx errors);
 - extraction that keeps hard-wrapped instructions whole;

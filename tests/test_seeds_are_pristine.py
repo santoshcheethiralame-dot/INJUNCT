@@ -38,7 +38,8 @@ def test_restore_refuses_to_write_inside_a_seed():
 
 TOP_LEVEL = {".claude", ".github", ".gitignore", "CLAUDE.md", "LICENSE", "README.md",
              "bench", "docs", "install.sh", "plugin", "pyproject.toml", "seeds",
-             "tests", "injunct", "web"}
+             "tests", "injunct", "web",
+             "action.yml", "examples", "skills"}   # the PR action, its workflow, the Agent Skill
 
 
 def test_no_stray_directory_has_been_committed_at_the_repo_root():
