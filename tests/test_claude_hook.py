@@ -248,3 +248,15 @@ def test_a_documented_rule_does_not_claim_it_failed_here_before():
         assert line in card, line
     assert "Tested: held on" in ts and "From:   " in ts
     card.encode("ascii")
+
+
+def test_a_pack_rule_says_what_it_is_in_both_harnesses():
+    ts = (verbs.ROOT / "plugin" / "injunct.ts").read_text(encoding="utf-8")
+    card = render.agent_card([{
+        "n": 14, "says": "Take the debugger breakpoint out before this lands.",
+        "rule": "must_not_appear( /breakpoint/ in **/*.py )", "reason": "a.py adds a line",
+        "when": "18 Oct 2026", "empanel": {"pack": "pdb"}}])
+    assert card.startswith("BLOCKED BY INJUNCT - a mistake coding agents make everywhere; this repository's rule pack forbids it.") and "BLOCKED BY INJUNCT - a mistake coding agents make everywhere; this repository's rule pack forbids it." in ts
+    assert "  Tested: a built-in rule, binding wherever it applies." in card
+    assert "Tested: a built-in rule, binding wherever it applies." in ts
+    card.encode("ascii")

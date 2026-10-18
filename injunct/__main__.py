@@ -32,6 +32,17 @@ def cmd_gate(a) -> int:
             led.cite(run_id, v.holding_id, "blocked")
     if a.json:
         print(json.dumps([v.__dict__ for v in verdicts], indent=2))
+    elif a.plain and verdicts:
+        # The card an agent reads: no box, no 74-column truncation. A pull
+        # request comment is read in a browser, where the box clipped the
+        # rule and the reason - exactly the two lines that matter.
+        import time as _time
+        from .nextstep import suggest
+        print(render.agent_card([
+            {"n": v.holding_id, "says": v.says, "rule": v.rule, "reason": v.reason,
+             "next": suggest(v, Path(repo), ch.touched), "empanel": v.empanel,
+             "when": _time.strftime("%d %b %Y", _time.localtime(v.established))}
+            for v in verdicts]))
     elif verdicts:
         for v in verdicts:
             print(render.halt_card(v, repo=repo, touched=ch.touched))
@@ -159,6 +170,7 @@ def main(argv=None) -> int:
     g = sub.add_parser("gate", help="does any binding precedent fire on this tree?")
     g.add_argument("path", nargs="?", default=".")
     g.add_argument("--json", action="store_true")
+    g.add_argument("--plain", action="store_true", help="the agent's text card, for logs and PR comments")
     g.set_defaults(fn=cmd_gate)
 
     r = sub.add_parser("reject", help="file a rejection against the current working tree")

@@ -56,7 +56,7 @@ runs:
         PR: ${{ github.event.pull_request.number }}
       run: |
         set +e
-        injunct gate . > "$RUNNER_TEMP/injunct-gate.txt" 2>&1
+        injunct gate . --plain > "$RUNNER_TEMP/injunct-gate.txt" 2>&1
         code=$?
         cat "$RUNNER_TEMP/injunct-gate.txt"
         if [ "$code" -ne 0 ] && [ -n "$PR" ]; then

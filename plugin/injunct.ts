@@ -83,9 +83,13 @@ const card = (verdicts: Verdict[]): string => {
   // claim a history that does not exist.
   const documented = verdicts.length > 0 &&
     verdicts.every((v) => ((v.empanel ?? {}) as Record<string, string>).documented)
+  const pack = verdicts.length > 0 &&
+    verdicts.every((v) => ((v.empanel ?? {}) as Record<string, string>).pack)
   const lines = [documented
     ? "BLOCKED BY INJUNCT - this breaks a rule this repository wrote down, and its history proved it."
-    : "BLOCKED BY INJUNCT - this exact change failed here before."]
+    : pack
+      ? "BLOCKED BY INJUNCT - a mistake coding agents make everywhere; this repository's rule pack forbids it."
+      : "BLOCKED BY INJUNCT - this exact change failed here before."]
   for (const v of verdicts) {
     lines.push("")
     lines.push(`  Holding No ${v.n}, established ${v.when}. ${v.says}`)
@@ -95,6 +99,7 @@ const card = (verdicts: Verdict[]): string => {
     // history has earned something a rule you typed has not.
     const e = (v.empanel ?? {}) as Record<string, string>
     if (e.documented) lines.push(`  Tested: held on ${String(e["false"] ?? "?").split("/").pop()} past commits, 0 false positives.`)
+    else if (e.pack) lines.push("  Tested: a built-in rule, binding wherever it applies.")
     else if (e.tested) lines.push(`  Tested: ${e.fire} fire, ${e["false"]} false positives.`)
     else if (e.taught) lines.push("  Tested: not empanelled - you wrote this rule yourself.")
     else if (e.mined) lines.push("  Tested: mined from this repo's history, not empanelled.")

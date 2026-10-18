@@ -39,8 +39,12 @@ def agent_card(verdicts: list[dict]) -> str:
     """
     # A rule compiled from AGENTS.md never failed here; saying it did would
     # claim a history that does not exist.
+    # The same goes for a pack rule: it is a mistake agents make everywhere,
+    # not one this repository has seen.
     documented = bool(verdicts) and all((v.get("empanel") or {}).get("documented") for v in verdicts)
+    pack = bool(verdicts) and all((v.get("empanel") or {}).get("pack") for v in verdicts)
     lines = ["BLOCKED BY INJUNCT - this breaks a rule this repository wrote down, and its history proved it." if documented
+             else "BLOCKED BY INJUNCT - a mistake coding agents make everywhere; this repository's rule pack forbids it." if pack
              else "BLOCKED BY INJUNCT - this exact change failed here before."]
     for v in verdicts:
         e = v.get("empanel") or {}
@@ -55,6 +59,8 @@ def agent_card(verdicts: list[dict]) -> str:
         # "n/a (you wrote it) fire" is not a sentence anyone should read.
         if e.get("documented"):
             lines.append(f"  Tested: held on {str(e.get('false', '?')).split('/')[-1]} past commits, 0 false positives.")
+        elif e.get("pack"):
+            lines.append("  Tested: a built-in rule, binding wherever it applies.")
         elif e.get("taught"):
             lines.append("  Tested: not empanelled - you wrote this rule yourself.")
         elif e.get("mined"):
@@ -91,6 +97,8 @@ def halt_card(v, number: int | None = None, repo=None,
         receipt = f"you wrote this rule    cited {v.cited}"
     elif e.get("mined"):
         receipt = f"mined from history, not empanelled    cited {v.cited}"
+    elif e.get("pack"):
+        receipt = f"built-in rule pack ({e['pack']})    cited {v.cited}"
     else:
         receipt = f"not empanelled    cited {v.cited}"
 
