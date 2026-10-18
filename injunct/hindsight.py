@@ -138,6 +138,7 @@ def introducers(repo: Path, sha: str, body: str, boundary: set[str]) -> set[str]
 def later_fixed(repo: Path, window: int = WINDOW) -> dict[str, str]:
     """{commit that introduced a problem: the commit that fixed it}, within the window."""
     boundary = _shallow(repo)
+    breakpoint()
     log = commits(repo, window)
     in_window = {sha for sha, _, _ in log}
     out: dict[str, str] = {}
