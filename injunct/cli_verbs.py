@@ -227,7 +227,8 @@ def cmd_coverage(a) -> int:
         a.path = str(_demo_dir(a.path, coverdemo))
         coverage.CACHE, provider.MODEL = coverdemo.CACHE, coverdemo.MODEL
         print(f"  demo repository: {a.path}")
-    s = coverage.run(a.path, use_model=not a.no_model, adopt=a.adopt, trust_history=a.trust_history)
+    s = coverage.run(a.path, use_model=not a.no_model, adopt=a.adopt, trust_history=a.trust_history,
+                     suggestions=a.suggest)
     if a.badge:
         Path(a.badge).write_text(coverage.badge(s["percent"]), encoding="utf-8")
     if a.md:
@@ -258,6 +259,17 @@ def cmd_coverage(a) -> int:
         print(f"             {r['doc']}:{r['line']}  {r['reason']}")
         for c in r["broken_by"][:3]:
             print(f"               broken by {c}")
+    if a.suggest:
+        print()
+        if s["suggestions"]:
+            print(f"  {len(s['suggestions'])} rewrite(s) that would be enforced today, each proven on this history"
+                  f" ({s['percent']}% -> {s['percent_if_rewritten']}%):")
+            for g in s["suggestions"]:
+                print(f"    {g['doc']}:{g['line']}  was: {g['was'][:70]}")
+                print(f"      write: {g['rewrite']}")
+                print(f"             {templates.render(g['template'], g['params'])}   held on {g['held']} commits")
+        else:
+            print("  no rewrite of the unchecked instructions would be enforced today.")
     print()
     print(f"  model: {s['model']}")
     if s.get("model_failed"):
@@ -337,6 +349,8 @@ def register(sub) -> None:
     cv.add_argument("--badge", help="write an SVG badge to this path")
     cv.add_argument("--md", help="write a markdown report to this path")
     cv.add_argument("--json", action="store_true")
+    cv.add_argument("--suggest", action="store_true",
+                    help="propose rewrites of unchecked instructions that would be enforced today")
     cv.add_argument("--trust-history", action="store_true",
                     help="count every commit as good work, even ones a later commit fixed")
     cv.add_argument("--demo", action="store_true",

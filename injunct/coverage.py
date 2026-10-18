@@ -325,22 +325,15 @@ def compile_rule(text: str, files: list[str], model: _Model,
         d = model.ask(full, COMPILE)
     if d is None:
         return None, {"kind": "vague", "unanswered": True}, UNANSWERED
-    t = d.get("template")
-    if not t:
+    if not d.get("template"):
         kind = d.get("kind") if d.get("kind") in REASONS + (NOT_AN_INSTRUCTION,) else "vague"
         return None, {"kind": kind}, str(d.get("why") or "no template fits")[:160]
-    if t == "required_command":
-        t = "must_run"
-    p = d.get("params") or {}
-    if t not in FROM_PROSE or not templates.valid(t, p):
-        return None, {"kind": "vague"}, f"the model proposed `{t}` with unusable blanks"
-    if "regex" in p:
-        try:
-            re.compile(p["regex"])
-        except re.error:
-            return None, {"kind": "vague"}, "the model's pattern is not a valid regex"
+    got = _usable(d)
+    if not got:
+        return None, {"kind": "vague"}, f"the model proposed `{d.get('template')}` with unusable blanks"
+    t, p = got
     says = (d.get("says") or "").strip() or templates.render(t, p)
-    return t, {k: str(v) for k, v in p.items()}, says
+    return t, p, says
 
 
 def _sample(files: list[str], n: int = 80) -> list[str]:
@@ -349,6 +342,68 @@ def _sample(files: list[str], n: int = 80) -> list[str]:
     rest = [f for f in files if f not in tops]
     step = max(1, len(rest) // max(1, n - len(tops)))
     return (tops + rest[::step])[:n]
+
+
+SUGGEST = """An instruction from a repository's agent documentation cannot be enforced as written.
+Propose ONE narrower rewrite that keeps its intent and that a deterministic check could enforce,
+using only these templates:
+  co_change       {"trigger": glob, "required": glob}   changing a trigger file requires changing a required file in the same commit
+  forbidden_edit  {"glob": glob}                         these files must never be edited by hand
+  must_not_appear {"regex": re, "glob": glob}            no added line in these files may match the regex
+  must_not_remove {"regex": re, "glob": glob}            no removed line in these files may match the regex
+  must_appear     {"regex": re, "glob": glob}            every changed file matching glob must contain the regex
+Globs must name paths that exist in the file list you are given. Regexes are Python syntax.
+Do not invent intent the instruction does not have. If no honest narrower version exists, reply {"template": null}.
+Reply with JSON only:
+  {"rewrite": "the instruction as the team could write it, one sentence", "template": "...", "params": {...}}"""
+SUGGEST_MAX = 20       # model calls per run; judgement and vague instructions first
+SUGGEST_FROM = ("judgement", "vague")
+
+
+def _usable(d: dict | None) -> tuple[str, dict] | None:
+    """The template and blanks a model proposed, if they are something we will run."""
+    if not d or not d.get("template"):
+        return None
+    t, p = d["template"], d.get("params") or {}
+    if t == "required_command":
+        t = "must_run"
+    if t not in FROM_PROSE or not templates.valid(t, p):
+        return None
+    if "regex" in p:
+        try:
+            re.compile(p["regex"])
+        except re.error:
+            return None
+    return t, {k: str(v) for k, v in p.items()}
+
+
+def suggest(led: Ledger, repo: Path, rules: list["Rule"], files: list[str], model: _Model) -> list[dict]:
+    """Rewrites that would be enforced today, each proven the same way a rule is.
+
+    A low coverage number is a diagnosis; this is the prescription. For each
+    instruction no check can express as written, the model proposes a
+    narrower sentence one template can enforce. The proposal then goes
+    through everything a documented rule does - real files, the history
+    replay - and only the ones that would bind are shown.
+    """
+    todo = [r for r in rules if r.status == "unchecked" and r.reason.split(":", 1)[0] in SUGGEST_FROM][:SUGGEST_MAX]
+    asks = [json.dumps({"instruction": r.text, "files": _sample(files)}, indent=1) for r in todo]
+    with ThreadPoolExecutor(WORKERS) as pool:
+        answers = list(pool.map(lambda a: model.ask(a, SUGGEST), asks))
+    out = []
+    for r, d in zip(todo, answers):
+        got = _usable(d)
+        if not got or not str(d.get("rewrite") or "").strip():
+            continue
+        t, p = got
+        if anchored(t, p, files):
+            continue
+        status, receipt, broken = prove(led, repo, t, p)
+        if status != "enforced":
+            continue
+        out.append({"doc": r.doc, "line": r.line, "was": r.text, "rewrite": str(d["rewrite"]).strip(),
+                    "template": t, "params": p, "held": receipt.get("judged")})
+    return out
 
 
 def anchored(t: str, p: dict, files: list[str]) -> str | None:
@@ -409,7 +464,7 @@ def prove(led: Ledger, repo: Path, t: str, p: dict) -> tuple[str, dict, list[str
 # ------------------------------------------------------------------ the run --
 
 def run(target: str | Path, use_model: bool = True, adopt: bool = False,
-        trust_history: bool = False) -> dict:
+        trust_history: bool = False, suggestions: bool = False) -> dict:
     repo, remote = _resolve(target)
     model = _Model(use_model)
     files = _files(repo)
@@ -463,10 +518,15 @@ def run(target: str | Path, use_model: bool = True, adopt: bool = False,
                     r.reason = r.receipt.get("note") or "no past commit could test it"
         rules.append(r)
 
+    suggested = suggest(led, repo, rules, files, model) if suggestions and use_model else []
     if adopt:
         _adopt(led, repo, rules)
     led.close()
-    return {**_summary(repo, remote, docs, rules, model, unanswered), "discounted": discounted}
+    out = {**_summary(repo, remote, docs, rules, model, unanswered), "discounted": discounted,
+           "suggestions": suggested}
+    if out["total"]:
+        out["percent_if_rewritten"] = round(100 * (out["enforced"] + len(suggested)) / out["total"])
+    return out
 
 
 def _resolve(target) -> tuple[Path, str | None]:
@@ -540,5 +600,11 @@ def markdown(s: dict) -> str:
         text = r["text"].replace("|", "\\|")
         out.append(f"| {mark[r['status']]} | {text} | {r['doc']}:{r['line']} | {rule} | "
                    f"{(r['reason'] or r['receipt'].get('false', '')).replace('|', '/')} |")
+    if s.get("suggestions"):
+        out += ["", f"### Rewrites that would be enforced today ({s['percent']}% → {s['percent_if_rewritten']}%)", "",
+                "| where | was | write instead | rule | held on |", "|---|---|---|---|---|"]
+        for g in s["suggestions"]:
+            out.append(f"| {g['doc']}:{g['line']} | {g['was'].replace('|', '/')} | {g['rewrite'].replace('|', '/')} | "
+                       f"`{templates.render(g['template'], g['params'])}` | {g['held']} commits |")
     out += ["", f"<sub>model: {s['model']} · proven against git history by injunct</sub>"]
     return "\n".join(out)

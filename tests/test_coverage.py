@@ -308,3 +308,37 @@ def test_a_sentence_that_timed_out_costs_nothing_on_the_next_run(repo, fake_mode
     calls.clear()
     s = coverage.run(repo)                                # warm: nothing should reach the model
     assert calls == [] and not s["model_failed"]
+
+
+def test_suggest_shows_only_rewrites_that_would_bind_today(repo, fake_model, monkeypatch):
+    """The prescription goes through the same proof as a rule: real files, and
+    the history replay. A rewrite that names nothing, or that the history
+    already breaks, is not offered."""
+    (repo / "AGENTS.md").write_text(AGENTS + "- Be careful with the schema.\n- Tidy up generated code.\n",
+                                    encoding="utf-8")
+    _commit(repo, {}, "more rules")
+    real = coverage.provider.chat
+    proposals = {
+        "Write clear commit messages.": {"template": None},
+        "Be careful with the schema.": {"rewrite": "Changing a model in models/ needs a migration in migrations/.",
+                                        "template": "co_change",
+                                        "params": {"trigger": "models/*.py", "required": "migrations/**"}},
+        "Tidy up generated code.": {"rewrite": "Never edit client/generated.py by hand.",
+                                    "template": "forbidden_edit", "params": {"glob": "client/generated.py"}},
+    }
+
+    def chat(prompt, system="", **k):
+        text = json.loads(prompt)["instruction"]
+        if system == coverage.SUGGEST:
+            return json.dumps(proposals.get(text, {"template": None}))
+        if system == coverage.COMPILE and text not in COMPILED:
+            return json.dumps({"template": None, "kind": "vague", "why": "too general"})
+        return real(prompt, system=system, **k)
+
+    monkeypatch.setattr(coverage.provider, "chat", chat)
+    s = coverage.run(repo, suggestions=True)
+    got = {g["was"]: g for g in s["suggestions"]}
+    assert set(got) == {"Be careful with the schema."}          # the history breaks the other one
+    assert got["Be careful with the schema."]["held"] >= 1
+    assert s["percent_if_rewritten"] > s["percent"]
+    assert "Rewrites that would be enforced today" in coverage.markdown(s)
